@@ -5,11 +5,13 @@
 
 from functools import lru_cache
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AppSettings(BaseSettings):
     """Global application settings — populated from .env or environment variables."""
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     openrouter_api_key: str = ""
     convex_url: str = ""
@@ -19,10 +21,6 @@ class AppSettings(BaseSettings):
     max_files: int = 20
     max_concurrent_analyses: int = 5
     temp_dir: str = "/tmp/procurement-analyzer"
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
 
 @lru_cache
