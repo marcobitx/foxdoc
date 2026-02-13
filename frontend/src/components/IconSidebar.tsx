@@ -4,7 +4,7 @@
 // Related: App.tsx, store.ts
 
 import { clsx } from 'clsx';
-import { Plus, Clock, Settings, FileSearch } from 'lucide-react';
+import { ScanSearch, Layers, SlidersHorizontal, FlaskConical } from 'lucide-react';
 import type { AppView } from '../lib/store';
 
 interface Props {
@@ -13,9 +13,9 @@ interface Props {
 }
 
 const NAV_ITEMS: { view: AppView; icon: any; label: string }[] = [
-  { view: 'upload', icon: Plus, label: 'Nauja analizė' },
-  { view: 'history', icon: Clock, label: 'Istorija' },
-  { view: 'settings', icon: Settings, label: 'Nustatymai' },
+  { view: 'upload', icon: ScanSearch, label: 'Nauja analizė' },
+  { view: 'history', icon: Layers, label: 'Istorija' },
+  { view: 'settings', icon: SlidersHorizontal, label: 'Nustatymai' },
 ];
 
 function getActiveNav(view: AppView): AppView {
@@ -34,12 +34,12 @@ export default function IconSidebar({ currentView, onNavigate }: Props) {
           className="w-8 h-8 rounded-[10px] bg-gradient-brand flex items-center justify-center
                      shadow-[0_2px_8px_rgba(132,204,22,0.2)]"
         >
-          <FileSearch className="w-4 h-4 text-surface-950" />
+          <FlaskConical className="w-4 h-4 text-surface-950" />
         </div>
       </div>
 
       {/* ── Navigation — vertically centered ─────────────────── */}
-      <nav className="flex-1 flex flex-col items-center justify-center gap-1.5">
+      <nav className="flex-1 flex flex-col items-center gap-1.5 pt-16">
         {NAV_ITEMS.map(({ view, icon: Icon, label }) => {
           const active = activeNav === view;
 
