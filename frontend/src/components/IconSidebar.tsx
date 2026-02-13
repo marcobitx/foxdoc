@@ -39,7 +39,7 @@ export default function IconSidebar({ currentView, onNavigate }: Props) {
       </div>
 
       {/* ── Navigation — vertically centered ─────────────────── */}
-      <nav className="flex-1 flex flex-col items-center gap-1.5 pt-16">
+      <nav className="flex-1 flex flex-col items-center gap-1.5 pt-6">
         {NAV_ITEMS.map(({ view, icon: Icon, label }) => {
           const active = activeNav === view;
 
