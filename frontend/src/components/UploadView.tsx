@@ -78,7 +78,7 @@ export default function UploadView() {
           }`}
           style={{
             padding: '1.5px',
-            background: 'linear-gradient(135deg, #8b5cf6, #ff8c0a, #8b5cf6)',
+            background: 'linear-gradient(135deg, #84cc16, #f4a261, #84cc16)',
             backgroundSize: '200% 200%',
             animation: 'borderFlow 2s linear infinite',
             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',

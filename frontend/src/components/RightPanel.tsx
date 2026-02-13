@@ -68,7 +68,7 @@ interface Props {
 
 export default function RightPanel({ currentView, analysisId }: Props) {
   return (
-    <aside className="hidden lg:flex flex-col w-[320px] h-full bg-surface-900/40 backdrop-blur-sm border-l border-white/[0.04] flex-shrink-0">
+    <aside className="hidden lg:flex flex-col w-[320px] h-full bg-transparent border-l border-white/[0.04] flex-shrink-0">
       {currentView === 'upload' && <UploadPanel />}
       {currentView === 'analyzing' && <AnalyzingPanel />}
       {currentView === 'results' && analysisId && <ResultsPanel analysisId={analysisId} />}

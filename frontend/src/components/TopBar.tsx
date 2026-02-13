@@ -24,7 +24,7 @@ export default function TopBar({ currentView, error, onDismissError }: Props) {
   const meta = VIEW_META[currentView] || VIEW_META.upload;
 
   return (
-    <header className="flex-shrink-0 border-b border-white/[0.04] bg-surface-900/60 backdrop-blur-lg">
+    <header className="flex-shrink-0 border-b border-white/[0.04] bg-transparent">
       <div className="flex items-center justify-between h-12 px-5 md:px-8">
         {/* Left — breadcrumb path */}
         <div className="flex items-center gap-2">

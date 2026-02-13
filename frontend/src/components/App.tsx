@@ -107,7 +107,7 @@ export default function App() {
               onClick={() => navigate(view)}
               className={clsx(
                 'flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all duration-200',
-                active ? 'text-accent-400' : 'text-surface-500',
+                active ? 'text-brand-400' : 'text-surface-500',
               )}
             >
               <Icon className="w-5 h-5" />
