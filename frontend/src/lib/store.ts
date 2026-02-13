@@ -34,6 +34,14 @@ export function useStore<T>(store: ReturnType<typeof createStore<T>>): T {
 
 export type AppView = 'upload' | 'analyzing' | 'results' | 'history' | 'settings';
 
+export interface ParsedDocInfo {
+  filename: string;
+  pages: number;
+  format: string;
+  size_kb: number;
+  token_estimate: number;
+}
+
 export interface AppState {
   view: AppView;
   currentAnalysisId: string | null;
@@ -47,6 +55,7 @@ export interface AppState {
   modelPanelOpen: boolean;
   analysisStatus: string | null;
   analysisElapsedSec: number;
+  parsedDocs: ParsedDocInfo[];
 }
 
 export const appStore = createStore<AppState>({
@@ -62,4 +71,5 @@ export const appStore = createStore<AppState>({
   modelPanelOpen: false,
   analysisStatus: null,
   analysisElapsedSec: 0,
+  parsedDocs: [],
 });

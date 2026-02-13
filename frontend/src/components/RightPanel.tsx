@@ -22,7 +22,10 @@ import {
   Image,
   Table2,
   ChevronRight,
+  ChevronDown,
   Zap,
+  Files,
+  BookOpen,
 } from 'lucide-react';
 import { appStore, useStore, type AppView } from '../lib/store';
 import { createAnalysis, getAnalysis, type Analysis } from '../lib/api';
@@ -190,6 +193,7 @@ function UploadPanel() {
         currentAnalysisId: result.id,
         uploading: false,
         error: null,
+        parsedDocs: [],
       });
     } catch (e: any) {
       setError(e.message || 'Nepavyko įkelti failų');
@@ -316,6 +320,7 @@ function UploadPanel() {
 function AnalyzingPanel() {
   const state = useStore(appStore);
   const [elapsed, setElapsed] = useState(0);
+  const [docsExpanded, setDocsExpanded] = useState(true);
   const startRef = useRef(Date.now());
 
   useEffect(() => {
@@ -324,6 +329,13 @@ function AnalyzingPanel() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  const totalFiles = state.files.length;
+  const parsedCount = state.parsedDocs.length;
+  const totalPages = state.parsedDocs.reduce((sum, d) => sum + d.pages, 0);
+
+  // Map parsed doc info by filename for quick lookup
+  const parsedMap = new Map(state.parsedDocs.map((d) => [d.filename, d]));
 
   return (
     <>
@@ -341,27 +353,89 @@ function AnalyzingPanel() {
           </div>
         </div>
 
-        {/* Uploaded files */}
-        {state.files.length > 0 && (
-          <div>
-            <h4 className="text-[11px] font-bold text-surface-500 uppercase tracking-wider mb-2.5">
-              Įkelti dokumentai ({state.files.length})
-            </h4>
-            <div className="space-y-1.5">
-              {state.files.map((f) => {
-                const info = getFileInfo(f.name);
-                const FileIcon = info.icon;
-                return (
-                  <div key={f.name} className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-950/40 border border-white/[0.04]">
-                    <FileIcon className={`w-4 h-4 flex-shrink-0 ${info.color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[12px] text-surface-200 font-semibold truncate leading-tight">{f.name}</p>
-                      <p className="text-[10px] text-surface-600 font-mono mt-0.5 uppercase tracking-tighter">{formatSize(f.size)}</p>
-                    </div>
+        {/* Document section — collapsible with file/page summary */}
+        {totalFiles > 0 && (
+          <div className="rounded-xl bg-surface-950/40 border border-white/[0.04] overflow-hidden">
+            {/* Collapsible header with summary stats */}
+            <button
+              onClick={() => setDocsExpanded((prev) => !prev)}
+              className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                {docsExpanded ? (
+                  <ChevronDown className="w-3.5 h-3.5 text-surface-500 transition-transform" />
+                ) : (
+                  <ChevronRight className="w-3.5 h-3.5 text-surface-500 transition-transform" />
+                )}
+                <h4 className="text-[11px] font-bold text-surface-400 uppercase tracking-widest">
+                  Dokumentai
+                </h4>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <Files className="w-3 h-3 text-brand-400" />
+                  <span className="text-[11px] font-mono font-bold text-brand-300">
+                    {parsedCount}/{totalFiles}
+                  </span>
+                </div>
+                {totalPages > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <BookOpen className="w-3 h-3 text-accent-400" />
+                    <span className="text-[11px] font-mono font-bold text-accent-300">
+                      {totalPages} psl.
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </div>
+            </button>
+
+            {/* Expanded file list */}
+            {docsExpanded && (
+              <div className="px-3 pb-3 space-y-1.5 animate-fade-in">
+                {state.files.map((f) => {
+                  const info = getFileInfo(f.name);
+                  const FileIcon = info.icon;
+                  const parsed = parsedMap.get(f.name);
+                  const isParsed = !!parsed;
+
+                  return (
+                    <div
+                      key={f.name}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-300 ${
+                        isParsed
+                          ? 'bg-emerald-500/[0.04] border-emerald-500/10'
+                          : 'bg-surface-950/40 border-white/[0.04]'
+                      }`}
+                    >
+                      <FileIcon className={`w-3.5 h-3.5 flex-shrink-0 ${isParsed ? 'text-emerald-400' : info.color}`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] text-surface-200 font-semibold truncate leading-tight">{f.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-surface-600 font-mono uppercase tracking-tighter">
+                            {formatSize(f.size)}
+                          </span>
+                          {isParsed && parsed.pages > 0 && (
+                            <>
+                              <span className="text-[10px] text-surface-700">·</span>
+                              <span className="text-[10px] font-mono font-bold text-emerald-400/80">
+                                {parsed.pages} psl.
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      {isParsed ? (
+                        <div className="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        </div>
+                      ) : (
+                        <Loader2 className="w-3.5 h-3.5 text-surface-600 animate-spin flex-shrink-0" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

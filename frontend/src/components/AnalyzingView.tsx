@@ -70,12 +70,32 @@ export default function AnalyzingView({ analysisId, error, onComplete, onError }
 
   // SSE stream
   useEffect(() => {
+    // Reset parsed docs for new analysis
+    appStore.setState({ parsedDocs: [] });
+
     const close = streamProgress(
       analysisId,
       (e: SSEEvent) => {
         setEvents((prev) => [...prev, { ...e, ts: Date.now() }]);
         if (e.event === 'status' && e.data?.status) setCurrentStatus(e.data.status.toUpperCase());
         if (e.data?.event_type === 'status_change' && e.data?.new_status) setCurrentStatus(e.data.new_status.toUpperCase());
+
+        // Push parsed doc info to global store
+        if (e.data?.event_type === 'file_parsed') {
+          const prev = appStore.getState().parsedDocs;
+          const already = prev.some((d) => d.filename === e.data.filename);
+          if (!already) {
+            appStore.setState({
+              parsedDocs: [...prev, {
+                filename: e.data.filename,
+                pages: e.data.pages ?? 0,
+                format: e.data.format ?? '',
+                size_kb: e.data.size_kb ?? 0,
+                token_estimate: e.data.token_estimate ?? 0,
+              }],
+            });
+          }
+        }
       },
       () => { },
     );

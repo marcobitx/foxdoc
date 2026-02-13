@@ -236,11 +236,13 @@ class LLMClient:
         thinking: str = "off",
         temperature: float | None = None,
         response_format: dict | None = None,
+        max_tokens: int = 16000,
     ) -> dict:
         """Build the request body for a chat completion."""
         body: dict = {
             "model": model or self.default_model,
             "messages": messages,
+            "max_tokens": max_tokens,
         }
 
         if temperature is not None:
