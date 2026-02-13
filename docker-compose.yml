@@ -1,0 +1,27 @@
+# docker-compose.yml
+# Container orchestration for procurement-analyzer
+# TODO: Configure after backend Dockerfile is ready (Task 3.2)
+
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+    # command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "4321:4321"
+  #   depends_on:
+  #     - backend
