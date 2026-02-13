@@ -48,7 +48,21 @@ async def parse_document(file_path: Path, filename: str) -> ParsedDocument:
     If Docling fails, returns a ParsedDocument with the error message
     in the content field.
     """
-    file_size = file_path.stat().st_size
+    try:
+        file_size = file_path.stat().st_size
+    except (FileNotFoundError, OSError) as e:
+        logger.warning("File not found or inaccessible: %s — %s", filename, e)
+        error_content = f"[ERROR] File not found: {filename}"
+        doc_type = classify_document(filename, "")
+        return ParsedDocument(
+            filename=filename,
+            content=error_content,
+            page_count=0,
+            file_size_bytes=0,
+            doc_type=doc_type,
+            token_estimate=len(error_content) // 4,
+        )
+
     file_ext = file_path.suffix.lower()
 
     try:
