@@ -2,10 +2,24 @@
 # FastAPI application entry point
 # Configures CORS, lifespan, and routes
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Procurement Analyzer API", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan: startup and shutdown hooks."""
+    yield
+    # Cleanup if needed (e.g. close LLM client connections)
+
+
+app = FastAPI(
+    title="Procurement Analyzer API",
+    version="0.1.0",
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,6 +28,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Include routers ────────────────────────────────────────────────────────────
+
+from app.routers import analyze, models, settings  # noqa: E402
+
+app.include_router(analyze.router)
+app.include_router(models.router)
+app.include_router(settings.router)
 
 
 @app.get("/health")

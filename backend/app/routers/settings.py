@@ -2,3 +2,69 @@
 # Settings endpoints: get and update API key, default model
 # Persists settings in Convex DB
 # Related: convex_client.py, config.py
+
+from __future__ import annotations
+
+import logging
+
+from fastapi import APIRouter, Depends
+
+from app.config import AppSettings, get_settings
+from app.convex_client import ConvexDB, get_db
+from app.models.schemas import SettingsResponse, SettingsUpdate
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/api", tags=["settings"])
+
+
+@router.get("/settings", response_model=SettingsResponse)
+async def get_settings_endpoint(
+    settings: AppSettings = Depends(get_settings),
+    db: ConvexDB = Depends(get_db),
+):
+    """Get current settings (API key is masked)."""
+    # Check both env var and DB for API key
+    has_key = bool(settings.openrouter_api_key)
+    if not has_key:
+        db_key = await db.get_setting("openrouter_api_key")
+        has_key = bool(db_key)
+
+    # Get default model from DB, fall back to env config
+    db_model = await db.get_setting("default_model")
+    default_model = db_model if db_model else settings.default_model
+
+    return SettingsResponse(
+        has_api_key=has_key,
+        default_model=default_model,
+    )
+
+
+@router.put("/settings", response_model=SettingsResponse)
+async def update_settings(
+    body: SettingsUpdate,
+    settings: AppSettings = Depends(get_settings),
+    db: ConvexDB = Depends(get_db),
+):
+    """Update API key and/or default model."""
+    if body.openrouter_api_key is not None:
+        await db.set_setting("openrouter_api_key", body.openrouter_api_key)
+        logger.info("Updated OpenRouter API key in DB")
+
+    if body.default_model is not None:
+        await db.set_setting("default_model", body.default_model)
+        logger.info("Updated default model to %s", body.default_model)
+
+    # Return updated state
+    has_key = bool(settings.openrouter_api_key)
+    if not has_key:
+        db_key = await db.get_setting("openrouter_api_key")
+        has_key = bool(db_key)
+
+    db_model = await db.get_setting("default_model")
+    default_model = db_model if db_model else settings.default_model
+
+    return SettingsResponse(
+        has_api_key=has_key,
+        default_model=default_model,
+    )
