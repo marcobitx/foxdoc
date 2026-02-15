@@ -10,7 +10,8 @@ from typing import Awaitable, Callable, Optional
 
 from app.models.schemas import ExtractionResult
 from app.prompts.extraction import EXTRACTION_SYSTEM, EXTRACTION_USER
-from app.services.llm import LLMClient
+from app.prompts.extraction_ocr import EXTRACTION_OCR_USER
+from app.services.llm import OPENROUTER_MAX_FILE_SIZE, LLMClient, build_multimodal_content
 from app.services.parser import ParsedDocument
 
 logger = logging.getLogger(__name__)
@@ -180,6 +181,73 @@ async def _extract_single(
     return result, usage  # type: ignore[return-value]
 
 
+async def _extract_single_multimodal(
+    doc: ParsedDocument,
+    llm: LLMClient,
+    model: str,
+    on_thinking: Callable[[str], Awaitable[None]] | None = None,
+) -> tuple[ExtractionResult, dict]:
+    """Extract structured data from a scanned PDF/image via OpenRouter multimodal API."""
+    user_prompt = EXTRACTION_OCR_USER.format(
+        filename=doc.filename,
+        document_type=doc.doc_type.value,
+        page_count=doc.page_count,
+    )
+
+    content_parts, plugins = build_multimodal_content(user_prompt, doc.file_path)
+
+    logger.info(
+        "Multimodal extraction for %s (%dKB, %d parts, plugins=%s)",
+        doc.filename,
+        doc.file_size_bytes // 1024,
+        len(content_parts),
+        plugins is not None,
+    )
+
+    result, usage = await llm.complete_structured_streaming(
+        system=EXTRACTION_SYSTEM,
+        user=content_parts,
+        response_schema=ExtractionResult,
+        model=model,
+        thinking="low",
+        on_thinking=on_thinking,
+        plugins=plugins,
+    )
+    return result, usage  # type: ignore[return-value]
+
+
+async def _extract_single_local_ocr(
+    doc: ParsedDocument,
+    llm: LLMClient,
+    model: str,
+    on_thinking: Callable[[str], Awaitable[None]] | None = None,
+) -> tuple[ExtractionResult, dict]:
+    """Extract from large scanned file using local Docling OCR fallback."""
+    from app.services.parser import parse_with_ocr
+
+    logger.info(
+        "Local OCR fallback for %s (%dKB, too large for multimodal)",
+        doc.filename, doc.file_size_bytes // 1024,
+    )
+
+    loop = asyncio.get_running_loop()
+    ocr_text, page_count = await loop.run_in_executor(
+        None, parse_with_ocr, doc.file_path
+    )
+
+    ocr_doc = ParsedDocument(
+        filename=doc.filename,
+        content=ocr_text,
+        page_count=page_count,
+        file_size_bytes=doc.file_size_bytes,
+        doc_type=doc.doc_type,
+        token_estimate=len(ocr_text) // 4,
+        file_path=doc.file_path,
+        is_scanned=False,  # OCR text is now available
+    )
+    return await _extract_single(ocr_doc, llm, model, on_thinking=on_thinking)
+
+
 async def extract_document(
     doc: ParsedDocument,
     llm: LLMClient,
@@ -207,6 +275,24 @@ async def extract_document(
     )
 
     try:
+        # Multimodal routing for scanned documents
+        if doc.is_scanned and doc.file_path and doc.file_path.exists():
+            if doc.file_size_bytes <= OPENROUTER_MAX_FILE_SIZE:
+                result, usage = await _extract_single_multimodal(
+                    doc, llm, model, on_thinking=on_thinking,
+                )
+            else:
+                result, usage = await _extract_single_local_ocr(
+                    doc, llm, model, on_thinking=on_thinking,
+                )
+            logger.info(
+                "Scanned extraction complete for %s: in=%d out=%d tokens",
+                doc.filename,
+                usage.get("input_tokens", 0),
+                usage.get("output_tokens", 0),
+            )
+            return result, usage
+
         chunks = chunk_text(doc.content, max_chars=max_chars)
 
         if len(chunks) == 1:
@@ -251,6 +337,8 @@ async def extract_document(
                     file_size_bytes=doc.file_size_bytes,
                     doc_type=doc.doc_type,
                     token_estimate=len(chunk) // 4,
+                    file_path=doc.file_path,
+                    is_scanned=False,  # chunks contain text
                 )
                 try:
                     return await _extract_single(chunk_doc, llm, model, on_thinking=on_thinking)

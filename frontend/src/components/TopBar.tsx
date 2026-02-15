@@ -3,7 +3,7 @@
 // Always visible at the top of the main content area
 // Related: App.tsx, store.ts
 
-import { AlertTriangle, X, ChevronRight, Home, XCircle } from 'lucide-react';
+import { AlertTriangle, X, ChevronRight, Home, XCircle, Plus } from 'lucide-react';
 import { appStore, useStore, type AppView } from '../lib/store';
 import Tooltip from './Tooltip';
 
@@ -63,7 +63,7 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
 
   return (
     <header className="flex-shrink-0 border-b border-surface-700/20">
-      <div className="flex items-center justify-between h-16 px-6 md:px-10">
+      <div className="flex items-center justify-between h-16 pl-6 pr-4 md:pl-10 md:pr-5">
         {/* Left — interactive breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-0 min-w-0">
           {/* Home root */}
@@ -168,6 +168,19 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
               >
                 <XCircle className="w-3.5 h-3.5" />
                 Nutraukti
+              </button>
+            </Tooltip>
+          )}
+          {(currentView === 'results' || (currentView === 'analyzing' && state.reviewMode)) && (
+            <Tooltip content="Pradėti naują analizę (Alt+N)" side="bottom">
+              <button
+                onClick={() => onNavigate('upload')}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg
+                         bg-brand-500/15 hover:bg-brand-500/25 text-brand-400 hover:text-brand-300
+                         border border-brand-500/20 transition-all text-[12px] font-semibold"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Nauja analizė
               </button>
             </Tooltip>
           )}

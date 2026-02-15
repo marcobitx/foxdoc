@@ -39,6 +39,8 @@ class ParsedDocument:
     file_size_bytes: int
     doc_type: DocumentType
     token_estimate: int  # len(content) // 4 rough estimate
+    file_path: Optional[Path] = None  # original file path for multimodal OCR
+    is_scanned: bool = False  # True = empty text, needs vision/OCR extraction
 
 
 # ── Fast parsers (PyMuPDF for PDF, python-docx for DOCX) ─────────────────────
@@ -203,6 +205,98 @@ def _get_converter():
     return _converter
 
 
+_ocr_converter = None
+
+
+def _get_ocr_converter():
+    """Lazily initialize Docling converter with OCR enabled (RapidOCR).
+
+    Used ONLY as fallback for scanned files > 5MB that can't be sent via
+    OpenRouter multimodal API.
+    """
+    global _ocr_converter
+    if _ocr_converter is None:
+        import os
+
+        from docling.datamodel.base_models import InputFormat
+        from docling.datamodel.pipeline_options import (
+            AcceleratorOptions,
+            PdfPipelineOptions,
+            RapidOcrOptions,
+            TableFormerMode,
+            TableStructureOptions,
+        )
+        from docling.document_converter import (
+            DocumentConverter,
+            ImageFormatOption,
+            PdfFormatOption,
+        )
+
+        from app.config import get_settings
+
+        settings = get_settings()
+        cpu_threads = os.cpu_count() or 4
+
+        table_opts = TableStructureOptions(mode=TableFormerMode.FAST)
+        accel_opts = AcceleratorOptions(num_threads=cpu_threads, device="cpu")
+        ocr_opts = RapidOcrOptions()
+
+        pdf_opts = PdfPipelineOptions(
+            do_ocr=True,
+            ocr_options=ocr_opts,
+            do_table_structure=True,
+            table_structure_options=table_opts,
+            document_timeout=settings.parser_doc_timeout,
+            accelerator_options=accel_opts,
+        )
+
+        _ocr_converter = DocumentConverter(
+            format_options={
+                InputFormat.PDF: PdfFormatOption(pipeline_options=pdf_opts),
+                InputFormat.IMAGE: ImageFormatOption(pipeline_options=pdf_opts),
+            }
+        )
+
+        logger.info(
+            "Docling OCR converter initialized: ocr=RapidOCR, "
+            "timeout=%ds, threads=%d",
+            settings.parser_doc_timeout,
+            cpu_threads,
+        )
+    return _ocr_converter
+
+
+def parse_with_ocr(file_path: Path) -> tuple[str, int]:
+    """Parse a scanned document using Docling with OCR enabled.
+
+    Used as fallback for files > 5MB. Returns (markdown_text, page_count).
+    """
+    converter = _get_ocr_converter()
+    result = converter.convert(str(file_path))
+
+    from docling.datamodel.base_models import ConversionStatus
+
+    if result.status == ConversionStatus.FAILURE:
+        error_msgs = "; ".join(str(e) for e in (result.errors or []))
+        raise RuntimeError(f"Docling OCR conversion failed: {error_msgs or 'unknown error'}")
+
+    markdown_text = result.document.export_to_markdown()
+    file_ext = file_path.suffix.lower()
+
+    try:
+        page_count = result.document.num_pages()
+        if page_count == 0:
+            page_count = _estimate_pages(markdown_text, file_ext)
+    except Exception:
+        page_count = _estimate_pages(markdown_text, file_ext)
+
+    logger.info(
+        "OCR parsing complete for %s: %d pages, %d chars",
+        file_path.name, page_count, len(markdown_text),
+    )
+    return markdown_text, page_count
+
+
 def _parse_with_docling(file_path: Path, file_ext: str) -> tuple[str, int]:
     """Parse using Docling — fallback for images, PPTX, and complex formats."""
     converter = _get_converter()
@@ -234,6 +328,8 @@ _FAST_PDF_EXTS = {".pdf"}
 _FAST_DOCX_EXTS = {".docx"}
 # Extensions that need Docling (images, PPTX, XLSX)
 _DOCLING_EXTS = {".pptx", ".png", ".tiff", ".jpg", ".jpeg", ".xlsx"}
+# Image extensions — always treated as scanned (need vision/OCR)
+_IMAGE_EXTS = {".png", ".tiff", ".jpg", ".jpeg"}
 
 
 async def parse_document(file_path: Path, filename: str) -> ParsedDocument:
@@ -258,6 +354,7 @@ async def parse_document(file_path: Path, filename: str) -> ParsedDocument:
             file_size_bytes=0,
             doc_type=doc_type,
             token_estimate=len(error_content) // 4,
+            file_path=file_path,
         )
 
     file_ext = file_path.suffix.lower()
@@ -316,15 +413,31 @@ async def parse_document(file_path: Path, filename: str) -> ParsedDocument:
         # Token estimate (~4 chars per token)
         token_estimate = len(markdown_text) // 4
 
+        # Detect scanned documents (empty/near-empty text)
+        from app.config import get_settings
+        settings = get_settings()
+        is_scanned = False
+        if file_ext in _IMAGE_EXTS:
+            is_scanned = True
+        elif file_ext in _FAST_PDF_EXTS and settings.ocr_enabled:
+            char_threshold = page_count * settings.ocr_scanned_threshold
+            if len(markdown_text.strip()) < char_threshold:
+                is_scanned = True
+                logger.info(
+                    "Detected scanned PDF: %s (%d pages, %d chars, threshold=%d)",
+                    filename, page_count, len(markdown_text.strip()), char_threshold,
+                )
+
         logger.info(
             "Parsed %s: %d pages, %d chars, %d est. tokens, type=%s, "
-            "parser=%s, time=%.2fs",
+            "parser=%s, scanned=%s, time=%.2fs",
             filename,
             page_count,
             len(markdown_text),
             token_estimate,
             doc_type.value,
             parser_used,
+            is_scanned,
             elapsed,
         )
 
@@ -335,6 +448,8 @@ async def parse_document(file_path: Path, filename: str) -> ParsedDocument:
             file_size_bytes=file_size,
             doc_type=doc_type,
             token_estimate=token_estimate,
+            file_path=file_path,
+            is_scanned=is_scanned,
         )
 
     except Exception as exc:
@@ -348,6 +463,7 @@ async def parse_document(file_path: Path, filename: str) -> ParsedDocument:
             file_size_bytes=file_size,
             doc_type=doc_type,
             token_estimate=len(error_content) // 4,
+            file_path=file_path,
         )
 
 

@@ -12,9 +12,12 @@ import {
   Shield,
   ChevronDown,
   ArrowRight,
+  Check,
+  Loader2,
 } from 'lucide-react';
 import { appStore, useStore } from '../lib/store';
 import Tooltip from './Tooltip';
+import { FileTypeLogo } from './FileTypeLogos';
 
 interface Props {
   analysisId: string;
@@ -85,6 +88,17 @@ const EVENT_STEP_MAP: Record<string, number> = {
   evaluation_completed: 3,
 };
 
+/** Extraction document status for the checklist */
+type ExtractionDocStatus = 'pending' | 'active' | 'done';
+
+interface ExtractionDoc {
+  filename: string;
+  pages: number;
+  status: ExtractionDocStatus;
+  startTime?: number;
+  endTime?: number;
+}
+
 /** Static step definitions — hoisted to avoid re-creation on every render */
 const STEP_DEFS = [
   { icon: FileText, label: 'Dokumentų parsavimas', detail: 'Docling konvertuoja failus' },
@@ -143,6 +157,9 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
 
   const logEndRef = useRef<HTMLDivElement>(null);
   const thinkingRef = useRef<HTMLDivElement>(null);
+  const fadeRef = useRef<HTMLDivElement>(null);
+  const [showTopFade, setShowTopFade] = useState(false);
+  const [showBottomFade, setShowBottomFade] = useState(false);
 
   // Auto-scroll active step's event log
   useEffect(() => {
@@ -208,6 +225,25 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
     }
   }, [error, reviewMode]);
 
+  // Top & bottom fade on page scroll
+  useEffect(() => {
+    let scrollParent = fadeRef.current?.parentElement;
+    while (scrollParent) {
+      const ov = getComputedStyle(scrollParent).overflowY;
+      if (ov === 'auto' || ov === 'scroll') break;
+      scrollParent = scrollParent.parentElement;
+    }
+    if (!scrollParent) return;
+    const sp = scrollParent;
+    const update = () => {
+      setShowTopFade(sp.scrollTop > 30);
+      setShowBottomFade(sp.scrollHeight - sp.scrollTop - sp.clientHeight > 30);
+    };
+    update();
+    sp.addEventListener('scroll', update, { passive: true });
+    return () => sp.removeEventListener('scroll', update);
+  }, []);
+
   // Derive step states from hoisted STEP_DEFS
   const activeIdx = getStepIndex(currentStatus);
   const steps: StepInfo[] = useMemo(() =>
@@ -230,6 +266,30 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
   const stepEvents = [0, 1, 2, 3].map((idx) =>
     displayEvents.filter((e) => EVENT_STEP_MAP[e.data?.event_type] === idx)
   );
+
+  // Extraction checklist — derive per-document status from events
+  const extractionDocs: ExtractionDoc[] = useMemo(() => {
+    const started = new Map<string, number>();
+    const completed = new Map<string, number>();
+    for (const e of events) {
+      const type = e.data?.event_type;
+      const fname = e.data?.filename;
+      if (!fname) continue;
+      if (type === 'extraction_started' && !started.has(fname)) started.set(fname, e.ts);
+      if (type === 'extraction_completed' && !completed.has(fname)) completed.set(fname, e.ts);
+    }
+    return state.parsedDocs.map((d) => ({
+      filename: d.filename,
+      pages: d.pages,
+      status: completed.has(d.filename)
+        ? 'done' as const
+        : started.has(d.filename)
+          ? 'active' as const
+          : 'pending' as const,
+      startTime: started.get(d.filename),
+      endTime: completed.get(d.filename),
+    }));
+  }, [events, state.parsedDocs]);
 
   // Counters and summaries
   const totalFiles = state.files.length;
@@ -255,12 +315,12 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
     return null;
   }
 
-  /** Color scheme per step for the collapsible event log card */
+  /** Color scheme per step for the collapsible event log card — border only, no bg */
   const LOG_COLORS = [
-    { border: 'border-emerald-500/15', bg: 'bg-emerald-500/[0.04]', dot: 'bg-emerald-400/30', dotActive: 'bg-emerald-400 animate-pulse', text: 'text-emerald-400/50', textActive: 'text-emerald-400/70', hoverBg: 'hover:bg-emerald-500/5', borderInner: 'border-emerald-500/10', bgInner: 'bg-emerald-500/[0.03]', chevron: 'text-emerald-400/40', chevronActive: 'text-emerald-400/50' },
-    { border: 'border-amber-500/15', bg: 'bg-amber-500/[0.04]', dot: 'bg-amber-400/30', dotActive: 'bg-amber-400 animate-pulse', text: 'text-amber-400/50', textActive: 'text-amber-400/70', hoverBg: 'hover:bg-amber-500/5', borderInner: 'border-amber-500/10', bgInner: 'bg-amber-500/[0.03]', chevron: 'text-amber-400/40', chevronActive: 'text-amber-400/50' },
-    { border: 'border-orange-500/15', bg: 'bg-orange-500/[0.04]', dot: 'bg-orange-400/30', dotActive: 'bg-orange-400 animate-pulse', text: 'text-orange-400/50', textActive: 'text-orange-400/70', hoverBg: 'hover:bg-orange-500/5', borderInner: 'border-orange-500/10', bgInner: 'bg-orange-500/[0.03]', chevron: 'text-orange-400/40', chevronActive: 'text-orange-400/50' },
-    { border: 'border-violet-500/15', bg: 'bg-violet-500/[0.04]', dot: 'bg-violet-400/30', dotActive: 'bg-violet-400 animate-pulse', text: 'text-violet-400/50', textActive: 'text-violet-400/70', hoverBg: 'hover:bg-violet-500/5', borderInner: 'border-violet-500/10', bgInner: 'bg-violet-500/[0.03]', chevron: 'text-violet-400/40', chevronActive: 'text-violet-400/50' },
+    { border: 'border-emerald-500/15', dot: 'bg-emerald-400/30', dotActive: 'bg-emerald-400 animate-pulse', text: 'text-emerald-400/50', textActive: 'text-emerald-400/70', hoverBg: 'hover:bg-emerald-500/5', borderInner: 'border-emerald-500/10', chevron: 'text-emerald-400/40', chevronActive: 'text-emerald-400/50' },
+    { border: 'border-amber-500/15', dot: 'bg-amber-400/30', dotActive: 'bg-amber-400 animate-pulse', text: 'text-amber-400/50', textActive: 'text-amber-400/70', hoverBg: 'hover:bg-amber-500/5', borderInner: 'border-amber-500/10', chevron: 'text-amber-400/40', chevronActive: 'text-amber-400/50' },
+    { border: 'border-orange-500/15', dot: 'bg-orange-400/30', dotActive: 'bg-orange-400 animate-pulse', text: 'text-orange-400/50', textActive: 'text-orange-400/70', hoverBg: 'hover:bg-orange-500/5', borderInner: 'border-orange-500/10', chevron: 'text-orange-400/40', chevronActive: 'text-orange-400/50' },
+    { border: 'border-violet-500/15', dot: 'bg-violet-400/30', dotActive: 'bg-violet-400 animate-pulse', text: 'text-violet-400/50', textActive: 'text-violet-400/70', hoverBg: 'hover:bg-violet-500/5', borderInner: 'border-violet-500/10', chevron: 'text-violet-400/40', chevronActive: 'text-violet-400/50' },
   ];
 
   function getCompletedSummary(idx: number): string {
@@ -279,6 +339,13 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
 
   return (
     <div className="animate-fade-in-up pt-6" role="status" aria-label="Analizės progresas">
+      {/* Sticky top fade — content dissolves when scrolled up */}
+      <div
+        ref={fadeRef}
+        className={`sticky top-0 h-20 -mb-20 z-20 pointer-events-none transition-opacity duration-300 ${showTopFade ? 'opacity-100' : 'opacity-0'}`}
+        style={{ background: 'linear-gradient(to bottom, #342a24 0%, transparent 100%)' }}
+        aria-hidden="true"
+      />
       {/* Review mode header */}
       {reviewMode && (
         <div className="flex items-center justify-between mb-4 px-1">
@@ -333,23 +400,23 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
               </div>
               {/* CoT bar — always visible when thinking was captured, content toggleable */}
               {hasCot && (
-                <div className="ml-[4.5rem] mr-5 mb-1 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] backdrop-blur-sm overflow-hidden">
+                <div className="ml-[4.5rem] mr-5 mb-1 rounded-xl border border-surface-600/35 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setCotCollapsedMap((prev) => ({ ...prev, [i]: prev[i] === false ? true : false }))}
-                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-violet-500/5 transition-colors cursor-pointer select-none"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.02] transition-colors cursor-pointer select-none"
                   >
                     <div className="w-1.5 h-1.5 rounded-full bg-violet-400/30" />
-                    <span className="text-[9px] font-black text-violet-400/50 uppercase tracking-widest">
+                    <span className="text-[9px] font-black text-surface-500 uppercase tracking-widest">
                       Modelio mąstymas
                     </span>
-                    <ChevronDown className={`w-3 h-3 text-violet-400/40 ml-auto transition-transform duration-200 ${isCotOpen ? '' : '-rotate-90'}`} />
+                    <ChevronDown className={`w-3 h-3 text-surface-500 ml-auto transition-transform duration-200 ${isCotOpen ? '' : '-rotate-90'}`} />
                   </button>
                   <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
                     isCotOpen ? 'max-h-[200px]' : 'max-h-0'
                   }`}>
                     <div
-                      className="px-3 py-2 border-t border-violet-500/10 bg-violet-500/[0.03]
+                      className="px-3 py-2 border-t border-surface-600/35
                                  max-h-[150px] overflow-y-auto scrollbar-thin
                                  text-[11px] text-surface-400 font-mono leading-relaxed
                                  whitespace-pre-wrap break-words"
@@ -359,30 +426,80 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
                   </div>
                 </div>
               )}
-              {/* Event log — collapsible, closed by default for done steps */}
-              {eventsForStep.length > 0 && (() => {
-                const c = LOG_COLORS[i];
+              {/* Extraction step (i===1): collapsible document checklist */}
+              {/* Other steps: collapsible event log */}
+              {i === 1 && extractionDocs.length > 0 ? (() => {
                 const isLogOpen = logCollapsedMap[i] === false;
                 return (
-                  <div className={`ml-[4.5rem] mr-5 mb-1 rounded-xl border ${c.border} ${c.bg} backdrop-blur-sm overflow-hidden`}>
+                  <div className="ml-[4.5rem] mr-5 mb-1 rounded-xl border border-surface-600/35 overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setLogCollapsedMap((prev) => ({ ...prev, [i]: isLogOpen }))}
-                      className={`w-full flex items-center gap-2 px-3 py-1.5 ${c.hoverBg} transition-colors cursor-pointer select-none`}
+                      className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.02] transition-colors cursor-pointer select-none"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/30" />
+                      <span className="text-[9px] font-black text-surface-500 uppercase tracking-widest">
+                        Dokumentai
+                      </span>
+                      <span className="text-[9px] font-mono text-surface-500 ml-1">
+                        ({extractionDocs.length})
+                      </span>
+                      <ChevronDown className={`w-3 h-3 text-surface-500 ml-auto transition-transform duration-200 ${isLogOpen ? '' : '-rotate-90'}`} />
+                    </button>
+                    <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                      isLogOpen ? 'max-h-[280px]' : 'max-h-0'
+                    }`}>
+                      <div className="px-3 py-2 border-t border-surface-600/35 max-h-[230px] overflow-y-auto scrollbar-thin space-y-1">
+                        {extractionDocs.map((doc) => {
+                          const ext = doc.filename.split('.').pop() || '';
+                          const durationMs = doc.startTime && doc.endTime ? doc.endTime - doc.startTime : null;
+                          return (
+                            <div key={doc.filename} className="flex items-center gap-3 px-2 py-1.5 rounded-lg">
+                              <div className="w-4 h-4 rounded bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                                <Check className="w-2.5 h-2.5 text-emerald-400" strokeWidth={3} />
+                              </div>
+                              <FileTypeLogo extension={ext} size={12} />
+                              <span className="text-[11px] font-medium text-emerald-300/80 truncate flex-1 min-w-0">
+                                {doc.filename}
+                              </span>
+                              {doc.pages > 0 && (
+                                <span className="text-[9px] font-mono text-surface-500 flex-shrink-0">{doc.pages} psl.</span>
+                              )}
+                              {durationMs && (
+                                <span className="text-[9px] font-mono font-bold text-emerald-400/60 flex-shrink-0">
+                                  {formatTime(Math.round(durationMs / 1000))}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })() : eventsForStep.length > 0 && i !== 1 ? (() => {
+                const c = LOG_COLORS[i];
+                const isLogOpen = logCollapsedMap[i] === false;
+                return (
+                  <div className="ml-[4.5rem] mr-5 mb-1 rounded-xl border border-surface-600/35 overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setLogCollapsedMap((prev) => ({ ...prev, [i]: isLogOpen }))}
+                      className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.02] transition-colors cursor-pointer select-none"
                     >
                       <div className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
-                      <span className={`text-[9px] font-black ${c.text} uppercase tracking-widest`}>
+                      <span className="text-[9px] font-black text-surface-500 uppercase tracking-widest">
                         Įvykių žurnalas
                       </span>
-                      <span className={`text-[9px] font-mono ${c.text} ml-1`}>
+                      <span className="text-[9px] font-mono text-surface-500 ml-1">
                         ({eventsForStep.length})
                       </span>
-                      <ChevronDown className={`w-3 h-3 ${c.chevron} ml-auto transition-transform duration-200 ${isLogOpen ? '' : '-rotate-90'}`} />
+                      <ChevronDown className="w-3 h-3 text-surface-500 ml-auto transition-transform duration-200" style={{ transform: isLogOpen ? 'none' : 'rotate(-90deg)' }} />
                     </button>
                     <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
                       isLogOpen ? 'max-h-[250px]' : 'max-h-0'
                     }`}>
-                      <div className={`px-3 py-2 border-t ${c.borderInner} ${c.bgInner} max-h-[200px] overflow-y-auto scrollbar-thin space-y-1`}>
+                      <div className="px-3 py-2 border-t border-surface-600/35 max-h-[200px] overflow-y-auto scrollbar-thin space-y-1">
                         {eventsForStep.map((e, j) => {
                           const fmt = formatEvent(e);
                           return (
@@ -403,7 +520,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
                     </div>
                   </div>
                 );
-              })()}
+              })() : null}
               {/* Divider after completed step */}
               <div className="mx-5 h-px" style={{ backgroundImage: 'repeating-linear-gradient(90deg, rgba(94,86,79,0.5) 0, rgba(94,86,79,0.5) 12px, transparent 12px, transparent 20px)' }} />
             </div>
@@ -438,24 +555,24 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
 
               {/* CoT box — manually toggleable card */}
               {stepThinking[i] && (
-                <div className="ml-[4.5rem] mr-5 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] backdrop-blur-sm overflow-hidden">
+                <div className="ml-[4.5rem] mr-5 rounded-xl border border-surface-600/35 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setCotCollapsedMap((prev) => ({ ...prev, [i]: !prev[i] }))}
-                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-violet-500/5 transition-colors cursor-pointer select-none"
+                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/[0.02] transition-colors cursor-pointer select-none"
                   >
                     <div className={`w-1.5 h-1.5 rounded-full ${thinkingStreaming ? 'bg-violet-400 animate-pulse' : 'bg-violet-400/30'}`} />
-                    <span className="text-[9px] font-black text-violet-400/70 uppercase tracking-widest">
+                    <span className="text-[9px] font-black text-surface-500 uppercase tracking-widest">
                       Modelio mąstymas
                     </span>
-                    <ChevronDown className={`w-3 h-3 text-violet-400/50 ml-auto transition-transform duration-200 ${cotCollapsedMap[i] ? '-rotate-90' : ''}`} />
+                    <ChevronDown className={`w-3 h-3 text-surface-500 ml-auto transition-transform duration-200 ${cotCollapsedMap[i] ? '-rotate-90' : ''}`} />
                   </button>
                   <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
                     cotCollapsedMap[i] ? 'max-h-0' : 'max-h-[200px]'
                   }`}>
                     <div
                       ref={thinkingRef}
-                      className="px-3 py-2 border-t border-violet-500/10 bg-violet-500/[0.03]
+                      className="px-3 py-2 border-t border-surface-600/35
                                  max-h-[150px] overflow-y-auto scrollbar-thin
                                  text-[11px] text-surface-400 font-mono leading-relaxed
                                  whitespace-pre-wrap break-words"
@@ -467,30 +584,84 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
                 </div>
               )}
 
-              {/* Event log — collapsible card below CoT */}
-              {eventsForStep.length > 0 && (() => {
+              {/* Extraction step (i===1): document checklist instead of event log */}
+              {/* Other steps: standard event log */}
+              {i === 1 && extractionDocs.length > 0 ? (
+                <div className="ml-[4.5rem] mr-5 rounded-xl border border-surface-600/35 overflow-hidden">
+                  <div className="px-3 py-2 max-h-[280px] overflow-y-auto scrollbar-thin space-y-1" aria-live="polite" aria-label="Dokumentų ištraukimo progresas">
+                    {extractionDocs.map((doc) => {
+                      const ext = doc.filename.split('.').pop() || '';
+                      const durationMs = doc.startTime && doc.endTime ? doc.endTime - doc.startTime : null;
+                      return (
+                        <div
+                          key={doc.filename}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 ${
+                            doc.status === 'pending' ? 'opacity-40' : ''
+                          }`}
+                        >
+                          {/* Status indicator */}
+                          {doc.status === 'done' ? (
+                            <div className="w-5 h-5 rounded-md bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                              <Check className="w-3 h-3 text-emerald-400" strokeWidth={3} />
+                            </div>
+                          ) : doc.status === 'active' ? (
+                            <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                              <Loader2 className="w-4 h-4 text-amber-400 animate-spin" />
+                            </div>
+                          ) : (
+                            <div className="w-5 h-5 rounded-md border border-surface-600/40 flex items-center justify-center flex-shrink-0">
+                              <div className="w-1.5 h-1.5 rounded-full bg-surface-600/30" />
+                            </div>
+                          )}
+                          {/* File icon */}
+                          <FileTypeLogo extension={ext} size={14} />
+                          {/* Filename */}
+                          <span className={`text-[12px] font-medium truncate flex-1 min-w-0 ${
+                            doc.status === 'done' ? 'text-emerald-300/90' : doc.status === 'active' ? 'text-amber-200' : 'text-surface-500'
+                          }`}>
+                            {doc.filename}
+                          </span>
+                          {/* Pages */}
+                          {doc.pages > 0 && (
+                            <span className="text-[10px] font-mono text-surface-500 flex-shrink-0">
+                              {doc.pages} psl.
+                            </span>
+                          )}
+                          {/* Duration for completed */}
+                          {durationMs && (
+                            <span className="text-[10px] font-mono font-bold text-emerald-400/70 flex-shrink-0">
+                              {formatTime(Math.round(durationMs / 1000))}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                    <div ref={logEndRef} />
+                  </div>
+                </div>
+              ) : eventsForStep.length > 0 && i !== 1 ? (() => {
                 const c = LOG_COLORS[i];
                 const isLogOpen = logCollapsedMap[i] !== true; // open by default for active step
                 return (
-                  <div className={`ml-[4.5rem] mr-5 rounded-xl border ${c.border} ${c.bg} backdrop-blur-sm overflow-hidden`}>
+                  <div className="ml-[4.5rem] mr-5 rounded-xl border border-surface-600/35 overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setLogCollapsedMap((prev) => ({ ...prev, [i]: isLogOpen }))}
-                      className={`w-full flex items-center gap-2 px-3 py-2 ${c.hoverBg} transition-colors cursor-pointer select-none`}
+                      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/[0.02] transition-colors cursor-pointer select-none"
                     >
                       <div className={`w-1.5 h-1.5 rounded-full ${c.dotActive}`} />
-                      <span className={`text-[9px] font-black ${c.textActive} uppercase tracking-widest`}>
+                      <span className="text-[9px] font-black text-surface-500 uppercase tracking-widest">
                         Įvykių žurnalas
                       </span>
-                      <span className={`text-[9px] font-mono ${c.textActive} ml-1`}>
+                      <span className="text-[9px] font-mono text-surface-500 ml-1">
                         ({eventsForStep.length})
                       </span>
-                      <ChevronDown className={`w-3 h-3 ${c.chevronActive} ml-auto transition-transform duration-200 ${isLogOpen ? '' : '-rotate-90'}`} />
+                      <ChevronDown className={`w-3 h-3 text-surface-500 ml-auto transition-transform duration-200 ${isLogOpen ? '' : '-rotate-90'}`} />
                     </button>
                     <div className={`transition-all duration-300 ease-in-out overflow-hidden ${
                       isLogOpen ? 'max-h-[250px]' : 'max-h-0'
                     }`}>
-                      <div className={`px-3 py-2 border-t ${c.borderInner} ${c.bgInner} max-h-[200px] overflow-y-auto scrollbar-thin space-y-1`} aria-live="polite" aria-label="Analizės įvykiai">
+                      <div className="px-3 py-2 border-t border-surface-600/35 max-h-[200px] overflow-y-auto scrollbar-thin space-y-1" aria-live="polite" aria-label="Analizės įvykiai">
                         {eventsForStep.map((e, j) => {
                           const fmt = formatEvent(e);
                           return (
@@ -512,7 +683,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
                     </div>
                   </div>
                 );
-              })()}
+              })() : null}
             </div>
           );
         }
@@ -547,6 +718,12 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
         );
       })}
       </div>
+      {/* Sticky bottom fade — content dissolves at the bottom */}
+      <div
+        className={`sticky bottom-0 h-20 -mt-20 z-20 pointer-events-none transition-opacity duration-300 ${showBottomFade ? 'opacity-100' : 'opacity-0'}`}
+        style={{ background: 'linear-gradient(to top, #342a24 0%, transparent 100%)' }}
+        aria-hidden="true"
+      />
     </div>
   );
 }

@@ -24,6 +24,9 @@ class AppSettings(BaseSettings):
     parser_force_backend_text: bool = False
     parser_doc_timeout: int = 120
     parser_max_concurrent: int = 2
+    ocr_enabled: bool = True
+    ocr_scanned_threshold: int = 100  # chars per page — below = scanned
+    ocr_pdf_engine: str = "native"  # "native", "mistral-ocr", "pdf-text"
 
 
 @lru_cache

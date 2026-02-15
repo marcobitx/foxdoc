@@ -9,7 +9,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # ── Enums ──────────────────────────────────────────────────────────────────────
@@ -64,6 +64,11 @@ class EstimatedValue(BaseModel):
     vat_included: Optional[bool] = Field(None, description="Ar suma su PVM")
     vat_amount: Optional[float] = Field(None, description="PVM suma")
 
+    @field_validator("currency", mode="before")
+    @classmethod
+    def _coerce_currency(cls, v: Any) -> str:
+        return v if v is not None else "EUR"
+
 
 class Deadlines(BaseModel):
     submission_deadline: Optional[str] = Field(
@@ -112,6 +117,11 @@ class FinancialTerms(BaseModel):
     price_adjustment: Optional[str] = Field(None, description="Kainos keitimo sąlygos (indeksavimas, perskaičiavimas)")
     insurance_requirements: Optional[str] = Field(None, description="Draudimo reikalavimai")
     currency: str = Field("EUR", description="Valiuta")
+
+    @field_validator("currency", mode="before")
+    @classmethod
+    def _coerce_currency(cls, v: Any) -> str:
+        return v if v is not None else "EUR"
 
 
 class SubmissionRequirements(BaseModel):

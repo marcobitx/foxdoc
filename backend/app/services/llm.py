@@ -4,9 +4,12 @@
 # Related: config.py, models/schemas.py
 
 import asyncio
+import base64
 import json
 import logging
+import mimetypes
 import random
+from pathlib import Path
 from typing import AsyncIterator, Awaitable, Callable, Optional
 
 import httpx
@@ -32,6 +35,60 @@ MANDATORY_MODELS = {
     "google/gemini-3-flash-preview",
     "openai/gpt-oss-120b",
 }
+
+
+OPENROUTER_MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB — above this, use local OCR
+
+# Image extensions for vision-based multimodal content
+_IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".tiff", ".webp", ".gif"}
+
+
+def build_multimodal_content(
+    text: str, file_path: Path
+) -> tuple[list[dict], list[dict] | None]:
+    """Build multimodal content blocks for OpenRouter API.
+
+    PDF → type:"file" + plugins:[{id:"file-parser", pdf:{engine:"native"}}]
+    Image → type:"image_url" (no plugins needed)
+
+    Returns (content_parts, plugins_or_none).
+    """
+    from app.config import get_settings
+
+    file_bytes = file_path.read_bytes()
+    b64 = base64.b64encode(file_bytes).decode("ascii")
+    ext = file_path.suffix.lower()
+
+    content_parts: list[dict] = [{"type": "text", "text": text}]
+    plugins: list[dict] | None = None
+
+    if ext == ".pdf":
+        content_parts.append({
+            "type": "file",
+            "file": {
+                "filename": file_path.name,
+                "file_data": f"data:application/pdf;base64,{b64}",
+            },
+        })
+        settings = get_settings()
+        plugins = [{"id": "file-parser", "pdf": {"engine": settings.ocr_pdf_engine}}]
+    elif ext in _IMAGE_EXTS:
+        mime = mimetypes.guess_type(file_path.name)[0] or "image/png"
+        content_parts.append({
+            "type": "image_url",
+            "image_url": {"url": f"data:{mime};base64,{b64}"},
+        })
+    else:
+        logger.warning("Unsupported multimodal file type: %s", ext)
+
+    logger.info(
+        "Built multimodal content for %s (%dKB, %d parts, plugins=%s)",
+        file_path.name,
+        len(file_bytes) // 1024,
+        len(content_parts),
+        plugins is not None,
+    )
+    return content_parts, plugins
 
 
 class LLMError(Exception):
@@ -239,6 +296,7 @@ class LLMClient:
         temperature: float | None = None,
         response_format: dict | None = None,
         max_tokens: int = 32000,
+        plugins: list[dict] | None = None,
     ) -> dict:
         """Build the request body for a chat completion."""
         body: dict = {
@@ -257,6 +315,9 @@ class LLMClient:
         if thinking_cfg:
             body["thinking"] = thinking_cfg
 
+        if plugins:
+            body["plugins"] = plugins
+
         return body
 
     # ── Public API ─────────────────────────────────────────────────────────
@@ -264,11 +325,12 @@ class LLMClient:
     async def complete_structured(
         self,
         system: str,
-        user: str,
+        user: str | list[dict],
         response_schema: type[BaseModel],
         model: str | None = None,
         temperature: float = 0.1,
         thinking: str = "off",
+        plugins: list[dict] | None = None,
         _retry_count: int = 0,
     ) -> tuple[BaseModel, dict]:
         """
@@ -276,6 +338,7 @@ class LLMClient:
 
         Uses OpenRouter's json_schema response_format with strict: true.
         The schema is derived from response_schema.model_json_schema().
+        user can be a string or a list of content parts (multimodal).
 
         Usage dict: {"input_tokens": int, "output_tokens": int}
 
@@ -305,6 +368,7 @@ class LLMClient:
             thinking=thinking,
             temperature=temperature,
             response_format=response_format,
+            plugins=plugins,
         )
 
         logger.debug(
@@ -337,7 +401,7 @@ class LLMClient:
                 return await self.complete_structured(
                     system=system, user=user, response_schema=response_schema,
                     model=model, temperature=temperature, thinking=thinking,
-                    _retry_count=_retry_count + 1,
+                    plugins=plugins, _retry_count=_retry_count + 1,
                 )
             raise LLMParseError(
                 f"Empty response after 3 attempts for {response_schema.__name__}"
@@ -377,17 +441,19 @@ class LLMClient:
     async def complete_structured_streaming(
         self,
         system: str,
-        user: str,
+        user: str | list[dict],
         response_schema: type[BaseModel],
         model: str | None = None,
         temperature: float = 0.1,
         thinking: str = "off",
         on_thinking: Callable[[str], Awaitable[None]] | None = None,
+        plugins: list[dict] | None = None,
     ) -> tuple[BaseModel, dict]:
         """
         Streaming structured output completion with live thinking token callback.
 
         Same contract as complete_structured() — returns (parsed_model, usage_dict).
+        user can be a string or a list of content parts (multimodal).
         Streams the response via SSE, calling on_thinking() for each reasoning chunk.
         Falls back to non-streaming complete_structured() on any streaming error.
         """
@@ -395,6 +461,7 @@ class LLMClient:
             return await self.complete_structured(
                 system=system, user=user, response_schema=response_schema,
                 model=model, temperature=temperature, thinking=thinking,
+                plugins=plugins,
             )
 
         raw_schema = response_schema.model_json_schema()
@@ -419,6 +486,7 @@ class LLMClient:
             thinking=thinking,
             temperature=temperature,
             response_format=response_format,
+            plugins=plugins,
         )
         body["stream"] = True
 
@@ -443,6 +511,7 @@ class LLMClient:
                     return await self.complete_structured(
                         system=system, user=user, response_schema=response_schema,
                         model=model, temperature=temperature, thinking=thinking,
+                        plugins=plugins,
                     )
 
                 async for line in response.aiter_lines():
@@ -492,13 +561,32 @@ class LLMClient:
                 return await self.complete_structured(
                     system=system, user=user, response_schema=response_schema,
                     model=model, temperature=temperature, thinking=thinking,
+                    plugins=plugins,
                 )
 
             # Parse accumulated content
             content_clean = _extract_json(full_content)
+
+            # Check for truncated/incomplete JSON before expensive validation
+            try:
+                json.loads(content_clean)
+            except json.JSONDecodeError as json_err:
+                logger.warning(
+                    "Streaming returned incomplete JSON for %s (%d chars: %.100s...), "
+                    "falling back to non-streaming: %s",
+                    response_schema.__name__, len(full_content),
+                    full_content, str(json_err)[:100],
+                )
+                return await self.complete_structured(
+                    system=system, user=user, response_schema=response_schema,
+                    model=model, temperature=temperature, thinking=thinking,
+                    plugins=plugins,
+                )
+
             try:
                 parsed = response_schema.model_validate_json(content_clean)
             except Exception as first_exc:
+                # JSON is syntactically valid but doesn't match schema — correction may help
                 logger.warning(
                     "Streaming parse failed for %s, retrying with correction: %s",
                     response_schema.__name__, str(first_exc)[:200],
@@ -525,6 +613,7 @@ class LLMClient:
             return await self.complete_structured(
                 system=system, user=user, response_schema=response_schema,
                 model=model, temperature=temperature, thinking=thinking,
+                plugins=plugins,
             )
 
     async def _retry_with_correction(

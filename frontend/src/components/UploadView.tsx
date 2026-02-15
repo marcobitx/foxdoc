@@ -1,43 +1,15 @@
 // frontend/src/components/UploadView.tsx
-// Upload view — centered hero with title and animated drop zone
-// File management (list, submit) lives in RightPanel; this just shows the hero
-// The drop zone here also accepts files and adds them to the store
-// Related: RightPanel.tsx, store.ts
+// Upload view — centered hero with title, features grid, and model carousel
+// File upload handled via FilesPanel; this shows the landing page
+// Related: FilesPanel.tsx, RightPanel.tsx, store.ts
 
-import { useState, useRef, useCallback } from 'react';
-import { Upload, Cpu, FileText, ExternalLink, ShieldCheck, ScrollText, BrainCircuit } from 'lucide-react';
+import { FileText, ExternalLink, ShieldCheck, ScrollText, BrainCircuit } from 'lucide-react';
 import { appStore, useStore } from '../lib/store';
 import ModelCarousel from './ModelCarousel';
-import { FileTypeStrip } from './FileTypeLogos';
 import Tooltip from './Tooltip';
-
-const ACCEPTED = '.pdf,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.zip';
-const MAX_SIZE_MB = 50;
 
 export default function UploadView() {
   const state = useStore(appStore);
-  const [dragOver, setDragOver] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const addFiles = useCallback((newFiles: FileList | File[]) => {
-    const arr = Array.from(newFiles);
-    const valid = arr.filter((f) => f.size <= MAX_SIZE_MB * 1024 * 1024);
-    const currentFiles = appStore.getState().files;
-    const names = new Set(currentFiles.map((f) => f.name));
-    const uniqueNew = valid.filter((f) => !names.has(f.name));
-    if (uniqueNew.length) {
-      appStore.setState({ files: [...currentFiles, ...uniqueNew] });
-    }
-  }, []);
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setDragOver(false);
-      if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
-    },
-    [addFiles],
-  );
 
   return (
     <div className="w-full animate-fade-in-up">
@@ -75,52 +47,6 @@ export default function UploadView() {
         <p className="text-surface-400 text-[13px] md:text-[14px] leading-relaxed max-w-lg mx-auto font-medium">
           Automatizuotas dokumentų vertinimas, rizikų nustatymas ir metrikų generavimas naudojant AI.
         </p>
-      </div>
-
-      {/* ── Drop Zone — primary focal point ────────────────────── */}
-      <div
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-        onClick={() => inputRef.current?.click()}
-        className={`relative group cursor-pointer transition-all duration-300 ${dragOver ? 'scale-[1.005]' : ''}`}
-      >
-        <div className={`absolute inset-0 rounded-2xl border-2 border-dashed transition-all duration-300 ${dragOver
-          ? 'border-brand-500/40 bg-brand-500/5'
-          : 'border-surface-600/30 bg-surface-800/50 group-hover:border-surface-500/40 group-hover:bg-surface-800/65'
-          }`} />
-
-        <div
-          className={`relative px-8 py-10 md:px-12 md:py-14 text-center transition-all duration-300 ${dragOver ? 'translate-y-[-2px]' : ''}`}
-        >
-          <input
-            ref={inputRef}
-            type="file"
-            accept={ACCEPTED}
-            multiple
-            onChange={(e) => e.target.files && addFiles(e.target.files)}
-            className="hidden"
-          />
-
-          <div
-            className={`w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center border transition-all duration-300 ${dragOver
-              ? 'bg-brand-500/10 border-brand-500/30'
-              : 'bg-surface-800 border-surface-700/50 group-hover:border-surface-600/60'
-              }`}
-          >
-            <Upload
-              className={`w-5 h-5 md:w-6 md:h-6 transition-colors duration-300 ${dragOver ? 'text-brand-400' : 'text-surface-400 group-hover:text-surface-300'}`}
-            />
-          </div>
-
-          <p className="text-[14px] md:text-[15px] font-semibold text-surface-200 mb-2.5 tracking-tight">
-            {dragOver ? 'Paleiskite failus čia' : 'Nutempkite failus arba paspauskite'}
-          </p>
-          <FileTypeStrip iconSize={16} />
-          <p className="text-[11px] text-surface-600 mt-2.5">
-            Maks. {MAX_SIZE_MB}MB · Iki 20 failų
-          </p>
-        </div>
       </div>
 
       {/* ── File count indicator — click to open files panel ──── */}
