@@ -1,5 +1,5 @@
 # backend/app/routers/settings.py
-# Settings endpoints: get and update API key, default model
+# Settings endpoints: get and update API key, default model, token usage stats
 # Persists settings in Convex DB
 # Related: convex_client.py, config.py
 
@@ -11,7 +11,7 @@ from fastapi import APIRouter, Depends
 
 from app.config import AppSettings, get_settings
 from app.convex_client import ConvexDB, get_db
-from app.models.schemas import SettingsResponse, SettingsUpdate
+from app.models.schemas import SettingsResponse, SettingsUpdate, TokenUsageStats
 
 logger = logging.getLogger(__name__)
 
@@ -68,3 +68,10 @@ async def update_settings(
         has_api_key=has_key,
         default_model=default_model,
     )
+
+
+@router.get("/usage", response_model=TokenUsageStats)
+async def get_usage_stats(db: ConvexDB = Depends(get_db)):
+    """Aggregate token usage across all analyses."""
+    stats = await db.get_token_usage_stats()
+    return TokenUsageStats(**stats)

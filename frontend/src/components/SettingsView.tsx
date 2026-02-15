@@ -1,33 +1,35 @@
 // frontend/src/components/SettingsView.tsx
-// Settings page — API key config, model selection, system info
+// Settings page — model selection, token usage, shortcuts, system info
 // Full-width layout with logical section hierarchy
 // Related: api.ts (getSettings, updateSettings, getModels)
 
 import { useEffect, useState } from 'react';
 import {
-  Save, Key, Cpu, Loader2, CheckCircle2, Eye, EyeOff,
-  Shield, Zap, Server, HardDrive, FileText, Users, Clock,
-  Info, ExternalLink, ChevronRight,
+  Save, Cpu, Loader2, CheckCircle2,
+  Zap, HardDrive, FileText, Users, Clock,
+  ExternalLink, ChevronRight, ArrowUpRight, ArrowDownRight,
+  DollarSign, Hash, Layers,
 } from 'lucide-react';
-import { getSettings, updateSettings, getModels, type Settings, type ModelInfo } from '../lib/api';
+import { getSettings, updateSettings, getModels, getUsageStats, type Settings, type ModelInfo, type TokenUsageStats } from '../lib/api';
 import CustomSelect from './CustomSelect';
+import Tooltip from './Tooltip';
 
 export default function SettingsView() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [models, setModels] = useState<ModelInfo[]>([]);
-  const [apiKey, setApiKey] = useState('');
+  const [usage, setUsage] = useState<TokenUsageStats | null>(null);
   const [selectedModel, setSelectedModel] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [showKey, setShowKey] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
-        const [s, m] = await Promise.all([getSettings(), getModels()]);
+        const [s, m, u] = await Promise.all([getSettings(), getModels(), getUsageStats()]);
         setSettings(s);
         setModels(m);
+        setUsage(u);
         setSelectedModel(s.default_model);
       } catch (e) {
         console.error(e);
@@ -43,11 +45,9 @@ export default function SettingsView() {
     try {
       const update: any = {};
       if (selectedModel && selectedModel !== settings?.default_model) update.default_model = selectedModel;
-      if (apiKey) update.openrouter_api_key = apiKey;
       if (Object.keys(update).length) {
         const result = await updateSettings(update);
         setSettings(result);
-        setApiKey('');
         setSaved(true);
         setTimeout(() => setSaved(false), 2500);
       }
@@ -56,7 +56,7 @@ export default function SettingsView() {
     }
   };
 
-  const hasChanges = apiKey || (selectedModel && selectedModel !== settings?.default_model);
+  const hasChanges = selectedModel && selectedModel !== settings?.default_model;
 
   const selectedModelInfo = models.find((m) => m.id === selectedModel);
 
@@ -69,79 +69,16 @@ export default function SettingsView() {
   }
 
   return (
-    <div className="w-full max-w-5xl animate-fade-in-up">
+    <div className="w-full animate-fade-in-up">
       {/* ── Page Header ──────────────────────────────────────────── */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white tracking-tight">Nustatymai</h1>
         <p className="text-[12px] text-surface-500 mt-1 font-bold uppercase tracking-widest">
-          Sistemos konfigūracija ir API prieiga
+          Modelio pasirinkimas, tokenų naudojimas ir sistemos parametrai
         </p>
       </div>
 
-      {/* ── Section 1: Connection ─────────────────────────────────── */}
-      <section className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-1 h-4 rounded-full bg-brand-500" />
-          <h2 className="text-[13px] font-bold text-surface-400 uppercase tracking-widest">
-            Ryšys ir autentifikacija
-          </h2>
-        </div>
-
-        <div className="enterprise-card p-0 overflow-hidden">
-          {/* API Key Row */}
-          <div className="p-5 flex flex-col lg:flex-row lg:items-start gap-5">
-            <div className="flex items-start gap-3 lg:w-72 flex-shrink-0">
-              <Key className="w-4.5 h-4.5 text-brand-400 flex-shrink-0 mt-0.5" />
-              <div className="min-w-0">
-                <h3 className="text-[14px] font-bold text-surface-100 tracking-tight">
-                  OpenRouter API raktas
-                </h3>
-                <p className="text-[11px] text-surface-500 mt-0.5 font-medium">
-                  Reikalingas LLM užklausoms vykdyti
-                </p>
-              </div>
-            </div>
-
-            <div className="flex-1 min-w-0 space-y-3">
-              <div className="relative">
-                <input
-                  type={showKey ? 'text' : 'password'}
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="sk-or-..."
-                  className="input-field w-full pr-11 font-mono text-[13px]"
-                />
-                <button
-                  onClick={() => setShowKey(!showKey)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md text-surface-500 hover:text-surface-300 transition-colors"
-                >
-                  {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-
-              {/* Status indicator */}
-              <div className="flex items-center gap-2">
-                <div className={`w-1.5 h-1.5 rounded-full ${settings?.api_key_set ? 'bg-emerald-400' : 'bg-surface-600'}`} />
-                <span className="text-[11px] font-medium text-surface-500">
-                  {settings?.api_key_set
-                    ? <>Būsena: <span className="text-emerald-400">aktyvus</span> — <span className="font-mono text-surface-400">{settings.api_key_preview}</span></>
-                    : <>Būsena: <span className="text-surface-400">nenustatytas</span></>}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Security note */}
-          {!settings?.api_key_set && (
-            <div className="border-t border-surface-700/30 px-5 py-3 flex items-center gap-2.5 text-[11px] text-brand-400/80 bg-brand-500/5">
-              <Shield className="w-3.5 h-3.5 flex-shrink-0" />
-              <span className="font-medium">Raktas saugomas šifruotai — naudojamas tik OpenRouter užklausoms</span>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── Section 2: Model Configuration ────────────────────────── */}
+      {/* ── Section: Model Configuration ─────────────────────────── */}
       <section className="mb-8">
         <div className="flex items-center gap-2 mb-4">
           <div className="w-1 h-4 rounded-full bg-brand-500" />
@@ -202,21 +139,27 @@ export default function SettingsView() {
 
               {selectedModelInfo ? (
                 <div className="space-y-3">
-                  <InfoRow
-                    icon={Zap}
-                    label="Konteksto langas"
-                    value={`${(selectedModelInfo.context_length / 1000).toFixed(0)}k tokenų`}
-                  />
-                  <InfoRow
-                    icon={FileText}
-                    label="Įvesties kaina"
-                    value={`$${selectedModelInfo.pricing_prompt.toFixed(2)} / 1M`}
-                  />
-                  <InfoRow
-                    icon={ChevronRight}
-                    label="Išvesties kaina"
-                    value={`$${selectedModelInfo.pricing_completion.toFixed(2)} / 1M`}
-                  />
+                  <Tooltip content="Maksimalus teksto kiekis, kurį modelis gali apdoroti vienu metu" side="left">
+                    <InfoRow
+                      icon={Zap}
+                      label="Konteksto langas"
+                      value={`${(selectedModelInfo.context_length / 1000).toFixed(0)}k tokenų`}
+                    />
+                  </Tooltip>
+                  <Tooltip content="Kaina už 1 mln. įvesties tokenų" side="left">
+                    <InfoRow
+                      icon={FileText}
+                      label="Įvesties kaina"
+                      value={`$${selectedModelInfo.pricing_prompt.toFixed(2)} / 1M`}
+                    />
+                  </Tooltip>
+                  <Tooltip content="Kaina už 1 mln. išvesties tokenų" side="left">
+                    <InfoRow
+                      icon={ChevronRight}
+                      label="Išvesties kaina"
+                      value={`$${selectedModelInfo.pricing_completion.toFixed(2)} / 1M`}
+                    />
+                  </Tooltip>
                 </div>
               ) : (
                 <p className="text-[12px] text-surface-500">
@@ -225,20 +168,87 @@ export default function SettingsView() {
               )}
             </div>
 
-            <a
-              href="https://openrouter.ai/models"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 flex items-center gap-1.5 text-[11px] font-medium text-brand-500 hover:text-brand-400 transition-colors"
-            >
-              Visi modeliai
-              <ExternalLink className="w-3 h-3" />
-            </a>
+            <Tooltip content="Atidaryti OpenRouter modelių sąrašą" side="left">
+              <a
+                href="https://openrouter.ai/models"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 flex items-center gap-1.5 text-[11px] font-medium text-brand-500 hover:text-brand-400 transition-colors"
+              >
+                Visi modeliai
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </Tooltip>
           </div>
         </div>
       </section>
 
-      {/* ── Section 3: System Limits ──────────────────────────────── */}
+      {/* ── Section 3: Token Usage ─────────────────────────────────── */}
+      {usage && usage.total_analyses > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1 h-4 rounded-full bg-emerald-500" />
+            <h2 className="text-[13px] font-bold text-surface-400 uppercase tracking-widest">
+              Tokenų naudojimas
+            </h2>
+            <span className="text-[10px] text-surface-600 font-medium ml-1">(visa istorija)</span>
+          </div>
+
+          {/* Top stats row */}
+          <div className="enterprise-card p-0 overflow-hidden mb-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-surface-700/30">
+              <StatCell
+                icon={Hash}
+                label="Viso tokenų"
+                value={formatTokens(usage.total_tokens)}
+                tooltip="Bendras sunaudotų tokenų skaičius"
+              />
+              <StatCell
+                icon={DollarSign}
+                label="Apytikslė kaina"
+                value={`$${usage.total_cost_usd.toFixed(4)}`}
+                tooltip="Apytikslė bendra kaina pagal modelio kainas"
+              />
+              <StatCell
+                icon={Layers}
+                label="Analizės"
+                value={String(usage.total_analyses)}
+                tooltip="Atliktų analizių skaičius"
+              />
+              <StatCell
+                icon={FileText}
+                label="Failai / Puslapiai"
+                value={`${usage.total_files_processed} / ${usage.total_pages_processed}`}
+                tooltip="Apdorotų failų ir puslapių skaičius"
+              />
+            </div>
+          </div>
+
+          {/* Phase breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <PhaseCard
+              label="Ekstrahavimas"
+              input={usage.by_phase.extraction.input}
+              output={usage.by_phase.extraction.output}
+              totalTokens={usage.total_tokens}
+            />
+            <PhaseCard
+              label="Agregavimas"
+              input={usage.by_phase.aggregation.input}
+              output={usage.by_phase.aggregation.output}
+              totalTokens={usage.total_tokens}
+            />
+            <PhaseCard
+              label="Vertinimas"
+              input={usage.by_phase.evaluation.input}
+              output={usage.by_phase.evaluation.output}
+              totalTokens={usage.total_tokens}
+            />
+          </div>
+        </section>
+      )}
+
+      {/* ── Section: System Limits ──────────────────────────────── */}
       <section className="mb-8">
         <div className="flex items-center gap-2 mb-4">
           <div className="w-1 h-4 rounded-full bg-surface-600" />
@@ -254,21 +264,25 @@ export default function SettingsView() {
               icon={HardDrive}
               label="Maks. failo dydis"
               value="50 MB"
+              tooltip="Vieno failo maksimalus dydis"
             />
             <StatCell
               icon={FileText}
               label="Maks. failų skaičius"
               value="20"
+              tooltip="Maksimalus failų skaičius vienai analizei"
             />
             <StatCell
               icon={Users}
               label="Lygiagrečios analizės"
               value="5"
+              tooltip="Vienu metu apdorojamų dokumentų skaičius"
             />
             <StatCell
               icon={Clock}
               label="Dokumento laikas"
               value="120 s"
+              tooltip="Maksimalus vieno dokumento apdorojimo laikas"
             />
           </div>
         </div>
@@ -320,12 +334,71 @@ function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value
   );
 }
 
-function StatCell({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
-  return (
-    <div className="p-4 text-center">
+function StatCell({ icon: Icon, label, value, tooltip }: { icon: any; label: string; value: string; tooltip?: string }) {
+  const cell = (
+    <div className="p-4 text-center w-full">
       <Icon className="w-4 h-4 text-surface-500 mx-auto mb-2" />
       <p className="text-[15px] font-bold text-surface-200 mb-0.5">{value}</p>
       <p className="text-[10px] text-surface-500 font-medium uppercase tracking-wider">{label}</p>
+    </div>
+  );
+  if (!tooltip) return cell;
+  return <Tooltip content={tooltip} side="top">{cell}</Tooltip>;
+}
+
+function formatTokens(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}k`;
+  return String(n);
+}
+
+function PhaseCard({
+  label,
+  input,
+  output,
+  totalTokens,
+}: {
+  label: string;
+  input: number;
+  output: number;
+  totalTokens: number;
+}) {
+  const phaseTotal = input + output;
+  const pct = totalTokens > 0 ? ((phaseTotal / totalTokens) * 100).toFixed(1) : '0';
+
+  return (
+    <div className="enterprise-card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-[12px] font-bold text-surface-300 uppercase tracking-widest">
+          {label}
+        </h4>
+        <span className="text-[11px] font-mono font-medium text-brand-400">{pct}%</span>
+      </div>
+
+      {/* Progress bar */}
+      <div className="w-full h-1 rounded-full bg-surface-700/50 mb-3">
+        <div
+          className="h-full rounded-full bg-brand-500 transition-all"
+          style={{ width: `${Math.min(parseFloat(pct), 100)}%` }}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <ArrowDownRight className="w-3 h-3 text-blue-400" />
+            <span className="text-[11px] text-surface-500">Įvestis</span>
+          </div>
+          <span className="text-[12px] font-mono font-medium text-surface-300">{formatTokens(input)}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <ArrowUpRight className="w-3 h-3 text-amber-400" />
+            <span className="text-[11px] text-surface-500">Išvestis</span>
+          </div>
+          <span className="text-[12px] font-mono font-medium text-surface-300">{formatTokens(output)}</span>
+        </div>
+      </div>
     </div>
   );
 }

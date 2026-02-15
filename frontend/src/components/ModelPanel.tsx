@@ -10,6 +10,7 @@ import { getModels, searchAllModels, type ModelInfo } from '../lib/api';
 import { useFocusTrap } from '../lib/useFocusTrap';
 import { ProviderLogo, getProvider, PROVIDER_COLORS } from './ProviderLogos';
 import ScrollText from './ScrollText';
+import Tooltip from './Tooltip';
 import { clsx } from 'clsx';
 
 const CUSTOM_MODELS_KEY = 'procurement-analyzer:custom-models';
@@ -236,12 +237,14 @@ export default function ModelPanel() {
                         <Cpu className="w-4 h-4 text-brand-400" />
                         <h2 className="text-[14px] font-bold text-white uppercase tracking-wider">Modeliai</h2>
                     </div>
-                    <button
-                        onClick={handleClose}
-                        className="p-1.5 rounded-lg hover:bg-white/[0.06] text-surface-400 hover:text-surface-200 transition-colors"
-                    >
-                        <X className="w-4 h-4" />
-                    </button>
+                    <Tooltip content="Uždaryti" side="bottom">
+                        <button
+                            onClick={handleClose}
+                            className="p-1.5 rounded-lg hover:bg-white/[0.06] text-surface-400 hover:text-surface-200 transition-colors"
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
+                    </Tooltip>
                 </div>
 
                 {/* Content */}
@@ -312,7 +315,7 @@ export default function ModelPanel() {
                 </div>
 
                 {/* Search / Add Model Section */}
-                <div className="border-t border-surface-700/50 bg-surface-900/40 flex-shrink-0">
+                <div className="border-t border-surface-700/50 bg-surface-800/55 flex-shrink-0">
                     <button
                         onClick={() => setSearchOpen(!searchOpen)}
                         className="w-full flex items-center justify-between px-5 py-3 text-[12px] font-semibold text-surface-400 hover:text-surface-200 transition-colors"
@@ -362,7 +365,7 @@ export default function ModelPanel() {
                                                     "w-full flex items-center gap-3 px-3 py-2 rounded-lg border text-left transition-all duration-150",
                                                     alreadyVisible
                                                         ? "bg-brand-500/5 border-brand-500/20 opacity-60"
-                                                        : "bg-surface-900/50 border-surface-700/40 hover:border-surface-600/60 hover:bg-surface-800/60"
+                                                        : "bg-surface-800/55 border-surface-600/30 hover:border-surface-500/50 hover:bg-surface-700/60"
                                                 )}
                                             >
                                                 <ProviderLogo modelId={model.id} size={16} />
@@ -427,7 +430,7 @@ function ModelCard({ model, isSelected, onSelect, onRemove }: {
                 "group relative flex items-center gap-3 pr-3.5 pl-4 py-2.5 rounded-[10px] border transition-all duration-200 text-left overflow-hidden",
                 isSelected
                     ? "bg-surface-800/60 border-brand-500/40"
-                    : "bg-surface-900/40 border-surface-700/50 hover:border-surface-600/70 hover:bg-surface-800/60"
+                    : "bg-surface-800/50 border-surface-600/30 hover:border-surface-500/50 hover:bg-surface-700/60"
             )}
         >
             {/* Left accent bar */}
@@ -467,13 +470,14 @@ function ModelCard({ model, isSelected, onSelect, onRemove }: {
 
             {/* Delete */}
             <div className="flex items-center flex-shrink-0">
-                <div
-                    onClick={(e) => onRemove(e, model.id)}
-                    className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-red-500/20 text-surface-500 hover:text-red-400 transition-all cursor-pointer"
-                    title="Pašalinti modelį"
-                >
-                    <Trash2 className="w-3.5 h-3.5" />
-                </div>
+                <Tooltip content="Pašalinti modelį" side="left">
+                    <div
+                        onClick={(e) => onRemove(e, model.id)}
+                        className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-red-500/20 text-surface-500 hover:text-red-400 transition-all cursor-pointer"
+                    >
+                        <Trash2 className="w-3.5 h-3.5" />
+                    </div>
+                </Tooltip>
             </div>
         </button>
     );

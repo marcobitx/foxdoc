@@ -86,6 +86,7 @@ module.exports = {
         'orbital-pulse': 'orbitalPulse 2s ease-in-out infinite',
         'slide-in-right': 'slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'slide-out-right': 'slideOutRight 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'tooltip-in': 'tooltipIn 0.15s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -116,6 +117,10 @@ module.exports = {
         orbitalPulse: {
           '0%, 100%': { transform: 'scale(1)', opacity: '0.7' },
           '50%': { transform: 'scale(1.15)', opacity: '1' },
+        },
+        tooltipIn: {
+          from: { opacity: '0', transform: 'scale(0.95)' },
+          to: { opacity: '1', transform: 'scale(1)' },
         },
       },
       transitionTimingFunction: {

@@ -22,10 +22,10 @@
   }
 
   body {
-    @apply bg-surface-950 text-surface-200 font-sans min-h-screen relative overflow-x-hidden;
-    background-image: radial-gradient(at 0% 0%, rgba(210, 120, 80, 0.08) 0, transparent 50%),
-      radial-gradient(at 100% 80%, rgba(180, 90, 50, 0.06) 0, transparent 50%),
-      radial-gradient(at 50% 30%, rgba(245, 158, 11, 0.03) 0, transparent 60%);
+    @apply text-surface-200 font-sans min-h-screen relative overflow-x-hidden;
+    background-color: #1a1512;
+    background-image: radial-gradient(at 0% 0%, rgba(210, 120, 80, 0.05) 0, transparent 50%),
+      radial-gradient(at 100% 80%, rgba(180, 90, 50, 0.03) 0, transparent 50%);
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
@@ -71,8 +71,8 @@
   /* ── Enterprise Card — Professional Layering ───────────────────── */
 
   .enterprise-card {
-    @apply bg-surface-900/70 backdrop-blur-xl rounded-2xl;
-    @apply border border-surface-700/40;
+    @apply bg-surface-800/80 rounded-2xl;
+    @apply border border-surface-600/30;
     @apply shadow-sm;
     position: relative;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -84,7 +84,7 @@
   }
 
   .enterprise-card-hover:hover {
-    @apply border-surface-600/60 bg-surface-800/70 -translate-y-1 shadow-2xl shadow-black/40;
+    @apply border-surface-500/40 bg-surface-700/85 -translate-y-0.5 shadow-lg shadow-black/20;
   }
 
   .enterprise-card-active {
@@ -177,14 +177,14 @@
   }
 
   .bg-secondary {
-    @apply bg-surface-900/90 backdrop-blur-2xl;
+    @apply bg-surface-800/60;
   }
 
   /* ── Cyber Card — Lighter translucent variant ──────────────── */
 
   .cyber-card {
-    @apply bg-surface-900/50 backdrop-blur-xl rounded-2xl;
-    @apply border border-surface-700/30;
+    @apply bg-surface-800/80 backdrop-blur-xl rounded-2xl;
+    @apply border border-surface-600/30;
     @apply shadow-sm;
   }
 

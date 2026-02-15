@@ -135,7 +135,9 @@ def _build_detail(record: dict, documents: list[dict]) -> AnalysisDetail:
         )
 
     created_at = record.get("_creationTime", datetime.now(timezone.utc).isoformat())
-    if isinstance(created_at, str):
+    if isinstance(created_at, (int, float)):
+        created_at = datetime.fromtimestamp(created_at / 1000, tz=timezone.utc)
+    elif isinstance(created_at, str):
         try:
             created_at = datetime.fromisoformat(created_at)
         except ValueError:
@@ -451,7 +453,9 @@ async def list_analyses(
     summaries = []
     for record in records:
         created_at = record.get("_creationTime", datetime.now(timezone.utc).isoformat())
-        if isinstance(created_at, str):
+        if isinstance(created_at, (int, float)):
+            created_at = datetime.fromtimestamp(created_at / 1000, tz=timezone.utc)
+        elif isinstance(created_at, str):
             try:
                 created_at = datetime.fromisoformat(created_at)
             except ValueError:
@@ -472,11 +476,13 @@ async def list_analyses(
         currency = "EUR"
         submission_deadline = None
         procurement_type = None
+        procurement_reference = None
         report_json = record.get("report_json")
         if report_json and isinstance(report_json, dict):
             project_title = report_json.get("project_title")
             project_summary = report_json.get("project_summary")
             procurement_type = report_json.get("procurement_type")
+            procurement_reference = report_json.get("procurement_reference")
 
             org = report_json.get("procuring_organization")
             if org and isinstance(org, dict):
@@ -501,7 +507,9 @@ async def list_analyses(
         completed_at = None
         completed_ts = record.get("completed_at")
         if completed_ts:
-            if isinstance(completed_ts, str):
+            if isinstance(completed_ts, (int, float)):
+                completed_at = datetime.fromtimestamp(completed_ts / 1000, tz=timezone.utc)
+            elif isinstance(completed_ts, str):
                 try:
                     completed_at = datetime.fromisoformat(completed_ts)
                 except ValueError:
@@ -525,6 +533,7 @@ async def list_analyses(
                 submission_deadline=submission_deadline,
                 completeness_score=completeness_score,
                 procurement_type=procurement_type,
+                procurement_reference=procurement_reference,
             )
         )
 
@@ -647,7 +656,9 @@ async def get_chat_history(
     messages = []
     for h in history_records:
         ts = h.get("_creationTime")
-        if isinstance(ts, str):
+        if isinstance(ts, (int, float)):
+            ts = datetime.fromtimestamp(ts / 1000, tz=timezone.utc)
+        elif isinstance(ts, str):
             try:
                 ts = datetime.fromisoformat(ts)
             except ValueError:

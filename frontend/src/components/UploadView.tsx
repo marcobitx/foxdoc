@@ -9,6 +9,7 @@ import { Upload, Cpu, FileText, ExternalLink, ShieldCheck, ScrollText, BrainCirc
 import { appStore, useStore } from '../lib/store';
 import ModelCarousel from './ModelCarousel';
 import { FileTypeStrip } from './FileTypeLogos';
+import Tooltip from './Tooltip';
 
 const ACCEPTED = '.pdf,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.zip';
 const MAX_SIZE_MB = 50;
@@ -39,7 +40,7 @@ export default function UploadView() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto animate-fade-in-up">
+    <div className="w-full animate-fade-in-up">
       {/* ── Compact Header — title + subtitle tightly grouped ──── */}
       <div className="text-center mb-6 pt-2 md:pt-4">
         {/* Brand + status — single compact row */}
@@ -57,12 +58,14 @@ export default function UploadView() {
             <ExternalLink className="w-2.5 h-2.5 text-surface-600 group-hover:text-surface-400 transition-colors" />
           </a>
           <div className="h-4 w-px bg-surface-700/40" />
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/5 border border-emerald-500/10">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] font-bold text-emerald-400/80 tracking-wide uppercase">
-              AI aktyvus
-            </span>
-          </div>
+          <Tooltip content="AI modelis paruoštas analizei" side="bottom">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/5 border border-emerald-500/10">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] font-bold text-emerald-400/80 tracking-wide uppercase">
+                AI aktyvus
+              </span>
+            </div>
+          </Tooltip>
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tighter leading-[1.1] mb-3">
@@ -84,7 +87,7 @@ export default function UploadView() {
       >
         <div className={`absolute inset-0 rounded-2xl border-2 border-dashed transition-all duration-300 ${dragOver
           ? 'border-brand-500/40 bg-brand-500/5'
-          : 'border-surface-700/50 bg-surface-900/60 group-hover:border-surface-600/60 group-hover:bg-surface-900/80'
+          : 'border-surface-600/30 bg-surface-800/50 group-hover:border-surface-500/40 group-hover:bg-surface-800/65'
           }`} />
 
         <div
@@ -123,6 +126,7 @@ export default function UploadView() {
       {/* ── File count indicator — click to open files panel ──── */}
       {state.files.length > 0 && (
         <div className="mt-5 text-center animate-fade-in">
+          <Tooltip content="Atidaryti failų sąrašą" side="top">
           <button
             onClick={() => appStore.setState({ filesPanelOpen: true })}
             className="group inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-brand-500/5 border border-brand-500/10 hover:border-brand-500/25 hover:bg-brand-500/8 transition-all duration-200 cursor-pointer"
@@ -133,26 +137,33 @@ export default function UploadView() {
             </span>
             <span className="text-[10px] text-brand-500/60 group-hover:text-brand-400 transition-colors">Peržiūrėti &rarr;</span>
           </button>
+          </Tooltip>
         </div>
       )}
 
       {/* ── Features — clear cards, responsive grid ────────────── */}
       <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 animate-fade-in" style={{ animationDelay: '300ms' }}>
-        <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-900/50 border border-surface-700/30">
-          <BrainCircuit className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400/80 flex-shrink-0" />
-          <div className="flex sm:flex-col items-center sm:items-center gap-1.5 sm:gap-1 min-w-0">
-            <span className="text-[12px] font-semibold text-surface-300 whitespace-nowrap">AI analizė</span>
-            <span className="text-[11px] text-surface-500 font-medium truncate">{state.selectedModel?.name?.split(':').pop()?.trim() || 'Claude'}</span>
+        <Tooltip content="Dokumentai analizuojami AI modeliu" side="top">
+          <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-800/60 border border-surface-600/25 w-full">
+            <BrainCircuit className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400/80 flex-shrink-0" />
+            <div className="flex sm:flex-col items-center sm:items-center gap-1.5 sm:gap-1 min-w-0">
+              <span className="text-[12px] font-semibold text-surface-300 whitespace-nowrap">AI analizė</span>
+              <span className="text-[11px] text-surface-500 font-medium truncate">{state.selectedModel?.name?.split(':').pop()?.trim() || 'Claude'}</span>
+            </div>
           </div>
-        </div>
-        <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-900/50 border border-surface-700/30">
-          <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-brand-400/80 flex-shrink-0" />
-          <span className="text-[12px] font-semibold text-surface-300">Šifruota sesija</span>
-        </div>
-        <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-900/50 border border-surface-700/30">
-          <ScrollText className="w-4 h-4 sm:w-5 sm:h-5 text-violet-400/80 flex-shrink-0" />
-          <span className="text-[12px] font-semibold text-surface-300">Pilnas žurnalas</span>
-        </div>
+        </Tooltip>
+        <Tooltip content="Duomenys perduodami šifruotu kanalu" side="top">
+          <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-800/60 border border-surface-600/25 w-full">
+            <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-brand-400/80 flex-shrink-0" />
+            <span className="text-[12px] font-semibold text-surface-300">Šifruota sesija</span>
+          </div>
+        </Tooltip>
+        <Tooltip content="Visa analizės eiga matoma realiu laiku" side="top">
+          <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-800/60 border border-surface-600/25 w-full">
+            <ScrollText className="w-4 h-4 sm:w-5 sm:h-5 text-violet-400/80 flex-shrink-0" />
+            <span className="text-[12px] font-semibold text-surface-300">Pilnas žurnalas</span>
+          </div>
+        </Tooltip>
       </div>
 
       {/* ── Model Logo Carousel — subtle footer ────────────────── */}

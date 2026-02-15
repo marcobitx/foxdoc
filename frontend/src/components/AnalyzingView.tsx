@@ -14,6 +14,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { appStore, useStore } from '../lib/store';
+import Tooltip from './Tooltip';
 
 interface Props {
   analysisId: string;
@@ -263,17 +264,19 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
             </p>
           </div>
           {onViewReport && (
-            <button
-              onClick={onViewReport}
-              className="btn-secondary-professional"
-            >
-              Peržiūrėti ataskaitą
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            <Tooltip content="Atidaryti sugeneruotą ataskaitą" side="bottom">
+              <button
+                onClick={onViewReport}
+                className="btn-secondary-professional"
+              >
+                Peržiūrėti ataskaitą
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </Tooltip>
           )}
         </div>
       )}
-      <div className="rounded-2xl bg-white/[0.05] border border-surface-700/60 overflow-hidden shadow-lg shadow-black/20 py-2 space-y-3">
+      <div className="rounded-2xl bg-surface-800/55 border border-surface-600/30 overflow-hidden py-2 space-y-3">
       {steps.map((step, i) => {
         const Icon = step.icon;
         const eventsForStep = stepEvents[i];

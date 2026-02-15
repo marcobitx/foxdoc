@@ -31,6 +31,7 @@ export interface AnalysisSummary {
   submission_deadline: string | null;
   completeness_score: number | null;
   procurement_type: string | null;
+  procurement_reference: string | null;
 }
 
 export interface SSEEvent {
@@ -223,4 +224,115 @@ export async function searchAllModels(query: string): Promise<ModelInfo[]> {
   if (!res.ok) throw new Error(res.statusText);
   const data = await res.json();
   return data.models || [];
+}
+
+// ── Usage Stats ──────────────────────────────────────────────────────────────
+
+export interface TokenUsageStats {
+  total_input_tokens: number;
+  total_output_tokens: number;
+  total_tokens: number;
+  total_cost_usd: number;
+  total_analyses: number;
+  total_files_processed: number;
+  total_pages_processed: number;
+  by_phase: {
+    extraction: { input: number; output: number };
+    aggregation: { input: number; output: number };
+    evaluation: { input: number; output: number };
+  };
+}
+
+export async function getUsageStats(): Promise<TokenUsageStats> {
+  const res = await fetch(`${BASE}/usage`);
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+// ── Notes ─────────────────────────────────────────────────────────────────────
+
+export interface NoteData {
+  _id: string;
+  _creationTime: number;
+  title: string;
+  content: string;
+  status: string;
+  priority: string;
+  tags: string[];
+  color: string | null;
+  pinned: boolean;
+  analysis_id: string | null;
+  updated_at: number;
+}
+
+export async function listNotes(limit = 100, offset = 0): Promise<NoteData[]> {
+  const res = await fetch(`${BASE}/notes?limit=${limit}&offset=${offset}`);
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+export async function getNote(id: string): Promise<NoteData> {
+  const res = await fetch(`${BASE}/notes/${id}`);
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+export async function createNoteApi(data: {
+  title?: string;
+  content?: string;
+  status?: string;
+  priority?: string;
+  tags?: string[];
+  color?: string;
+  pinned?: boolean;
+  analysis_id?: string | null;
+}): Promise<{ id: string }> {
+  const res = await fetch(`${BASE}/notes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
+  return res.json();
+}
+
+export async function updateNoteApi(id: string, data: {
+  title?: string;
+  content?: string;
+  status?: string;
+  priority?: string;
+  tags?: string[];
+  color?: string;
+  pinned?: boolean;
+  analysis_id?: string | null;
+}): Promise<void> {
+  const res = await fetch(`${BASE}/notes/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
+}
+
+export async function deleteNoteApi(id: string): Promise<void> {
+  const res = await fetch(`${BASE}/notes/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error(res.statusText);
+}
+
+export async function bulkDeleteNotes(ids: string[]): Promise<void> {
+  const res = await fetch(`${BASE}/notes/bulk/delete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids }),
+  });
+  if (!res.ok) throw new Error(res.statusText);
+}
+
+export async function bulkUpdateNotesStatus(ids: string[], status: string): Promise<void> {
+  const res = await fetch(`${BASE}/notes/bulk/status`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids, status }),
+  });
+  if (!res.ok) throw new Error(res.statusText);
 }

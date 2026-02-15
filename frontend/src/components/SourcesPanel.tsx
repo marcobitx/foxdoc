@@ -8,6 +8,7 @@ import { X, FileText, BookOpen } from 'lucide-react';
 import { appStore, useStore } from '../lib/store';
 import { useFocusTrap } from '../lib/useFocusTrap';
 import { getAnalysis, type Analysis } from '../lib/api';
+import Tooltip from './Tooltip';
 import { clsx } from 'clsx';
 
 export default function SourcesPanel() {
@@ -118,12 +119,14 @@ export default function SourcesPanel() {
                 </span>
               )}
             </div>
-            <button
-              onClick={handleClose}
-              className="p-1.5 rounded-lg hover:bg-white/[0.06] text-surface-400 hover:text-surface-200 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <Tooltip content="Uždaryti šaltinius" side="bottom">
+              <button
+                onClick={handleClose}
+                className="p-1.5 rounded-lg hover:bg-white/[0.06] text-surface-400 hover:text-surface-200 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </Tooltip>
           </div>
 
           {/* Content */}
@@ -148,7 +151,7 @@ export default function SourcesPanel() {
                 {docs.map((doc: any, i: number) => (
                   <div
                     key={i}
-                    className="group flex items-center gap-3 px-3 py-2.5 rounded-xl border bg-surface-900/40 border-surface-700/40 hover:border-surface-600/60 hover:bg-surface-800/40 transition-all duration-200"
+                    className="group flex items-center gap-3 px-3 py-2.5 rounded-xl border bg-surface-800/55 border-surface-600/30 hover:border-surface-500/50 hover:bg-surface-700/55 transition-all duration-200"
                   >
                     <div className="w-8 h-8 rounded-lg bg-brand-500/8 border border-brand-500/15 flex items-center justify-center flex-shrink-0">
                       <FileText className="w-4 h-4 text-brand-400" />

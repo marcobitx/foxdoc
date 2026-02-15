@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>docAgent — Bold Logo Concepts v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #050507;
+    --card: #0E0E12;
+    --border: #1A1A22;
+    --text: #F0F0F5;
+    --text2: #8888A0;
+    --cyan: #06B6D4;
+    --amber: #F59E0B;
+    --violet: #8B5CF6;
+    --pink: #EC4899;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .hero {
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(6,182,212,0.04) 0%, transparent 60%);
+    top: -400px; left: 50%; transform: translateX(-50%);
+  }
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 4px; text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px; font-weight: 700;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #F0F0F5 30%, #06B6D4 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .hero-sub {
+    font-size: 16px; color: var(--text2);
+    max-width: 480px; margin: 0 auto; line-height: 1.7;
+  }
+
+  /* CONCEPT SECTIONS */
+  .concept-section {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 40px;
+  }
+
+  .concept-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .concept-canvas {
+    height: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .concept-meta {
+    padding: 36px 40px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .concept-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 8px;
+  }
+
+  .concept-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+
+  .concept-why {
+    font-size: 14px; color: var(--text2); line-height: 1.7;
+  }
+
+  .concept-tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 12px;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(6,182,212,0.08);
+    color: var(--cyan);
+    border: 1px solid rgba(6,182,212,0.15);
+  }
+
+  /* ============================================ */
+  /* CONCEPT 1 — The Folding Paradox */
+  /* ============================================ */
+  .c1-canvas {
+    background: radial-gradient(ellipse at center, #0A0F1A 0%, #050507 100%);
+  }
+
+  .c1-logo { display: flex; align-items: center; gap: 28px; }
+
+  .c1-icon {
+    width: 100px; height: 100px;
+    position: relative;
+  }
+
+  @keyframes fold-draw {
+    0% { stroke-dashoffset: 300; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.15; r: 12; }
+    50% { opacity: 0.3; r: 18; }
+  }
+
+  .c1-path-main {
+    stroke-dasharray: 300;
+    animation: fold-draw 3s ease-out forwards;
+  }
+
+  .c1-glow {
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  .c1-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 48px; font-weight: 700;
+    letter-spacing: -2px;
+  }
+  .c1-wordmark .w-doc { color: #06B6D4; }
+  .c1-wordmark .w-agent { color: #FAFAFA; }
+
+  /* ============================================ */
+  /* CONCEPT 2 — The Dissolving Page */
+  /* ============================================ */
+  .c2-canvas {
+    background: radial-gradient(ellipse at 30% 50%, #0A0F1A 0%, #050507 100%);
+  }
+
+  .c2-logo { display: flex; align-items: center; gap: 32px; }
+
+  @keyframes particle-float {
+    0% { transform: translateX(0) translateY(0); opacity: 0.8; }
+    100% { transform: translateX(8px) translateY(-4px); opacity: 0.2; }
+  }
+
+  .c2-particle {
+    animation: particle-float 3s ease-in-out infinite alternate;
+  }
+
+  .c2-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 46px; font-weight: 700;
+    letter-spacing: -1.5px;
+  }
+  .c2-wordmark .w-doc { color: #E2E8F0; }
+  .c2-wordmark .w-agent {
+    background: linear-gradient(90deg, #06B6D4 0%, #8B5CF6 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* ============================================ */
+  /* CONCEPT 3 — Negative Space Agent */
+  /* ============================================ */
+  .c3-canvas {
+    background: radial-gradient(ellipse at center, #0C0C14 0%, #050507 100%);
+  }
+
+  .c3-logo { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+
+  @keyframes eye-blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+
+  .c3-eye-pupil {
+    animation: eye-blink 5s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .c3-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px; font-weight: 500;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: #A0A0B8;
+  }
+
+  /* ============================================ */
+  /* CONCEPT 4 — The Mesh Bloom */
+  /* ============================================ */
+  .c4-canvas {
+    background: #050507;
+  }
+
+  .c4-logo { display: flex; align-items: center; gap: 28px; }
+
+  @keyframes mesh-shift-1 {
+    0%, 100% { cx: 25%; cy: 20%; }
+    33% { cx: 30%; cy: 25%; }
+    66% { cx: 20%; cy: 15%; }
+  }
+  @keyframes mesh-shift-2 {
+    0%, 100% { cx: 75%; cy: 30%; }
+    33% { cx: 70%; cy: 35%; }
+    66% { cx: 80%; cy: 25%; }
+  }
+  @keyframes mesh-shift-3 {
+    0%, 100% { cx: 60%; cy: 80%; }
+    33% { cx: 55%; cy: 75%; }
+    66% { cx: 65%; cy: 85%; }
+  }
+  @keyframes mesh-shift-4 {
+    0%, 100% { cx: 20%; cy: 70%; }
+    33% { cx: 25%; cy: 65%; }
+    66% { cx: 15%; cy: 75%; }
+  }
+
+  .c4-mesh-1 stop:first-child { animation: none; }
+  .c4-wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 46px; font-weight: 700;
+    letter-spacing: -1.5px;
+  }
+
+  /* ============================================ */
+  /* CONCEPT 5 — Typographic Illusion */
+  /* ============================================ */
+  .c5-canvas {
+    background: radial-gradient(ellipse at center, #08080E 0%, #050507 100%);
+  }
+
+  @keyframes laser-scan {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.9; }
+  }
+
+  .c5-laser {
+    animation: laser-scan 2s ease-in-out infinite;
+  }
+
+  /* COMPARISON ROW */
+  .compare-section {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 40px;
+  }
+  .compare-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 4px; text-transform: uppercase;
+    color: var(--cyan);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  .compare-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .compare-card .compare-label {
+    position: absolute;
+    bottom: 12px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">Bold Concepts &middot; V2</div>
+  <div class="hero-title">docAgent</div>
+  <div class="hero-sub">5 unique, boundary-pushing logo concepts. No generic document icons. Pure creativity.</div>
+</div>
+
+<!-- CONCEPT 1 — The Folding Paradox -->
+<div class="concept-section">
+  <div class="concept-block">
+    <div class="concept-canvas c1-canvas">
+      <div class="c1-logo">
+        <div class="c1-icon">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+            <defs>
+              <linearGradient id="fold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06B6D4"/>
+                <stop offset="55%" stop-color="#06B6D4"/>
+                <stop offset="100%" stop-color="#F59E0B"/>
+              </linearGradient>
+              <filter id="fold-glow">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- Impossible document fold -->
+            <!-- Back face - top portion -->
+            <path d="M22,14 L60,14 L68,22 L68,50" stroke="url(#fold-grad)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="c1-path-main"/>
+            <!-- Folded corner -->
+            <path d="M60,14 L60,22 L68,22" stroke="#06B6D4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+
+            <!-- The paradox fold - impossible geometry -->
+            <!-- Line goes "behind" the front face, then "through" it -->
+            <path d="M68,50 L68,58 L50,70 L32,58 L32,50" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+
+            <!-- The front face "over" the fold -->
+            <path d="M22,14 L22,78 L68,78 L68,65" stroke="url(#fold-grad)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- Over crossing (front face goes over fold) -->
+            <path d="M32,50 L22,50" stroke="#06B6D4" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+            <!-- Paradox intersection glow -->
+            <circle cx="50" cy="58" r="12" fill="#06B6D4" opacity="0.06" class="c1-glow"/>
+            <circle cx="50" cy="58" r="6" fill="#F59E0B" opacity="0.12" class="c1-glow"/>
+            <circle cx="50" cy="58" r="2.5" fill="#F59E0B" opacity="0.8"/>
+
+            <!-- Text lines on the page surface -->
+            <line x1="30" y1="30" x2="52" y2="30" stroke="#06B6D4" stroke-width="1.5" stroke-linecap="round" opacity="0.2"/>
+            <line x1="30" y1="36" x2="46" y2="36" stroke="#06B6D4" stroke-width="1.5" stroke-linecap="round" opacity="0.15"/>
+            <line x1="30" y1="42" x2="50" y2="42" stroke="#06B6D4" stroke-width="1.5" stroke-linecap="round" opacity="0.1"/>
+          </svg>
+        </div>
+        <div class="c1-wordmark">
+          <span class="w-doc">doc</span><span class="w-agent">Agent</span>
+        </div>
+      </div>
+    </div>
+    <div class="concept-meta">
+      <div>
+        <div class="concept-num">Concept 01</div>
+        <div class="concept-name">The Folding Paradox</div>
+        <div class="concept-why">An Escher-inspired impossible document that folds through itself. The page creates a Penrose-triangle-like construction where the fold passes through its own plane. The cyan-to-amber gradient marks the paradox intersection point.</div>
+      </div>
+      <div>
+        <div class="concept-why" style="margin-bottom: 16px;">Impossible geometry creates a cognitive hook — your brain tries to resolve the shape and can't. Communicates "we go THROUGH your documents, not just over them."</div>
+        <div class="concept-tags">
+          <span class="tag">impossible geometry</span>
+          <span class="tag">escher-inspired</span>
+          <span class="tag">cognitive hook</span>
+          <span class="tag">animated</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT 2 — The Dissolving Page -->
+<div class="concept-section">
+  <div class="concept-block">
+    <div class="concept-canvas c2-canvas">
+      <div class="c2-logo">
+        <svg viewBox="0 0 140 100" fill="none" xmlns="http://www.w3.org/2000/svg" width="196" height="140">
+          <defs>
+            <linearGradient id="particle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#06B6D4"/>
+              <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Solid document left side -->
+          <rect x="10" y="12" width="38" height="50" rx="2" stroke="#CBD5E1" stroke-width="1.8" fill="none"/>
+          <path d="M38,12 L48,12 L48,22" stroke="#CBD5E1" stroke-width="1.5" fill="none"/>
+          <!-- Doc lines -->
+          <line x1="17" y1="24" x2="33" y2="24" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="17" y1="30" x2="38" y2="30" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="17" y1="36" x2="35" y2="36" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="17" y1="42" x2="30" y2="42" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="17" y1="48" x2="26" y2="48" stroke="#475569" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="17" y1="54" x2="22" y2="54" stroke="#334155" stroke-width="1" stroke-linecap="round"/>
+
+          <!-- Dissolving edge — partial lines breaking into particles -->
+          <line x1="48" y1="30" x2="52" y2="30" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+          <line x1="48" y1="36" x2="54" y2="36" stroke="#64748B" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+          <line x1="48" y1="42" x2="51" y2="42" stroke="#475569" stroke-width="1" stroke-linecap="round" opacity="0.4"/>
+
+          <!-- Fibonacci spiral particles -->
+          <!-- Ring 1 - closest to document -->
+          <circle cx="56" cy="26" r="1.8" fill="#06B6D4" opacity="0.9" class="c2-particle" style="animation-delay: 0s"/>
+          <circle cx="58" cy="34" r="2" fill="#0EA5E9" opacity="0.85" class="c2-particle" style="animation-delay: 0.2s"/>
+          <circle cx="55" cy="42" r="1.5" fill="#06B6D4" opacity="0.8" class="c2-particle" style="animation-delay: 0.4s"/>
+          <circle cx="57" cy="50" r="1.7" fill="#0284C7" opacity="0.75" class="c2-particle" style="animation-delay: 0.1s"/>
+
+          <!-- Ring 2 -->
+          <circle cx="64" cy="20" r="2.2" fill="#06B6D4" opacity="0.8" class="c2-particle" style="animation-delay: 0.3s"/>
+          <circle cx="66" cy="30" r="1.6" fill="#3B82F6" opacity="0.75" class="c2-particle" style="animation-delay: 0.5s"/>
+          <circle cx="63" cy="38" r="2" fill="#6366F1" opacity="0.7" class="c2-particle" style="animation-delay: 0.7s"/>
+          <circle cx="65" cy="48" r="1.4" fill="#8B5CF6" opacity="0.65" class="c2-particle" style="animation-delay: 0.2s"/>
+          <circle cx="62" cy="56" r="1.8" fill="#7C3AED" opacity="0.6" class="c2-particle" style="animation-delay: 0.4s"/>
+
+          <!-- Ring 3 -->
+          <circle cx="74" cy="16" r="1.8" fill="#06B6D4" opacity="0.65" class="c2-particle" style="animation-delay: 0.6s"/>
+          <circle cx="76" cy="24" r="2.3" fill="#3B82F6" opacity="0.6" class="c2-particle" style="animation-delay: 0.8s"/>
+          <circle cx="73" cy="34" r="1.5" fill="#6366F1" opacity="0.55" class="c2-particle" style="animation-delay: 1s"/>
+          <circle cx="77" cy="42" r="2" fill="#8B5CF6" opacity="0.5" class="c2-particle" style="animation-delay: 0.3s"/>
+          <circle cx="72" cy="52" r="1.3" fill="#A78BFA" opacity="0.45" class="c2-particle" style="animation-delay: 0.5s"/>
+          <circle cx="75" cy="60" r="1.7" fill="#8B5CF6" opacity="0.4" class="c2-particle" style="animation-delay: 0.7s"/>
+
+          <!-- Ring 4 - outer -->
+          <circle cx="84" cy="18" r="1.5" fill="#3B82F6" opacity="0.5" class="c2-particle" style="animation-delay: 0.9s"/>
+          <circle cx="87" cy="28" r="1.8" fill="#6366F1" opacity="0.45" class="c2-particle" style="animation-delay: 1.1s"/>
+          <circle cx="82" cy="38" r="1.2" fill="#8B5CF6" opacity="0.4" class="c2-particle" style="animation-delay: 0.4s"/>
+          <circle cx="86" cy="46" r="1.6" fill="#A78BFA" opacity="0.35" class="c2-particle" style="animation-delay: 0.6s"/>
+          <circle cx="83" cy="56" r="1.4" fill="#8B5CF6" opacity="0.3" class="c2-particle" style="animation-delay: 0.8s"/>
+
+          <!-- Ring 5 - farthest -->
+          <circle cx="94" cy="22" r="1.2" fill="#6366F1" opacity="0.35" class="c2-particle" style="animation-delay: 1.2s"/>
+          <circle cx="96" cy="34" r="1.5" fill="#8B5CF6" opacity="0.3" class="c2-particle" style="animation-delay: 0.5s"/>
+          <circle cx="92" cy="44" r="1" fill="#A78BFA" opacity="0.25" class="c2-particle" style="animation-delay: 0.7s"/>
+          <circle cx="95" cy="54" r="1.3" fill="#C4B5FD" opacity="0.2" class="c2-particle" style="animation-delay: 0.9s"/>
+
+          <!-- Scattered far particles -->
+          <circle cx="104" cy="26" r="0.8" fill="#8B5CF6" opacity="0.2" class="c2-particle" style="animation-delay: 1.4s"/>
+          <circle cx="106" cy="40" r="1" fill="#A78BFA" opacity="0.15" class="c2-particle" style="animation-delay: 0.6s"/>
+          <circle cx="102" cy="50" r="0.7" fill="#C4B5FD" opacity="0.12" class="c2-particle" style="animation-delay: 0.8s"/>
+          <circle cx="112" cy="32" r="0.6" fill="#A78BFA" opacity="0.1" class="c2-particle" style="animation-delay: 1s"/>
+          <circle cx="110" cy="46" r="0.8" fill="#C4B5FD" opacity="0.08" class="c2-particle" style="animation-delay: 1.2s"/>
+
+          <!-- Hidden "A" shape in denser particle cluster -->
+          <circle cx="76" cy="35" r="1" fill="#22D3EE" opacity="0.7" class="c2-particle" style="animation-delay: 0.2s"/>
+          <circle cx="73" cy="42" r="1" fill="#22D3EE" opacity="0.65" class="c2-particle" style="animation-delay: 0.4s"/>
+          <circle cx="70" cy="49" r="1" fill="#22D3EE" opacity="0.6" class="c2-particle" style="animation-delay: 0.6s"/>
+          <circle cx="79" cy="42" r="1" fill="#22D3EE" opacity="0.65" class="c2-particle" style="animation-delay: 0.3s"/>
+          <circle cx="82" cy="49" r="1" fill="#22D3EE" opacity="0.6" class="c2-particle" style="animation-delay: 0.5s"/>
+          <circle cx="73" cy="44" r="0.8" fill="#22D3EE" opacity="0.5" class="c2-particle" style="animation-delay: 0.7s"/>
+          <circle cx="79" cy="44" r="0.8" fill="#22D3EE" opacity="0.5" class="c2-particle" style="animation-delay: 0.9s"/>
+        </svg>
+        <div class="c2-wordmark">
+          <span class="w-doc">doc</span><span class="w-agent">Agent</span>
+        </div>
+      </div>
+    </div>
+    <div class="concept-meta">
+      <div>
+        <div class="concept-num">Concept 02</div>
+        <div class="concept-name">The Dissolving Page</div>
+        <div class="concept-why">A document disintegrates into a cloud of particles flowing in a Fibonacci spiral pattern. Raw document goes in, pure data intelligence comes out. A hidden "A" shape (Agent) is visible in the brighter particle cluster.</div>
+      </div>
+      <div>
+        <div class="concept-why" style="margin-bottom: 16px;">Documents don't just get "read" — they get decomposed into intelligence. The cyan-to-violet particle gradient represents transformation from raw content to AI insight.</div>
+        <div class="concept-tags">
+          <span class="tag">particle system</span>
+          <span class="tag">fibonacci spiral</span>
+          <span class="tag">hidden symbol</span>
+          <span class="tag">transformation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT 3 — Negative Space Agent -->
+<div class="concept-section">
+  <div class="concept-block">
+    <div class="concept-canvas c3-canvas">
+      <div class="c3-logo">
+        <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="180" height="180">
+          <defs>
+            <filter id="ns-glow">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- The dA compound lettermark -->
+          <!-- 'd' bowl - left side -->
+          <path d="
+            M 24,18
+            L 52,18
+            L 52,102
+            L 24,102
+            C 24,102 24,18 24,18
+            Z
+          " fill="#06B6D4"/>
+
+          <!-- Cut out the 'd' bowl interior -->
+          <path d="
+            M 32,28
+            C 32,28 32,92 32,92
+            L 44,92
+            C 44,92 44,28 44,28
+            L 32,28
+            Z
+          " fill="#0C0C14"/>
+
+          <!-- 'd' bowl curve cut -->
+          <ellipse cx="38" cy="68" rx="16" ry="24" fill="#0C0C14"/>
+
+          <!-- Rebuild 'd' properly with compound shape -->
+          <!-- Actually let me do this cleaner with a single compound path -->
+        </svg>
+
+        <!-- Cleaner approach with pre-composed SVG -->
+        <svg viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg" width="260" height="162" style="margin-top:-180px;">
+          <defs>
+            <filter id="eye-glow">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- d letterform -->
+          <path d="
+            M 28,10
+            L 56,10
+            L 56,90
+            L 28,90
+            Z
+          " fill="#06B6D4"/>
+          <!-- d bowl cutout (creates negative space on left) -->
+          <ellipse cx="42" cy="62" rx="18" ry="22" fill="#0C0C14"/>
+          <!-- d stem stays full height, bowl is bottom half -->
+
+          <!-- A letterform -->
+          <path d="
+            M 64,90
+            L 84,10
+            L 104,90
+            Z
+          " fill="#06B6D4"/>
+          <!-- A triangle cutout -->
+          <path d="
+            M 76,70
+            L 84,38
+            L 92,70
+            Z
+          " fill="#0C0C14"/>
+          <!-- A crossbar cutout -->
+          <rect x="73" y="58" width="22" height="8" fill="#0C0C14"/>
+
+          <!-- The NEGATIVE SPACE between d and A forms an eye/lens shape -->
+          <!-- This emerges naturally from the gap between d's right edge and A's left edge -->
+
+          <!-- Eye pupil in the negative space (amber accent) -->
+          <g class="c3-eye-pupil">
+            <circle cx="60" cy="52" r="5" fill="#F59E0B" filter="url(#eye-glow)"/>
+            <circle cx="60" cy="52" r="2.5" fill="#FAFAFA"/>
+          </g>
+
+          <!-- Subtle eye highlight -->
+          <circle cx="58" cy="50" r="1" fill="#FAFAFA" opacity="0.6"/>
+        </svg>
+
+        <div class="c3-wordmark">docAgent</div>
+      </div>
+    </div>
+    <div class="concept-meta">
+      <div>
+        <div class="concept-num">Concept 03</div>
+        <div class="concept-name">The Negative Space Agent</div>
+        <div class="concept-why">A bold "dA" lettermark where the gap between the letters forms an eye/lens shape — the "agent" watching through your documents. The amber pupil blinks occasionally, bringing the mark to life.</div>
+      </div>
+      <div>
+        <div class="concept-why" style="margin-bottom: 16px;">Negative space logos are the most remembered logos in history (FedEx arrow, NBC peacock). The "discovery moment" when you see the eye is unforgettable. Communicates "intelligent agent hidden within documents."</div>
+        <div class="concept-tags">
+          <span class="tag">negative space</span>
+          <span class="tag">discovery moment</span>
+          <span class="tag">hidden eye</span>
+          <span class="tag">blinking animation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT 4 — The Mesh Bloom -->
+<div class="concept-section">
+  <div class="concept-block">
+    <div class="concept-canvas c4-canvas">
+      <div class="c4-logo">
+        <div style="width: 120px; height: 120px; position: relative;">
+          <svg viewBox="0 0 120 120" width="120" height="120">
+            <defs>
+              <radialGradient id="m1" cx="25%" cy="20%" r="60%">
+                <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.95"/>
+                <stop offset="100%" stop-color="#06B6D4" stop-opacity="0"/>
+                <animate attributeName="cx" values="25%;32%;20%;25%" dur="8s" repeatCount="indefinite"/>
+                <animate attributeName="cy" values="20%;28%;15%;20%" dur="8s" repeatCount="indefinite"/>
+              </radialGradient>
+              <radialGradient id="m2" cx="75%" cy="25%" r="55%">
+                <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+                <animate attributeName="cx" values="75%;68%;82%;75%" dur="10s" repeatCount="indefinite"/>
+                <animate attributeName="cy" values="25%;32%;20%;25%" dur="10s" repeatCount="indefinite"/>
+              </radialGradient>
+              <radialGradient id="m3" cx="65%" cy="78%" r="50%">
+                <stop offset="0%" stop-color="#EC4899" stop-opacity="0.75"/>
+                <stop offset="100%" stop-color="#EC4899" stop-opacity="0"/>
+                <animate attributeName="cx" values="65%;58%;72%;65%" dur="12s" repeatCount="indefinite"/>
+                <animate attributeName="cy" values="78%;72%;85%;78%" dur="12s" repeatCount="indefinite"/>
+              </radialGradient>
+              <radialGradient id="m4" cx="22%" cy="72%" r="55%">
+                <stop offset="0%" stop-color="#0F172A" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#0F172A" stop-opacity="0"/>
+                <animate attributeName="cx" values="22%;28%;18%;22%" dur="9s" repeatCount="indefinite"/>
+                <animate attributeName="cy" values="72%;66%;78%;72%" dur="9s" repeatCount="indefinite"/>
+              </radialGradient>
+              <clipPath id="bloom-clip">
+                <rect x="8" y="8" width="104" height="104" rx="24"/>
+              </clipPath>
+            </defs>
+            <g clip-path="url(#bloom-clip)">
+              <rect width="120" height="120" fill="#0F172A"/>
+              <rect width="120" height="120" fill="url(#m1)"/>
+              <rect width="120" height="120" fill="url(#m2)"/>
+              <rect width="120" height="120" fill="url(#m3)"/>
+              <rect width="120" height="120" fill="url(#m4)"/>
+            </g>
+            <!-- Ghost document outline -->
+            <path d="M38,28 L68,28 L78,38 L78,88 L38,88 Z" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none" clip-path="url(#bloom-clip)"/>
+            <path d="M68,28 L68,38 L78,38" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" fill="none" clip-path="url(#bloom-clip)"/>
+            <!-- Rounded border -->
+            <rect x="8" y="8" width="104" height="104" rx="24" stroke="rgba(255,255,255,0.06)" stroke-width="1" fill="none"/>
+          </svg>
+        </div>
+        <div class="c4-wordmark">
+          <span style="background: linear-gradient(135deg, #06B6D4 0%, #8B5CF6 50%, #EC4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">doc</span><span style="color: #FAFAFA;">Agent</span>
+        </div>
+      </div>
+    </div>
+    <div class="concept-meta">
+      <div>
+        <div class="concept-num">Concept 04</div>
+        <div class="concept-name">The Mesh Bloom</div>
+        <div class="concept-why">A living, breathing gradient mesh inside a rounded square — like Stripe's aesthetic but with a ghost document shape emerging from the color flow. Four color control points continuously orbit, creating an ever-shifting brand mark.</div>
+      </div>
+      <div>
+        <div class="concept-why" style="margin-bottom: 16px;">Generative logos are the cutting-edge 2026 trend. Each instance is slightly different — the brand is recognized by its color DNA rather than fixed geometry. The mesh hides a document ghost that appears and disappears.</div>
+        <div class="concept-tags">
+          <span class="tag">generative</span>
+          <span class="tag">mesh gradient</span>
+          <span class="tag">stripe-inspired</span>
+          <span class="tag">living logo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT 5 — Typographic Illusion -->
+<div class="concept-section">
+  <div class="concept-block">
+    <div class="concept-canvas c5-canvas">
+      <svg viewBox="0 0 600 120" fill="none" xmlns="http://www.w3.org/2000/svg" width="700" height="140">
+        <defs>
+          <filter id="laser-glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- 'd' - isometric block -->
+        <g transform="translate(40, 10)">
+          <!-- Front face -->
+          <path d="M0,90 L0,0 L8,0 L8,90 Z" fill="#FAFAFA"/>
+          <!-- Bowl front -->
+          <path d="M8,28 C30,20 40,30 40,50 C40,70 30,82 8,74" stroke="#FAFAFA" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <!-- Depth shadow -->
+          <path d="M3,90 L3,0 L11,0 L11,90 Z" fill="#3F3F46" transform="translate(4,-4)"/>
+          <path d="M11,28 C33,20 43,30 43,50 C43,70 33,82 11,74" stroke="#3F3F46" stroke-width="5" fill="none" stroke-linecap="round" transform="translate(4,-4)"/>
+        </g>
+
+        <!-- 'o' - isometric cube -->
+        <g transform="translate(105, 10)">
+          <!-- Front ellipse -->
+          <ellipse cx="22" cy="55" rx="22" ry="30" stroke="#FAFAFA" stroke-width="7" fill="none"/>
+          <!-- Back ellipse (depth) -->
+          <ellipse cx="26" cy="51" rx="22" ry="30" stroke="#3F3F46" stroke-width="4" fill="none"/>
+        </g>
+
+        <!-- 'c' - isometric L-beam -->
+        <g transform="translate(175, 10)">
+          <path d="M40,28 C30,16 12,16 4,28 L4,64 C12,78 30,78 40,68" stroke="#FAFAFA" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M44,24 C34,12 16,12 8,24 L8,60 C16,74 34,74 44,64" stroke="#3F3F46" stroke-width="4" fill="none" stroke-linecap="round" transform="translate(3,-3)"/>
+        </g>
+
+        <!-- 'A' - isometric triangular prism -->
+        <g transform="translate(255, 10)">
+          <!-- Front -->
+          <path d="M0,90 L26,0 L52,90" stroke="#FAFAFA" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="10" y1="62" x2="42" y2="62" stroke="#FAFAFA" stroke-width="7" stroke-linecap="round"/>
+          <!-- Depth -->
+          <path d="M4,86 L30,-4 L56,86" stroke="#3F3F46" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(3,-3)"/>
+          <line x1="14" y1="58" x2="46" y2="58" stroke="#3F3F46" stroke-width="4" stroke-linecap="round" transform="translate(3,-3)"/>
+        </g>
+
+        <!-- 'g' - with Mobius twist descender -->
+        <g transform="translate(330, 10)">
+          <!-- Bowl -->
+          <ellipse cx="22" cy="45" rx="22" ry="24" stroke="#FAFAFA" stroke-width="7" fill="none"/>
+          <!-- Stem + Mobius descender -->
+          <path d="M44,28 L44,82 C44,98 22,100 14,88 C8,78 18,70 28,76" stroke="#FAFAFA" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <!-- Depth -->
+          <ellipse cx="26" cy="41" rx="22" ry="24" stroke="#3F3F46" stroke-width="4" fill="none"/>
+        </g>
+
+        <!-- 'e' -->
+        <g transform="translate(400, 10)">
+          <path d="M40,50 L4,50 C4,30 14,18 26,18 C38,18 44,28 44,42 L44,50 L4,50 C4,72 14,82 26,82 C36,82 42,74 44,66" stroke="#FAFAFA" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M44,46 L8,46 C8,26 18,14 30,14 C42,14 48,24 48,38 L48,46 L8,46 C8,68 18,78 30,78 C40,78 46,70 48,62" stroke="#3F3F46" stroke-width="4" fill="none" stroke-linecap="round" transform="translate(3,-3)"/>
+        </g>
+
+        <!-- 'n' -->
+        <g transform="translate(468, 10)">
+          <path d="M4,90 L4,28 C4,18 18,14 28,20 L40,28 L40,90" stroke="#FAFAFA" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8,86 L8,24 C8,14 22,10 32,16 L44,24 L44,86" stroke="#3F3F46" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(3,-3)"/>
+        </g>
+
+        <!-- 't' -->
+        <g transform="translate(530, 10)">
+          <path d="M18,10 L18,74 C18,84 24,88 32,84" stroke="#FAFAFA" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <line x1="4" y1="30" x2="34" y2="30" stroke="#FAFAFA" stroke-width="7" stroke-linecap="round"/>
+          <!-- Depth -->
+          <path d="M22,6 L22,70 C22,80 28,84 36,80" stroke="#3F3F46" stroke-width="4" fill="none" stroke-linecap="round" transform="translate(3,-3)"/>
+          <line x1="8" y1="26" x2="38" y2="26" stroke="#3F3F46" stroke-width="4" stroke-linecap="round" transform="translate(3,-3)"/>
+        </g>
+
+        <!-- Cyan laser line through all letters -->
+        <line x1="20" y1="55" x2="580" y2="55" stroke="#06B6D4" stroke-width="2" filter="url(#laser-glow)" class="c5-laser"/>
+
+      </svg>
+    </div>
+    <div class="concept-meta">
+      <div>
+        <div class="concept-num">Concept 05</div>
+        <div class="concept-name">The Typographic Illusion</div>
+        <div class="concept-why">No icon. No symbol. Just "docAgent" constructed from isometric 3D letterforms — each letter is an architectural beam floating in space. A cyan laser line runs through all letters at the same depth. Reads as text from afar, reveals impossible 3D construction up close.</div>
+      </div>
+      <div>
+        <div class="concept-why" style="margin-bottom: 16px;">Typography-as-logo is the premium tier of branding (Cursor Gothic, OpenAI Sans). The depth illusion communicates "we see deeper into your documents." The word itself IS the logo — no icon needed.</div>
+        <div class="concept-tags">
+          <span class="tag">typography hero</span>
+          <span class="tag">isometric 3D</span>
+          <span class="tag">no icon needed</span>
+          <span class="tag">premium tier</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MINI COMPARISON -->
+<div class="compare-section" style="padding-bottom: 80px;">
+  <div class="compare-title">All Concepts — Side by Side</div>
+  <div class="compare-grid">
+    <div class="compare-card" style="background: radial-gradient(ellipse, #0A0F1A 0%, #0E0E12 100%);">
+      <svg viewBox="0 0 100 100" width="60" height="60" fill="none">
+        <path d="M22,14 L60,14 L68,22 L68,50" stroke="url(#fold-grad)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M68,50 L68,58 L50,70 L32,58 L32,50" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+        <path d="M22,14 L22,78 L68,78 L68,65" stroke="#06B6D4" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="50" cy="58" r="2.5" fill="#F59E0B" opacity="0.8"/>
+      </svg>
+      <div class="compare-label">01 · Folding Paradox</div>
+    </div>
+    <div class="compare-card" style="background: radial-gradient(ellipse at 30%, #0A0F1A 0%, #0E0E12 100%);">
+      <svg viewBox="0 0 80 60" width="56" height="42" fill="none">
+        <rect x="6" y="8" width="24" height="32" rx="2" stroke="#CBD5E1" stroke-width="1.5" fill="none"/>
+        <circle cx="42" cy="18" r="1.5" fill="#06B6D4" opacity="0.8"/>
+        <circle cx="46" cy="26" r="1.8" fill="#6366F1" opacity="0.6"/>
+        <circle cx="50" cy="20" r="1.2" fill="#8B5CF6" opacity="0.5"/>
+        <circle cx="44" cy="32" r="1.4" fill="#A78BFA" opacity="0.4"/>
+        <circle cx="54" cy="28" r="1" fill="#C4B5FD" opacity="0.3"/>
+        <circle cx="48" cy="36" r="0.8" fill="#8B5CF6" opacity="0.25"/>
+      </svg>
+      <div class="compare-label">02 · Dissolving Page</div>
+    </div>
+    <div class="compare-card" style="background: radial-gradient(ellipse, #0C0C14 0%, #0E0E12 100%);">
+      <svg viewBox="0 0 80 60" width="56" height="42" fill="none">
+        <rect x="10" y="5" width="16" height="50" rx="0" fill="#06B6D4"/>
+        <ellipse cx="20" cy="38" rx="12" ry="14" fill="#0C0C14"/>
+        <path d="M32,55 L42,5 L52,55 Z" fill="#06B6D4"/>
+        <path d="M37,42 L42,22 L47,42 Z" fill="#0C0C14"/>
+        <rect x="36" y="35" width="12" height="5" fill="#0C0C14"/>
+        <circle cx="30" cy="32" r="3" fill="#F59E0B"/>
+        <circle cx="30" cy="32" r="1.5" fill="#FAFAFA"/>
+      </svg>
+      <div class="compare-label">03 · Negative Space</div>
+    </div>
+    <div class="compare-card">
+      <svg viewBox="0 0 60 60" width="52" height="52">
+        <defs>
+          <radialGradient id="cm1" cx="25%" cy="20%" r="60%">
+            <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#06B6D4" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="cm2" cx="75%" cy="30%" r="55%">
+            <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="cm3" cx="60%" cy="80%" r="50%">
+            <stop offset="0%" stop-color="#EC4899" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#EC4899" stop-opacity="0"/>
+          </radialGradient>
+          <clipPath id="cm-clip"><rect x="4" y="4" width="52" height="52" rx="12"/></clipPath>
+        </defs>
+        <g clip-path="url(#cm-clip)">
+          <rect width="60" height="60" fill="#0F172A"/>
+          <rect width="60" height="60" fill="url(#cm1)"/>
+          <rect width="60" height="60" fill="url(#cm2)"/>
+          <rect width="60" height="60" fill="url(#cm3)"/>
+        </g>
+        <rect x="4" y="4" width="52" height="52" rx="12" stroke="rgba(255,255,255,0.06)" stroke-width="1" fill="none"/>
+      </svg>
+      <div class="compare-label">04 · Mesh Bloom</div>
+    </div>
+    <div class="compare-card" style="background: radial-gradient(ellipse, #08080E 0%, #0E0E12 100%);">
+      <div style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #FAFAFA; text-shadow: 2px -2px 0 #3F3F46; position: relative;">
+        docAgent
+        <div style="position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: #06B6D4; box-shadow: 0 0 8px #06B6D4; opacity: 0.7;"></div>
+      </div>
+      <div class="compare-label">05 · Typo Illusion</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

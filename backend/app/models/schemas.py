@@ -326,6 +326,7 @@ class AnalysisSummary(BaseModel):
     submission_deadline: Optional[str] = None
     completeness_score: Optional[float] = None
     procurement_type: Optional[str] = None
+    procurement_reference: Optional[str] = None
 
 
 class AnalysisDetail(BaseModel):
@@ -371,3 +372,108 @@ class ChatMessage(BaseModel):
     role: str  # "user" | "assistant"
     content: str
     timestamp: Optional[datetime] = None
+
+
+# ── User / Auth schemas ───────────────────────────────────────────────────────
+
+
+class UserActivity(BaseModel):
+    id: str
+    user_id: str
+    action: str  # login, logout, analysis_started, analysis_completed, export, chat
+    metadata: Optional[dict] = None
+    created_at: datetime
+
+
+class UserSettings(BaseModel):
+    default_model: Optional[str] = None
+    theme: str = "system"
+    language: str = "lt"
+    notifications_enabled: bool = True
+    items_per_page: int = 10
+
+
+class UserSettingsUpdate(BaseModel):
+    default_model: Optional[str] = None
+    theme: Optional[str] = None
+    language: Optional[str] = None
+    notifications_enabled: Optional[bool] = None
+    items_per_page: Optional[int] = None
+
+
+class SavedReport(BaseModel):
+    id: str
+    user_id: str
+    analysis_id: str
+    title: Optional[str] = None
+    notes: Optional[str] = None
+    pinned: bool = False
+    created_at: datetime
+
+
+class SavedReportCreate(BaseModel):
+    analysis_id: str
+    title: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class SavedReportUpdate(BaseModel):
+    title: Optional[str] = None
+    notes: Optional[str] = None
+    pinned: Optional[bool] = None
+
+
+class UserStats(BaseModel):
+    total_logins: int = 0
+    total_analyses: int = 0
+    total_exports: int = 0
+    last_active: Optional[datetime] = None
+
+
+class TokenUsageStats(BaseModel):
+    total_input_tokens: int = 0
+    total_output_tokens: int = 0
+    total_tokens: int = 0
+    total_cost_usd: float = 0.0
+    total_analyses: int = 0
+    total_files_processed: int = 0
+    total_pages_processed: int = 0
+    by_phase: dict = Field(default_factory=lambda: {
+        "extraction": {"input": 0, "output": 0},
+        "aggregation": {"input": 0, "output": 0},
+        "evaluation": {"input": 0, "output": 0},
+    })
+
+
+# ── Notes schemas ──────────────────────────────────────────────────────────────
+
+
+class NoteCreate(BaseModel):
+    title: str = ""
+    content: str = ""
+    status: str = Field("idea", description="idea | in_progress | done | archived")
+    priority: str = Field("medium", description="low | medium | high")
+    tags: list[str] = Field(default_factory=list)
+    color: Optional[str] = "default"
+    pinned: bool = False
+    analysis_id: Optional[str] = None
+
+
+class NoteUpdate(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    status: Optional[str] = None
+    priority: Optional[str] = None
+    tags: Optional[list[str]] = None
+    color: Optional[str] = None
+    pinned: Optional[bool] = None
+    analysis_id: Optional[str] = None
+
+
+class NoteBulkAction(BaseModel):
+    ids: list[str]
+
+
+class NoteBulkStatusUpdate(BaseModel):
+    ids: list[str]
+    status: str

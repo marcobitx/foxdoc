@@ -30,7 +30,7 @@ function ProviderPill({ p, suffix }: { p: Provider; suffix: string }) {
   return (
     <div
       key={`${suffix}-${p.name}`}
-      className="flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-full border bg-surface-900/20 transition-all duration-300 flex-shrink-0 cursor-default select-none hover:bg-surface-800/40"
+      className="flex items-center gap-2 px-4 py-1.5 mx-1.5 rounded-full border bg-surface-800/40 transition-all duration-300 flex-shrink-0 cursor-default select-none hover:bg-surface-700/50"
       style={{ borderColor: `${color}25` }}
     >
       <ProviderLogo modelId={p.modelId} size={16} />
@@ -52,8 +52,8 @@ export default function ModelCarousel() {
       </p>
 
       <div className="relative overflow-hidden">
-        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-surface-950 to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-surface-950 to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#342a24] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#342a24] to-transparent z-10 pointer-events-none" />
 
         <div className="flex marquee-track hover:[animation-play-state:paused]">
           {PROVIDERS.map((p) => (

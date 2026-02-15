@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>docAI — Brand Identity</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #08090E;
+    color: #E2E8F0;
+    min-height: 100vh;
+  }
+
+  .showcase {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #64748B;
+    margin-bottom: 60px;
+  }
+
+  .section {
+    margin-bottom: 80px;
+  }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #475569;
+    margin-bottom: 30px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1E293B;
+  }
+
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
+  }
+
+  .logo-card {
+    border-radius: 16px;
+    padding: 60px 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .logo-card.dark {
+    background: #0F1219;
+  }
+
+  .logo-card.light {
+    background: #F8FAFC;
+  }
+
+  .logo-card.gradient {
+    background: linear-gradient(135deg, #0F1219 0%, #1a1f35 100%);
+  }
+
+  .logo-card.accent-bg {
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+  }
+
+  .logo-card .label {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.35;
+  }
+
+  .logo-card.light .label { color: #0F172A; }
+
+  /* Icon styles */
+  .icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 24px;
+  }
+
+  .icon-card {
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .icon-card.dark { background: #0F1219; }
+  .icon-card.light { background: #F8FAFC; }
+  .icon-card.gradient { background: linear-gradient(135deg, #0F1219 0%, #1a1f35 100%); }
+  .icon-card.accent-bg { background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%); }
+
+  /* Color palette */
+  .palette {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .swatch {
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .swatch span { opacity: 0.8; }
+
+  .type-specimen {
+    background: #0F1219;
+    border-radius: 16px;
+    padding: 50px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .type-specimen .brand-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+  }
+
+  .type-specimen .brand-name .doc { color: #E2E8F0; }
+  .type-specimen .brand-name .ai {
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .type-specimen .tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #64748B;
+    letter-spacing: 0.5px;
+  }
+
+  /* Sizing showcase */
+  .sizes {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    flex-wrap: wrap;
+    background: #0F1219;
+    border-radius: 16px;
+    padding: 50px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .size-item {
+    text-align: center;
+  }
+
+  .size-item .size-label {
+    font-size: 10px;
+    color: #475569;
+    margin-top: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* App icon */
+  .app-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+  }
+
+  .app-icon-card {
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-height: 200px;
+    background: #0F1219;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .app-icon-card .label {
+    font-size: 10px;
+    color: #475569;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="showcase">
+
+<h1>docAI — Brand Identity System</h1>
+
+<!-- ============================================ -->
+<!-- SECTION: Primary Logo -->
+<!-- ============================================ -->
+<div class="section">
+  <div class="section-title">Primary Logo — Full Lockup</div>
+  <div class="logo-grid">
+
+    <!-- Dark background -->
+    <div class="logo-card dark">
+      <svg width="260" height="56" viewBox="0 0 260 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Icon: Document with AI spark -->
+        <g>
+          <!-- Document body -->
+          <rect x="2" y="2" width="34" height="44" rx="4" fill="none" stroke="#E2E8F0" stroke-width="2.2"/>
+          <!-- Corner fold -->
+          <path d="M26 2V12C26 13.1 26.9 14 28 14H36" stroke="#E2E8F0" stroke-width="2.2" fill="none"/>
+          <path d="M26 2L36 12" stroke="none"/>
+          <!-- Text lines -->
+          <line x1="9" y1="22" x2="22" y2="22" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="28" x2="28" y2="28" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="34" x2="19" y2="34" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+          <!-- AI Spark / Analysis indicator -->
+          <g transform="translate(28, 34)">
+            <circle cx="0" cy="0" r="8" fill="url(#sparkGlow)" opacity="0.3"/>
+            <circle cx="0" cy="0" r="3" fill="url(#sparkGrad)"/>
+            <!-- Spark rays -->
+            <line x1="0" y1="-5.5" x2="0" y2="-7.5" stroke="url(#sparkGrad)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="0" y1="5.5" x2="0" y2="7.5" stroke="url(#sparkGrad)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="-5.5" y1="0" x2="-7.5" y2="0" stroke="url(#sparkGrad)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="5.5" y1="0" x2="7.5" y2="0" stroke="url(#sparkGrad)" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Diagonal rays -->
+            <line x1="-3.9" y1="-3.9" x2="-5.3" y2="-5.3" stroke="url(#sparkGrad)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="3.9" y1="-3.9" x2="5.3" y2="-5.3" stroke="url(#sparkGrad)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="-3.9" y1="3.9" x2="-5.3" y2="5.3" stroke="url(#sparkGrad)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="3.9" y1="3.9" x2="5.3" y2="5.3" stroke="url(#sparkGrad)" stroke-width="1.2" stroke-linecap="round"/>
+          </g>
+        </g>
+        <!-- Wordmark -->
+        <text x="52" y="36" font-family="'Space Grotesk', sans-serif" font-size="38" font-weight="700" letter-spacing="-0.5">
+          <tspan fill="#E2E8F0">doc</tspan><tspan fill="url(#textGrad)">AI</tspan>
+        </text>
+        <!-- Gradients -->
+        <defs>
+          <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3B82F6"/>
+            <stop offset="100%" stop-color="#8B5CF6"/>
+          </linearGradient>
+          <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3B82F6"/>
+            <stop offset="100%" stop-color="#8B5CF6"/>
+          </linearGradient>
+          <radialGradient id="sparkGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <span class="label">Dark</span>
+    </div>
+
+    <!-- Light background -->
+    <div class="logo-card light">
+      <svg width="260" height="56" viewBox="0 0 260 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <rect x="2" y="2" width="34" height="44" rx="4" fill="none" stroke="#0F172A" stroke-width="2.2"/>
+          <path d="M26 2V12C26 13.1 26.9 14 28 14H36" stroke="#0F172A" stroke-width="2.2" fill="none"/>
+          <line x1="9" y1="22" x2="22" y2="22" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="28" x2="28" y2="28" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="34" x2="19" y2="34" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+          <g transform="translate(28, 34)">
+            <circle cx="0" cy="0" r="8" fill="url(#sparkGlowL)" opacity="0.25"/>
+            <circle cx="0" cy="0" r="3" fill="url(#sparkGradL)"/>
+            <line x1="0" y1="-5.5" x2="0" y2="-7.5" stroke="url(#sparkGradL)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="0" y1="5.5" x2="0" y2="7.5" stroke="url(#sparkGradL)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="-5.5" y1="0" x2="-7.5" y2="0" stroke="url(#sparkGradL)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="5.5" y1="0" x2="7.5" y2="0" stroke="url(#sparkGradL)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="-3.9" y1="-3.9" x2="-5.3" y2="-5.3" stroke="url(#sparkGradL)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="3.9" y1="-3.9" x2="5.3" y2="-5.3" stroke="url(#sparkGradL)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="-3.9" y1="3.9" x2="-5.3" y2="5.3" stroke="url(#sparkGradL)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="3.9" y1="3.9" x2="5.3" y2="5.3" stroke="url(#sparkGradL)" stroke-width="1.2" stroke-linecap="round"/>
+          </g>
+        </g>
+        <text x="52" y="36" font-family="'Space Grotesk', sans-serif" font-size="38" font-weight="700" letter-spacing="-0.5">
+          <tspan fill="#0F172A">doc</tspan><tspan fill="url(#textGradL)">AI</tspan>
+        </text>
+        <defs>
+          <linearGradient id="sparkGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2563EB"/>
+            <stop offset="100%" stop-color="#7C3AED"/>
+          </linearGradient>
+          <linearGradient id="textGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2563EB"/>
+            <stop offset="100%" stop-color="#7C3AED"/>
+          </linearGradient>
+          <radialGradient id="sparkGlowL" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#2563EB" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <span class="label" style="color:#0F172A">Light</span>
+    </div>
+
+    <!-- Gradient background -->
+    <div class="logo-card gradient">
+      <svg width="260" height="56" viewBox="0 0 260 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <rect x="2" y="2" width="34" height="44" rx="4" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/>
+          <path d="M26 2V12C26 13.1 26.9 14 28 14H36" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" fill="none"/>
+          <line x1="9" y1="22" x2="22" y2="22" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="28" x2="28" y2="28" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="34" x2="19" y2="34" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/>
+          <g transform="translate(28, 34)">
+            <circle cx="0" cy="0" r="8" fill="url(#sparkGlowG)" opacity="0.4"/>
+            <circle cx="0" cy="0" r="3" fill="url(#sparkGradG)"/>
+            <line x1="0" y1="-5.5" x2="0" y2="-7.5" stroke="url(#sparkGradG)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="0" y1="5.5" x2="0" y2="7.5" stroke="url(#sparkGradG)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="-5.5" y1="0" x2="-7.5" y2="0" stroke="url(#sparkGradG)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="5.5" y1="0" x2="7.5" y2="0" stroke="url(#sparkGradG)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="-3.9" y1="-3.9" x2="-5.3" y2="-5.3" stroke="url(#sparkGradG)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="3.9" y1="-3.9" x2="5.3" y2="-5.3" stroke="url(#sparkGradG)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="-3.9" y1="3.9" x2="-5.3" y2="5.3" stroke="url(#sparkGradG)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="3.9" y1="3.9" x2="5.3" y2="5.3" stroke="url(#sparkGradG)" stroke-width="1.2" stroke-linecap="round"/>
+          </g>
+        </g>
+        <text x="52" y="36" font-family="'Space Grotesk', sans-serif" font-size="38" font-weight="700" letter-spacing="-0.5">
+          <tspan fill="rgba(255,255,255,0.95)">doc</tspan><tspan fill="url(#textGradG)">AI</tspan>
+        </text>
+        <defs>
+          <linearGradient id="sparkGradG" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA"/>
+            <stop offset="100%" stop-color="#A78BFA"/>
+          </linearGradient>
+          <linearGradient id="textGradG" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA"/>
+            <stop offset="100%" stop-color="#A78BFA"/>
+          </linearGradient>
+          <radialGradient id="sparkGlowG" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <span class="label">Gradient</span>
+    </div>
+
+    <!-- On accent -->
+    <div class="logo-card accent-bg">
+      <svg width="260" height="56" viewBox="0 0 260 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <rect x="2" y="2" width="34" height="44" rx="4" fill="none" stroke="white" stroke-width="2.2"/>
+          <path d="M26 2V12C26 13.1 26.9 14 28 14H36" stroke="white" stroke-width="2.2" fill="none"/>
+          <line x1="9" y1="22" x2="22" y2="22" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="28" x2="28" y2="28" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="9" y1="34" x2="19" y2="34" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+          <g transform="translate(28, 34)">
+            <circle cx="0" cy="0" r="8" fill="rgba(255,255,255,0.15)"/>
+            <circle cx="0" cy="0" r="3" fill="white"/>
+            <line x1="0" y1="-5.5" x2="0" y2="-7.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="0" y1="5.5" x2="0" y2="7.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="-5.5" y1="0" x2="-7.5" y2="0" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="5.5" y1="0" x2="7.5" y2="0" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="-3.9" y1="-3.9" x2="-5.3" y2="-5.3" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="3.9" y1="-3.9" x2="5.3" y2="-5.3" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="-3.9" y1="3.9" x2="-5.3" y2="5.3" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="3.9" y1="3.9" x2="5.3" y2="5.3" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+          </g>
+        </g>
+        <text x="52" y="36" font-family="'Space Grotesk', sans-serif" font-size="38" font-weight="700" letter-spacing="-0.5" fill="white">
+          <tspan>doc</tspan><tspan>AI</tspan>
+        </text>
+      </svg>
+      <span class="label" style="color:rgba(255,255,255,0.5)">On Accent</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION: Icon Only -->
+<!-- ============================================ -->
+<div class="section">
+  <div class="section-title">Icon — Standalone Mark</div>
+  <div class="icon-grid">
+
+    <div class="icon-card dark">
+      <svg width="64" height="80" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="50" height="66" rx="6" fill="none" stroke="#E2E8F0" stroke-width="3"/>
+        <path d="M38 3V18C38 19.66 39.34 21 41 21H53" stroke="#E2E8F0" stroke-width="3" fill="none"/>
+        <line x1="14" y1="34" x2="30" y2="34" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="42" x2="40" y2="42" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="50" x2="26" y2="50" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- AI Spark -->
+        <g transform="translate(42, 52)">
+          <circle cx="0" cy="0" r="12" fill="url(#icoGlow1)" opacity="0.35"/>
+          <circle cx="0" cy="0" r="4.5" fill="url(#icoGrad1)"/>
+          <line x1="0" y1="-8" x2="0" y2="-11" stroke="url(#icoGrad1)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="0" y1="8" x2="0" y2="11" stroke="url(#icoGrad1)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-8" y1="0" x2="-11" y2="0" stroke="url(#icoGrad1)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="0" x2="11" y2="0" stroke="url(#icoGrad1)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-5.7" y1="-5.7" x2="-7.8" y2="-7.8" stroke="url(#icoGrad1)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="-5.7" x2="7.8" y2="-7.8" stroke="url(#icoGrad1)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-5.7" y1="5.7" x2="-7.8" y2="7.8" stroke="url(#icoGrad1)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="5.7" x2="7.8" y2="7.8" stroke="url(#icoGrad1)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <defs>
+          <linearGradient id="icoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3B82F6"/>
+            <stop offset="100%" stop-color="#8B5CF6"/>
+          </linearGradient>
+          <radialGradient id="icoGlow1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="icon-card light">
+      <svg width="64" height="80" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="50" height="66" rx="6" fill="none" stroke="#0F172A" stroke-width="3"/>
+        <path d="M38 3V18C38 19.66 39.34 21 41 21H53" stroke="#0F172A" stroke-width="3" fill="none"/>
+        <line x1="14" y1="34" x2="30" y2="34" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="42" x2="40" y2="42" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="50" x2="26" y2="50" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+        <g transform="translate(42, 52)">
+          <circle cx="0" cy="0" r="12" fill="url(#icoGlow2)" opacity="0.3"/>
+          <circle cx="0" cy="0" r="4.5" fill="url(#icoGrad2)"/>
+          <line x1="0" y1="-8" x2="0" y2="-11" stroke="url(#icoGrad2)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="0" y1="8" x2="0" y2="11" stroke="url(#icoGrad2)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-8" y1="0" x2="-11" y2="0" stroke="url(#icoGrad2)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="0" x2="11" y2="0" stroke="url(#icoGrad2)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-5.7" y1="-5.7" x2="-7.8" y2="-7.8" stroke="url(#icoGrad2)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="-5.7" x2="7.8" y2="-7.8" stroke="url(#icoGrad2)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-5.7" y1="5.7" x2="-7.8" y2="7.8" stroke="url(#icoGrad2)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="5.7" x2="7.8" y2="7.8" stroke="url(#icoGrad2)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <defs>
+          <linearGradient id="icoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2563EB"/>
+            <stop offset="100%" stop-color="#7C3AED"/>
+          </linearGradient>
+          <radialGradient id="icoGlow2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#2563EB" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="icon-card gradient">
+      <svg width="64" height="80" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="50" height="66" rx="6" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="3"/>
+        <path d="M38 3V18C38 19.66 39.34 21 41 21H53" stroke="rgba(255,255,255,0.85)" stroke-width="3" fill="none"/>
+        <line x1="14" y1="34" x2="30" y2="34" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="42" x2="40" y2="42" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="50" x2="26" y2="50" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+        <g transform="translate(42, 52)">
+          <circle cx="0" cy="0" r="12" fill="url(#icoGlow3)" opacity="0.4"/>
+          <circle cx="0" cy="0" r="4.5" fill="url(#icoGrad3)"/>
+          <line x1="0" y1="-8" x2="0" y2="-11" stroke="url(#icoGrad3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="0" y1="8" x2="0" y2="11" stroke="url(#icoGrad3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-8" y1="0" x2="-11" y2="0" stroke="url(#icoGrad3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="0" x2="11" y2="0" stroke="url(#icoGrad3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-5.7" y1="-5.7" x2="-7.8" y2="-7.8" stroke="url(#icoGrad3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="-5.7" x2="7.8" y2="-7.8" stroke="url(#icoGrad3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-5.7" y1="5.7" x2="-7.8" y2="7.8" stroke="url(#icoGrad3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="5.7" x2="7.8" y2="7.8" stroke="url(#icoGrad3)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <defs>
+          <linearGradient id="icoGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#60A5FA"/>
+            <stop offset="100%" stop-color="#A78BFA"/>
+          </linearGradient>
+          <radialGradient id="icoGlow3" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="icon-card accent-bg">
+      <svg width="64" height="80" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="50" height="66" rx="6" fill="none" stroke="white" stroke-width="3"/>
+        <path d="M38 3V18C38 19.66 39.34 21 41 21H53" stroke="white" stroke-width="3" fill="none"/>
+        <line x1="14" y1="34" x2="30" y2="34" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="42" x2="40" y2="42" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="50" x2="26" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
+        <g transform="translate(42, 52)">
+          <circle cx="0" cy="0" r="12" fill="rgba(255,255,255,0.15)"/>
+          <circle cx="0" cy="0" r="4.5" fill="white"/>
+          <line x1="0" y1="-8" x2="0" y2="-11" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="0" y1="8" x2="0" y2="11" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-8" y1="0" x2="-11" y2="0" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="0" x2="11" y2="0" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-5.7" y1="-5.7" x2="-7.8" y2="-7.8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="-5.7" x2="7.8" y2="-7.8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-5.7" y1="5.7" x2="-7.8" y2="7.8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="5.7" x2="7.8" y2="7.8" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION: App Icon -->
+<!-- ============================================ -->
+<div class="section">
+  <div class="section-title">App Icon — Rounded Square</div>
+  <div class="app-icon-grid">
+
+    <div class="app-icon-card">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Rounded square background -->
+        <rect width="80" height="80" rx="18" fill="url(#appGrad1)"/>
+        <!-- Document -->
+        <rect x="18" y="12" width="32" height="42" rx="4" fill="none" stroke="white" stroke-width="2.4"/>
+        <path d="M38 12V22C38 23.1 38.9 24 40 24H50" stroke="white" stroke-width="2.4" fill="none"/>
+        <line x1="24" y1="32" x2="34" y2="32" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="38" x2="42" y2="38" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="44" x2="32" y2="44" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Spark -->
+        <g transform="translate(52, 52)">
+          <circle cx="0" cy="0" r="10" fill="rgba(255,255,255,0.12)"/>
+          <circle cx="0" cy="0" r="3.5" fill="white"/>
+          <line x1="0" y1="-6.5" x2="0" y2="-9" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="0" y1="6.5" x2="0" y2="9" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-6.5" y1="0" x2="-9" y2="0" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="6.5" y1="0" x2="9" y2="0" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-4.6" y1="-4.6" x2="-6.4" y2="-6.4" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="4.6" y1="-4.6" x2="6.4" y2="-6.4" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="-4.6" y1="4.6" x2="-6.4" y2="6.4" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="4.6" y1="4.6" x2="6.4" y2="6.4" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        </g>
+        <defs>
+          <linearGradient id="appGrad1" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#2563EB"/>
+            <stop offset="1" stop-color="#7C3AED"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="label">Gradient</span>
+    </div>
+
+    <div class="app-icon-card">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="80" height="80" rx="18" fill="#0F172A"/>
+        <rect x="18" y="12" width="32" height="42" rx="4" fill="none" stroke="#E2E8F0" stroke-width="2.4"/>
+        <path d="M38 12V22C38 23.1 38.9 24 40 24H50" stroke="#E2E8F0" stroke-width="2.4" fill="none"/>
+        <line x1="24" y1="32" x2="34" y2="32" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="38" x2="42" y2="38" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="44" x2="32" y2="44" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+        <g transform="translate(52, 52)">
+          <circle cx="0" cy="0" r="10" fill="url(#appIcoGlow2)" opacity="0.35"/>
+          <circle cx="0" cy="0" r="3.5" fill="url(#appIcoGrad2)"/>
+          <line x1="0" y1="-6.5" x2="0" y2="-9" stroke="url(#appIcoGrad2)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="0" y1="6.5" x2="0" y2="9" stroke="url(#appIcoGrad2)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-6.5" y1="0" x2="-9" y2="0" stroke="url(#appIcoGrad2)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="6.5" y1="0" x2="9" y2="0" stroke="url(#appIcoGrad2)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-4.6" y1="-4.6" x2="-6.4" y2="-6.4" stroke="url(#appIcoGrad2)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="4.6" y1="-4.6" x2="6.4" y2="-6.4" stroke="url(#appIcoGrad2)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="-4.6" y1="4.6" x2="-6.4" y2="6.4" stroke="url(#appIcoGrad2)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="4.6" y1="4.6" x2="6.4" y2="6.4" stroke="url(#appIcoGrad2)" stroke-width="1.3" stroke-linecap="round"/>
+        </g>
+        <defs>
+          <linearGradient id="appIcoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3B82F6"/>
+            <stop offset="100%" stop-color="#8B5CF6"/>
+          </linearGradient>
+          <radialGradient id="appIcoGlow2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <span class="label">Dark</span>
+    </div>
+
+    <div class="app-icon-card" style="background:#F8FAFC; border-color:rgba(0,0,0,0.08);">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="80" height="80" rx="18" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+        <rect x="18" y="12" width="32" height="42" rx="4" fill="none" stroke="#0F172A" stroke-width="2.4"/>
+        <path d="M38 12V22C38 23.1 38.9 24 40 24H50" stroke="#0F172A" stroke-width="2.4" fill="none"/>
+        <line x1="24" y1="32" x2="34" y2="32" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="38" x2="42" y2="38" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="44" x2="32" y2="44" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+        <g transform="translate(52, 52)">
+          <circle cx="0" cy="0" r="10" fill="url(#appIcoGlow3)" opacity="0.25"/>
+          <circle cx="0" cy="0" r="3.5" fill="url(#appIcoGrad3)"/>
+          <line x1="0" y1="-6.5" x2="0" y2="-9" stroke="url(#appIcoGrad3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="0" y1="6.5" x2="0" y2="9" stroke="url(#appIcoGrad3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-6.5" y1="0" x2="-9" y2="0" stroke="url(#appIcoGrad3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="6.5" y1="0" x2="9" y2="0" stroke="url(#appIcoGrad3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-4.6" y1="-4.6" x2="-6.4" y2="-6.4" stroke="url(#appIcoGrad3)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="4.6" y1="-4.6" x2="6.4" y2="-6.4" stroke="url(#appIcoGrad3)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="-4.6" y1="4.6" x2="-6.4" y2="6.4" stroke="url(#appIcoGrad3)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="4.6" y1="4.6" x2="6.4" y2="6.4" stroke="url(#appIcoGrad3)" stroke-width="1.3" stroke-linecap="round"/>
+        </g>
+        <defs>
+          <linearGradient id="appIcoGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2563EB"/>
+            <stop offset="100%" stop-color="#7C3AED"/>
+          </linearGradient>
+          <radialGradient id="appIcoGlow3" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#2563EB" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <span class="label" style="color:#94A3B8">Light</span>
+    </div>
+
+    <div class="app-icon-card">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="80" height="80" rx="18" fill="#1E1B4B"/>
+        <rect x="18" y="12" width="32" height="42" rx="4" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.4"/>
+        <path d="M38 12V22C38 23.1 38.9 24 40 24H50" stroke="rgba(255,255,255,0.8)" stroke-width="2.4" fill="none"/>
+        <line x1="24" y1="32" x2="34" y2="32" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="38" x2="42" y2="38" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="24" y1="44" x2="32" y2="44" stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-linecap="round"/>
+        <g transform="translate(52, 52)">
+          <circle cx="0" cy="0" r="10" fill="url(#appIcoGlow4)" opacity="0.45"/>
+          <circle cx="0" cy="0" r="3.5" fill="url(#appIcoGrad4)"/>
+          <line x1="0" y1="-6.5" x2="0" y2="-9" stroke="url(#appIcoGrad4)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="0" y1="6.5" x2="0" y2="9" stroke="url(#appIcoGrad4)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-6.5" y1="0" x2="-9" y2="0" stroke="url(#appIcoGrad4)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="6.5" y1="0" x2="9" y2="0" stroke="url(#appIcoGrad4)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-4.6" y1="-4.6" x2="-6.4" y2="-6.4" stroke="url(#appIcoGrad4)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="4.6" y1="-4.6" x2="6.4" y2="-6.4" stroke="url(#appIcoGrad4)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="-4.6" y1="4.6" x2="-6.4" y2="6.4" stroke="url(#appIcoGrad4)" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="4.6" y1="4.6" x2="6.4" y2="6.4" stroke="url(#appIcoGrad4)" stroke-width="1.3" stroke-linecap="round"/>
+        </g>
+        <defs>
+          <linearGradient id="appIcoGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#818CF8"/>
+            <stop offset="100%" stop-color="#C084FC"/>
+          </linearGradient>
+          <radialGradient id="appIcoGlow4" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#818CF8" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#C084FC" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <span class="label">Indigo</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION: Typography -->
+<!-- ============================================ -->
+<div class="section">
+  <div class="section-title">Typography & Wordmark</div>
+  <div class="type-specimen">
+    <div class="brand-name"><span class="doc">doc</span><span class="ai">AI</span></div>
+    <div class="tagline">Intelligent Document Analysis</div>
+    <div style="margin-top:40px; display:flex; gap:60px; flex-wrap:wrap;">
+      <div>
+        <div style="font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#475569; margin-bottom:12px; font-weight:600;">Primary Font</div>
+        <div style="font-family:'Space Grotesk'; font-size:28px; font-weight:700; color:#E2E8F0;">Space Grotesk</div>
+        <div style="font-family:'Space Grotesk'; font-size:16px; font-weight:400; color:#64748B; margin-top:4px;">Bold 700 — Wordmark</div>
+      </div>
+      <div>
+        <div style="font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#475569; margin-bottom:12px; font-weight:600;">Body Font</div>
+        <div style="font-family:'Inter'; font-size:28px; font-weight:500; color:#E2E8F0;">Inter</div>
+        <div style="font-family:'Inter'; font-size:16px; font-weight:400; color:#64748B; margin-top:4px;">Regular 400 — Body Text</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION: Color Palette -->
+<!-- ============================================ -->
+<div class="section">
+  <div class="section-title">Color Palette</div>
+  <div class="palette">
+    <div class="swatch" style="background:#0F172A; color:#E2E8F0;">
+      <span>Deep Navy</span>
+      <span>#0F172A</span>
+    </div>
+    <div class="swatch" style="background:#E2E8F0; color:#0F172A;">
+      <span>Frost</span>
+      <span>#E2E8F0</span>
+    </div>
+    <div class="swatch" style="background:#3B82F6; color:white;">
+      <span>Electric Blue</span>
+      <span>#3B82F6</span>
+    </div>
+    <div class="swatch" style="background:#8B5CF6; color:white;">
+      <span>Violet</span>
+      <span>#8B5CF6</span>
+    </div>
+    <div class="swatch" style="background:linear-gradient(135deg,#3B82F6,#8B5CF6); color:white;">
+      <span>Accent Grad</span>
+      <span>Blue→Violet</span>
+    </div>
+    <div class="swatch" style="background:#475569; color:#E2E8F0;">
+      <span>Muted</span>
+      <span>#475569</span>
+    </div>
+    <div class="swatch" style="background:#1E293B; color:#94A3B8;">
+      <span>Surface</span>
+      <span>#1E293B</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION: Sizes -->
+<!-- ============================================ -->
+<div class="section">
+  <div class="section-title">Responsive Sizing</div>
+  <div class="sizes">
+
+    <div class="size-item">
+      <svg width="16" height="20" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="50" height="66" rx="6" fill="none" stroke="#E2E8F0" stroke-width="5"/>
+        <g transform="translate(42, 52)">
+          <circle cx="0" cy="0" r="4.5" fill="url(#szG1)"/>
+        </g>
+        <defs><linearGradient id="szG1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+      </svg>
+      <div class="size-label">16px</div>
+    </div>
+
+    <div class="size-item">
+      <svg width="24" height="30" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="50" height="66" rx="6" fill="none" stroke="#E2E8F0" stroke-width="4"/>
+        <g transform="translate(42, 52)">
+          <circle cx="0" cy="0" r="4.5" fill="url(#szG2)"/>
+          <line x1="0" y1="-8" x2="0" y2="-11" stroke="url(#szG2)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="0" y1="8" x2="0" y2="11" stroke="url(#szG2)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="-8" y1="0" x2="-11" y2="0" stroke="url(#szG2)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="8" y1="0" x2="11" y2="0" stroke="url(#szG2)" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+        <defs><linearGradient id="szG2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+      </svg>
+      <div class="size-label">24px</div>
+    </div>
+
+    <div class="size-item">
+      <svg width="40" height="50" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="50" height="66" rx="6" fill="none" stroke="#E2E8F0" stroke-width="3"/>
+        <path d="M38 3V18C38 19.66 39.34 21 41 21H53" stroke="#E2E8F0" stroke-width="3" fill="none"/>
+        <line x1="14" y1="34" x2="30" y2="34" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="42" x2="40" y2="42" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+        <g transform="translate(42, 52)">
+          <circle cx="0" cy="0" r="4.5" fill="url(#szG3)"/>
+          <line x1="0" y1="-8" x2="0" y2="-11" stroke="url(#szG3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="0" y1="8" x2="0" y2="11" stroke="url(#szG3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-8" y1="0" x2="-11" y2="0" stroke="url(#szG3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="0" x2="11" y2="0" stroke="url(#szG3)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-5.7" y1="-5.7" x2="-7.8" y2="-7.8" stroke="url(#szG3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="-5.7" x2="7.8" y2="-7.8" stroke="url(#szG3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-5.7" y1="5.7" x2="-7.8" y2="7.8" stroke="url(#szG3)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="5.7" x2="7.8" y2="7.8" stroke="url(#szG3)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <defs><linearGradient id="szG3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+      </svg>
+      <div class="size-label">40px</div>
+    </div>
+
+    <div class="size-item">
+      <svg width="64" height="80" viewBox="0 0 64 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="50" height="66" rx="6" fill="none" stroke="#E2E8F0" stroke-width="3"/>
+        <path d="M38 3V18C38 19.66 39.34 21 41 21H53" stroke="#E2E8F0" stroke-width="3" fill="none"/>
+        <line x1="14" y1="34" x2="30" y2="34" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="42" x2="40" y2="42" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="14" y1="50" x2="26" y2="50" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+        <g transform="translate(42, 52)">
+          <circle cx="0" cy="0" r="12" fill="url(#szGw4)" opacity="0.35"/>
+          <circle cx="0" cy="0" r="4.5" fill="url(#szG4)"/>
+          <line x1="0" y1="-8" x2="0" y2="-11" stroke="url(#szG4)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="0" y1="8" x2="0" y2="11" stroke="url(#szG4)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-8" y1="0" x2="-11" y2="0" stroke="url(#szG4)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="8" y1="0" x2="11" y2="0" stroke="url(#szG4)" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-5.7" y1="-5.7" x2="-7.8" y2="-7.8" stroke="url(#szG4)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="-5.7" x2="7.8" y2="-7.8" stroke="url(#szG4)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="-5.7" y1="5.7" x2="-7.8" y2="7.8" stroke="url(#szG4)" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="5.7" y1="5.7" x2="7.8" y2="7.8" stroke="url(#szG4)" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <defs>
+          <linearGradient id="szG4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient>
+          <radialGradient id="szGw4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3B82F6" stop-opacity="0.6"/><stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/></radialGradient>
+        </defs>
+      </svg>
+      <div class="size-label">64px</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION: Design Concept -->
+<!-- ============================================ -->
+<div class="section">
+  <div class="section-title">Design Concept</div>
+  <div style="background:#0F1219; border-radius:16px; padding:50px; border:1px solid rgba(255,255,255,0.06); max-width:700px;">
+    <div style="font-family:'Space Grotesk'; font-size:20px; font-weight:600; color:#E2E8F0; margin-bottom:20px;">Logo Anatomy</div>
+    <div style="display:flex; flex-direction:column; gap:16px; color:#94A3B8; font-size:14px; line-height:1.7;">
+      <div><span style="color:#3B82F6; font-weight:600;">Document shape</span> — Rounded rectangle with corner fold. Universally recognized as "document". Contains text lines representing content being analyzed.</div>
+      <div><span style="color:#8B5CF6; font-weight:600;">AI Spark</span> — 8-pointed starburst in the bottom-right corner, partially overlapping the document edge. Represents AI intelligence "illuminating" the document. The glow effect suggests active processing.</div>
+      <div><span style="color:#E2E8F0; font-weight:600;">Wordmark: doc</span> — Lowercase, clean, approachable. "doc" = document. Set in Space Grotesk Bold for geometric precision.</div>
+      <div><span style="background:linear-gradient(135deg,#3B82F6,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; font-weight:600;">Wordmark: AI</span> — Uppercase, gradient-filled, distinctive. The gradient (Electric Blue → Violet) signals intelligence and modernity. The case shift (doc → AI) creates visual rhythm.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

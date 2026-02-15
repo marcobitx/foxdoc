@@ -43,6 +43,10 @@ class ConvexDB:
             "documents": {},
             "chat_messages": {},
             "settings": {},
+            "user_activity_log": {},
+            "user_settings": {},
+            "saved_reports": {},
+            "notes": {},
         }
         self._lock = asyncio.Lock()  # thread-safety for in-memory store
 
@@ -440,6 +444,532 @@ class ConvexDB:
                 return []
             events: list[dict] = record.get("events_json") or []
             return list(events[since_index:])
+
+    # ------------------------------------------------------------------ #
+    #  Analyses — user-scoped queries
+    # ------------------------------------------------------------------ #
+
+    async def list_analyses_by_user(
+        self, user_id: str, limit: int = 20, offset: int = 0
+    ) -> list[dict]:
+        """List analyses owned by a specific user."""
+        if self.is_convex:
+            try:
+                return self._client.query(
+                    "analyses:listByUser",
+                    {"user_id": user_id, "limit": limit, "offset": offset},
+                )
+            except Exception as e:
+                logger.error("Convex list_analyses_by_user failed: %s", e)
+                raise
+
+        async with self._lock:
+            all_records = sorted(
+                [
+                    r
+                    for r in self._table("analyses").values()
+                    if r.get("user_id") == user_id
+                ],
+                key=lambda r: r.get("_creationTime", ""),
+                reverse=True,
+            )
+            page = all_records[offset : offset + limit]
+            return [dict(r) for r in page]
+
+    # ------------------------------------------------------------------ #
+    #  User Activity
+    # ------------------------------------------------------------------ #
+
+    async def log_activity(
+        self, user_id: str, action: str, metadata: Optional[dict] = None
+    ) -> str:
+        """Record a user action (login, logout, analysis, export, etc.)."""
+        if self.is_convex:
+            try:
+                result = self._client.mutation(
+                    "userActivity:log",
+                    {"user_id": user_id, "action": action, "metadata": metadata},
+                )
+                return str(result)
+            except Exception as e:
+                logger.error("Convex log_activity failed: %s", e)
+                raise
+
+        async with self._lock:
+            aid = self._new_id()
+            self._table("user_activity_log")[aid] = {
+                "_id": aid,
+                "_creationTime": self._now_iso(),
+                "user_id": user_id,
+                "action": action,
+                "metadata": metadata,
+            }
+            return aid
+
+    async def get_user_activity(
+        self, user_id: str, limit: int = 50, offset: int = 0
+    ) -> list[dict]:
+        """Get activity log for a user (paginated, most recent first)."""
+        if self.is_convex:
+            try:
+                return self._client.query(
+                    "userActivity:listByUser",
+                    {"user_id": user_id, "limit": limit, "offset": offset},
+                )
+            except Exception as e:
+                logger.error("Convex get_user_activity failed: %s", e)
+                raise
+
+        async with self._lock:
+            all_records = sorted(
+                [
+                    r
+                    for r in self._table("user_activity_log").values()
+                    if r.get("user_id") == user_id
+                ],
+                key=lambda r: r.get("_creationTime", ""),
+                reverse=True,
+            )
+            page = all_records[offset : offset + limit]
+            return [dict(r) for r in page]
+
+    async def get_user_stats(self, user_id: str) -> dict:
+        """Aggregate stats: total logins, analyses count, last active, etc."""
+        if self.is_convex:
+            try:
+                return self._client.query(
+                    "userActivity:getStats",
+                    {"user_id": user_id},
+                )
+            except Exception as e:
+                logger.error("Convex get_user_stats failed: %s", e)
+                raise
+
+        async with self._lock:
+            records = [
+                r
+                for r in self._table("user_activity_log").values()
+                if r.get("user_id") == user_id
+            ]
+            logins = sum(1 for r in records if r.get("action") == "login")
+            analyses = sum(
+                1 for r in records if r.get("action") == "analysis_started"
+            )
+            exports = sum(1 for r in records if r.get("action") == "export")
+            sorted_records = sorted(
+                records, key=lambda r: r.get("_creationTime", ""), reverse=True
+            )
+            last_active = (
+                sorted_records[0].get("_creationTime") if sorted_records else None
+            )
+            return {
+                "total_logins": logins,
+                "total_analyses": analyses,
+                "total_exports": exports,
+                "last_active": last_active,
+            }
+
+    # ------------------------------------------------------------------ #
+    #  User Settings
+    # ------------------------------------------------------------------ #
+
+    async def get_user_settings(self, user_id: str) -> dict:
+        """Get settings for a user (returns defaults if none exist)."""
+        if self.is_convex:
+            try:
+                return self._client.query(
+                    "userSettings:get",
+                    {"user_id": user_id},
+                )
+            except Exception as e:
+                logger.error("Convex get_user_settings failed: %s", e)
+                raise
+
+        async with self._lock:
+            for record in self._table("user_settings").values():
+                if record.get("user_id") == user_id:
+                    return dict(record)
+            # Return defaults
+            return {
+                "user_id": user_id,
+                "default_model": None,
+                "theme": "system",
+                "language": "lt",
+                "notifications_enabled": True,
+                "items_per_page": 10,
+            }
+
+    async def update_user_settings(self, user_id: str, **kwargs: Any) -> None:
+        """Update one or more user settings fields."""
+        if self.is_convex:
+            try:
+                self._client.mutation(
+                    "userSettings:update",
+                    {"user_id": user_id, **kwargs},
+                )
+                return
+            except Exception as e:
+                logger.error("Convex update_user_settings failed: %s", e)
+                raise
+
+        async with self._lock:
+            settings_table = self._table("user_settings")
+            for sid, record in settings_table.items():
+                if record.get("user_id") == user_id:
+                    record.update(kwargs)
+                    return
+            # Insert new
+            sid = self._new_id()
+            settings_table[sid] = {
+                "_id": sid,
+                "_creationTime": self._now_iso(),
+                "user_id": user_id,
+                **kwargs,
+            }
+
+    # ------------------------------------------------------------------ #
+    #  Saved Reports
+    # ------------------------------------------------------------------ #
+
+    async def save_report(
+        self,
+        user_id: str,
+        analysis_id: str,
+        title: Optional[str] = None,
+        notes: Optional[str] = None,
+    ) -> str:
+        """Bookmark an analysis. Returns bookmark ID."""
+        if self.is_convex:
+            try:
+                result = self._client.mutation(
+                    "savedReports:save",
+                    {
+                        "user_id": user_id,
+                        "analysis_id": analysis_id,
+                        "title": title,
+                        "notes": notes,
+                    },
+                )
+                return str(result)
+            except Exception as e:
+                logger.error("Convex save_report failed: %s", e)
+                raise
+
+        async with self._lock:
+            # Check if already saved
+            for record in self._table("saved_reports").values():
+                if (
+                    record.get("user_id") == user_id
+                    and record.get("analysis_id") == analysis_id
+                ):
+                    return record["_id"]
+
+            bid = self._new_id()
+            self._table("saved_reports")[bid] = {
+                "_id": bid,
+                "_creationTime": self._now_iso(),
+                "user_id": user_id,
+                "analysis_id": analysis_id,
+                "title": title,
+                "notes": notes,
+                "pinned": False,
+            }
+            return bid
+
+    async def unsave_report(self, user_id: str, analysis_id: str) -> None:
+        """Remove a bookmark."""
+        if self.is_convex:
+            try:
+                self._client.mutation(
+                    "savedReports:unsave",
+                    {"user_id": user_id, "analysis_id": analysis_id},
+                )
+                return
+            except Exception as e:
+                logger.error("Convex unsave_report failed: %s", e)
+                raise
+
+        async with self._lock:
+            table = self._table("saved_reports")
+            to_remove = [
+                sid
+                for sid, r in table.items()
+                if r.get("user_id") == user_id
+                and r.get("analysis_id") == analysis_id
+            ]
+            for sid in to_remove:
+                table.pop(sid, None)
+
+    async def get_saved_reports(self, user_id: str) -> list[dict]:
+        """Get all saved reports for a user."""
+        if self.is_convex:
+            try:
+                return self._client.query(
+                    "savedReports:listByUser",
+                    {"user_id": user_id},
+                )
+            except Exception as e:
+                logger.error("Convex get_saved_reports failed: %s", e)
+                raise
+
+        async with self._lock:
+            reports = [
+                dict(r)
+                for r in self._table("saved_reports").values()
+                if r.get("user_id") == user_id
+            ]
+            reports.sort(key=lambda r: r.get("_creationTime", ""), reverse=True)
+            return reports
+
+    async def is_report_saved(self, user_id: str, analysis_id: str) -> bool:
+        """Check if a specific analysis is bookmarked by the user."""
+        if self.is_convex:
+            try:
+                return self._client.query(
+                    "savedReports:isSaved",
+                    {"user_id": user_id, "analysis_id": analysis_id},
+                )
+            except Exception as e:
+                logger.error("Convex is_report_saved failed: %s", e)
+                raise
+
+        async with self._lock:
+            return any(
+                r.get("user_id") == user_id and r.get("analysis_id") == analysis_id
+                for r in self._table("saved_reports").values()
+            )
+
+    async def get_token_usage_stats(self) -> dict:
+        """Aggregate token usage from all completed analyses."""
+        analyses = await self.list_analyses(limit=1000, offset=0)
+        stats = {
+            "total_input_tokens": 0,
+            "total_output_tokens": 0,
+            "total_tokens": 0,
+            "total_cost_usd": 0.0,
+            "total_analyses": 0,
+            "total_files_processed": 0,
+            "total_pages_processed": 0,
+            "by_phase": {
+                "extraction": {"input": 0, "output": 0},
+                "aggregation": {"input": 0, "output": 0},
+                "evaluation": {"input": 0, "output": 0},
+            },
+        }
+        for a in analyses:
+            metrics = a.get("metrics_json")
+            if not metrics:
+                continue
+            stats["total_analyses"] += 1
+            stats["total_files_processed"] += metrics.get("total_files", 0)
+            stats["total_pages_processed"] += metrics.get("total_pages", 0)
+            stats["total_cost_usd"] += metrics.get("estimated_cost_usd", 0.0)
+
+            ext_in = metrics.get("tokens_extraction_input", 0)
+            ext_out = metrics.get("tokens_extraction_output", 0)
+            agg_in = metrics.get("tokens_aggregation_input", 0)
+            agg_out = metrics.get("tokens_aggregation_output", 0)
+            evl_in = metrics.get("tokens_evaluation_input", 0)
+            evl_out = metrics.get("tokens_evaluation_output", 0)
+
+            total_in = ext_in + agg_in + evl_in
+            total_out = ext_out + agg_out + evl_out
+
+            stats["total_input_tokens"] += total_in
+            stats["total_output_tokens"] += total_out
+            stats["total_tokens"] += total_in + total_out
+
+            stats["by_phase"]["extraction"]["input"] += ext_in
+            stats["by_phase"]["extraction"]["output"] += ext_out
+            stats["by_phase"]["aggregation"]["input"] += agg_in
+            stats["by_phase"]["aggregation"]["output"] += agg_out
+            stats["by_phase"]["evaluation"]["input"] += evl_in
+            stats["by_phase"]["evaluation"]["output"] += evl_out
+
+        return stats
+
+    async def update_saved_report(self, bookmark_id: str, **kwargs: Any) -> None:
+        """Edit title/notes/pinned on a saved report."""
+        if self.is_convex:
+            try:
+                self._client.mutation(
+                    "savedReports:updateNotes",
+                    {"id": bookmark_id, **kwargs},
+                )
+                return
+            except Exception as e:
+                logger.error("Convex update_saved_report failed: %s", e)
+                raise
+
+        async with self._lock:
+            record = self._table("saved_reports").get(bookmark_id)
+            if record is None:
+                raise KeyError(f"Saved report {bookmark_id} not found")
+            record.update(kwargs)
+
+    # ------------------------------------------------------------------ #
+    #  Notes
+    # ------------------------------------------------------------------ #
+
+    async def create_note(
+        self,
+        title: str = "",
+        content: str = "",
+        status: str = "idea",
+        priority: str = "medium",
+        tags: Optional[list[str]] = None,
+        color: Optional[str] = "default",
+        pinned: bool = False,
+        analysis_id: Optional[str] = None,
+    ) -> str:
+        """Create a new note. Returns note ID."""
+        if self.is_convex:
+            try:
+                args: dict[str, Any] = {
+                    "title": title,
+                    "content": content,
+                    "status": status,
+                    "priority": priority,
+                    "tags": tags or [],
+                    "pinned": pinned,
+                }
+                if color is not None:
+                    args["color"] = color
+                if analysis_id is not None:
+                    args["analysis_id"] = analysis_id
+                result = self._client.mutation("notes:create", args)
+                return str(result)
+            except Exception as e:
+                logger.error("Convex create_note failed: %s", e)
+                raise
+
+        async with self._lock:
+            nid = self._new_id()
+            now = self._now_iso()
+            self._table("notes")[nid] = {
+                "_id": nid,
+                "_creationTime": now,
+                "title": title,
+                "content": content,
+                "status": status,
+                "priority": priority,
+                "tags": tags or [],
+                "color": color,
+                "pinned": pinned,
+                "analysis_id": analysis_id,
+                "updated_at": int(datetime.now(timezone.utc).timestamp() * 1000),
+            }
+            return nid
+
+    async def update_note(self, note_id: str, **kwargs: Any) -> None:
+        """Partial update on a note."""
+        if self.is_convex:
+            try:
+                self._client.mutation(
+                    "notes:update",
+                    {"id": note_id, **kwargs},
+                )
+                return
+            except Exception as e:
+                logger.error("Convex update_note failed: %s", e)
+                raise
+
+        async with self._lock:
+            record = self._table("notes").get(note_id)
+            if record is None:
+                raise KeyError(f"Note {note_id} not found")
+            record.update(kwargs)
+            record["updated_at"] = int(
+                datetime.now(timezone.utc).timestamp() * 1000
+            )
+
+    async def delete_note(self, note_id: str) -> None:
+        """Delete a single note."""
+        if self.is_convex:
+            try:
+                self._client.mutation("notes:remove", {"id": note_id})
+                return
+            except Exception as e:
+                logger.error("Convex delete_note failed: %s", e)
+                raise
+
+        async with self._lock:
+            self._table("notes").pop(note_id, None)
+
+    async def bulk_delete_notes(self, note_ids: list[str]) -> None:
+        """Delete multiple notes at once."""
+        if self.is_convex:
+            try:
+                self._client.mutation("notes:bulkRemove", {"ids": note_ids})
+                return
+            except Exception as e:
+                logger.error("Convex bulk_delete_notes failed: %s", e)
+                raise
+
+        async with self._lock:
+            table = self._table("notes")
+            for nid in note_ids:
+                table.pop(nid, None)
+
+    async def bulk_update_notes_status(
+        self, note_ids: list[str], status: str
+    ) -> None:
+        """Change status on multiple notes."""
+        if self.is_convex:
+            try:
+                self._client.mutation(
+                    "notes:bulkUpdateStatus",
+                    {"ids": note_ids, "status": status},
+                )
+                return
+            except Exception as e:
+                logger.error("Convex bulk_update_notes_status failed: %s", e)
+                raise
+
+        async with self._lock:
+            table = self._table("notes")
+            now = int(datetime.now(timezone.utc).timestamp() * 1000)
+            for nid in note_ids:
+                record = table.get(nid)
+                if record:
+                    record["status"] = status
+                    record["updated_at"] = now
+
+    async def get_note(self, note_id: str) -> Optional[dict]:
+        """Return a note dict or None."""
+        if self.is_convex:
+            try:
+                return self._client.query("notes:get", {"id": note_id})
+            except Exception as e:
+                logger.error("Convex get_note failed: %s", e)
+                raise
+
+        async with self._lock:
+            record = self._table("notes").get(note_id)
+            return dict(record) if record is not None else None
+
+    async def list_notes(
+        self, limit: int = 100, offset: int = 0
+    ) -> list[dict]:
+        """List notes sorted by creation time descending."""
+        if self.is_convex:
+            try:
+                return self._client.query(
+                    "notes:list",
+                    {"limit": limit, "offset": offset},
+                )
+            except Exception as e:
+                logger.error("Convex list_notes failed: %s", e)
+                raise
+
+        async with self._lock:
+            all_records = sorted(
+                self._table("notes").values(),
+                key=lambda r: r.get("_creationTime", ""),
+                reverse=True,
+            )
+            page = all_records[offset : offset + limit]
+            return [dict(r) for r in page]
 
 
 # ------------------------------------------------------------------ #

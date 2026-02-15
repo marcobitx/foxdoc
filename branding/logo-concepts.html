@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>docAgent — Logo Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-dark: #09090B;
+    --bg-card: #18181B;
+    --bg-card-hover: #1E1E22;
+    --border: #27272A;
+    --text-primary: #FAFAFA;
+    --text-secondary: #A1A1AA;
+    --text-muted: #71717A;
+    --accent-cyan: #06B6D4;
+    --accent-blue: #3B82F6;
+    --accent-teal: #14B8A6;
+    --accent-amber: #F59E0B;
+    --accent-violet: #8B5CF6;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 60px 40px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 80px;
+  }
+
+  .header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+  }
+
+  .header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+
+  .header p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .concepts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .concept-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .concept-card:hover {
+    border-color: #3F3F46;
+    transform: translateY(-2px);
+  }
+
+  .concept-preview {
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .concept-info {
+    padding: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .concept-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 8px;
+  }
+
+  .concept-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .concept-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ============================================ */
+  /* CONCEPT A — Scanning Agent */
+  /* ============================================ */
+  .concept-a .concept-preview {
+    background: linear-gradient(135deg, #09090B 0%, #0C1222 100%);
+  }
+
+  .concept-a .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .concept-a .icon-wrap {
+    width: 72px;
+    height: 72px;
+    position: relative;
+  }
+
+  .concept-a .icon-wrap svg {
+    width: 72px;
+    height: 72px;
+  }
+
+  .concept-a .wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -1px;
+  }
+
+  .concept-a .wordmark .doc {
+    color: #A1A1AA;
+  }
+
+  .concept-a .wordmark .agent {
+    color: #FAFAFA;
+  }
+
+  /* ============================================ */
+  /* CONCEPT B — Prismatic dA Lettermark */
+  /* ============================================ */
+  .concept-b .concept-preview {
+    background: linear-gradient(160deg, #09090B 0%, #0A1628 50%, #09090B 100%);
+  }
+
+  .concept-b .logo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .concept-b .icon-wrap {
+    width: 100px;
+    height: 100px;
+    position: relative;
+  }
+
+  .concept-b .wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+
+  /* ============================================ */
+  /* CONCEPT C — Bold Wordmark + Dot Agent */
+  /* ============================================ */
+  .concept-c .concept-preview {
+    background: #FAFAF9;
+  }
+
+  .concept-c .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .concept-c .wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    color: #09090B;
+    position: relative;
+  }
+
+  .concept-c .wordmark .dot {
+    color: #06B6D4;
+  }
+
+  /* ============================================ */
+  /* CONCEPT D — Flowing Document Layers */
+  /* ============================================ */
+  .concept-d .concept-preview {
+    background: linear-gradient(145deg, #0F172A 0%, #09090B 100%);
+  }
+
+  .concept-d .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .concept-d .wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  .concept-d .wordmark .doc {
+    color: #94A3B8;
+  }
+
+  .concept-d .wordmark .agent {
+    color: #F8FAFC;
+  }
+
+  /* ============================================ */
+  /* VARIANTS SECTION */
+  /* ============================================ */
+  .variants-section {
+    max-width: 1400px;
+    margin: 80px auto 0;
+  }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .variants-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .variant-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    gap: 16px;
+  }
+
+  .variant-card.light {
+    background: #FAFAF9;
+    border-color: #E4E4E7;
+  }
+
+  .variant-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .variant-card.light .variant-label {
+    color: #71717A;
+  }
+
+  /* ============================================ */
+  /* FULL WIDTH CONCEPT E — Premium */
+  /* ============================================ */
+  .concept-full {
+    max-width: 1400px;
+    margin: 80px auto 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .concept-full .concept-preview {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #09090B 0%, #111827 50%, #09090B 100%);
+    position: relative;
+  }
+
+  .concept-full .concept-preview::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .concept-full .concept-info {
+    padding: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .concept-e .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .concept-e .wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -2px;
+  }
+
+  .concept-e .wordmark .doc {
+    color: #06B6D4;
+  }
+
+  .concept-e .wordmark .agent {
+    color: #FAFAFA;
+  }
+
+  /* ============================================ */
+  /* COLOR PALETTE SECTION */
+  /* ============================================ */
+  .palette-section {
+    max-width: 1400px;
+    margin: 80px auto 0;
+  }
+
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 16px;
+  }
+
+  .color-swatch {
+    aspect-ratio: 1;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px;
+    position: relative;
+    border: 1px solid var(--border);
+  }
+
+  .color-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .color-hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    opacity: 0.8;
+  }
+
+  /* ============================================ */
+  /* TYPOGRAPHY SECTION */
+  /* ============================================ */
+  .typo-section {
+    max-width: 1400px;
+    margin: 80px auto 0;
+    padding-bottom: 80px;
+  }
+
+  .typo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .typo-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+  }
+
+  .typo-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 20px;
+  }
+
+  .typo-sample {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+
+  .typo-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Glow effects */
+  @keyframes subtle-glow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+  }
+
+  .glow-dot {
+    animation: subtle-glow 3s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Brand Identity</h1>
+  <h2>docAgent</h2>
+  <p>Logo concepts for an AI-powered procurement document analysis platform</p>
+</div>
+
+<!-- CONCEPT GRID -->
+<div class="concepts-grid">
+
+  <!-- CONCEPT A — Scanning Agent Mark -->
+  <div class="concept-card concept-a">
+    <div class="concept-preview">
+      <div class="logo-wrap">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Document base -->
+            <rect x="12" y="6" width="42" height="54" rx="4" stroke="#3F3F46" stroke-width="1.5" fill="none"/>
+            <!-- Folded corner -->
+            <path d="M42 6V18H54" stroke="#3F3F46" stroke-width="1.5" fill="none"/>
+            <path d="M42 6L54 18" stroke="#3F3F46" stroke-width="1.5"/>
+            <!-- Scan line (agent) -->
+            <line x1="8" y1="36" x2="58" y2="36" stroke="#06B6D4" stroke-width="2" opacity="0.8"/>
+            <!-- Scan glow -->
+            <line x1="8" y1="36" x2="58" y2="36" stroke="#06B6D4" stroke-width="6" opacity="0.15"/>
+            <!-- Agent dot -->
+            <circle cx="58" cy="36" r="4" fill="#06B6D4" class="glow-dot"/>
+            <circle cx="58" cy="36" r="8" fill="#06B6D4" opacity="0.15" class="glow-dot"/>
+            <!-- Doc lines -->
+            <line x1="20" y1="26" x2="36" y2="26" stroke="#3F3F46" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="20" y1="46" x2="40" y2="46" stroke="#3F3F46" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="20" y1="52" x2="34" y2="52" stroke="#3F3F46" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="wordmark">
+          <span class="doc">doc</span><span class="agent">Agent</span>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-label">Concept A</div>
+      <div class="concept-title">Scanning Agent</div>
+      <div class="concept-desc">Minimal document icon with a cyan scan line + glowing agent dot. Directly communicates "AI scanning documents." Clean, tech-forward, instantly readable.</div>
+    </div>
+  </div>
+
+  <!-- CONCEPT B — Prismatic dA Lettermark -->
+  <div class="concept-card concept-b">
+    <div class="concept-preview">
+      <div class="logo-wrap">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background shape - hexagonal/diamond -->
+            <path d="M50 5L90 30V70L50 95L10 70V30L50 5Z" fill="none" stroke="#1E293B" stroke-width="1"/>
+
+            <!-- d letter - left side -->
+            <path d="M25 28V72" stroke="#06B6D4" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M25 45C25 35 35 28 45 28" stroke="#06B6D4" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M25 72C35 72 45 65 45 55" stroke="#06B6D4" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M45 28V55" stroke="#06B6D4" stroke-width="3.5" stroke-linecap="round"/>
+
+            <!-- A letter - right side, overlapping -->
+            <path d="M55 72L70 28L85 72" stroke="#FAFAFA" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <line x1="60" y1="58" x2="80" y2="58" stroke="#FAFAFA" stroke-width="3.5" stroke-linecap="round"/>
+
+            <!-- Connecting element - bridge between d and A -->
+            <line x1="45" y1="42" x2="55" y2="42" stroke="#06B6D4" stroke-width="2" opacity="0.5" stroke-dasharray="2 3"/>
+          </svg>
+        </div>
+        <div class="wordmark">docAgent</div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-label">Concept B</div>
+      <div class="concept-title">dA Lettermark</div>
+      <div class="concept-desc">Monogram combining "d" (cyan) and "A" (white) inside a geometric frame. The bridge between letters symbolizes connection between documents and AI intelligence.</div>
+    </div>
+  </div>
+
+  <!-- CONCEPT C — Clean Light Mode -->
+  <div class="concept-card concept-c">
+    <div class="concept-preview">
+      <div class="logo-wrap">
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Shield/badge shape -->
+          <path d="M26 2L48 14V32C48 42 38 50 26 50C14 50 4 42 4 32V14L26 2Z" fill="none" stroke="#09090B" stroke-width="2.5"/>
+          <!-- Inner agent eye -->
+          <circle cx="26" cy="28" r="8" stroke="#06B6D4" stroke-width="2.5" fill="none"/>
+          <circle cx="26" cy="28" r="3" fill="#06B6D4"/>
+          <!-- Top doc lines -->
+          <line x1="19" y1="14" x2="33" y2="14" stroke="#09090B" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="19" x2="30" y2="19" stroke="#09090B" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+        </svg>
+        <div class="wordmark">
+          doc<span class="dot">.</span>Agent
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-label">Concept C</div>
+      <div class="concept-title">Shield Agent — Light</div>
+      <div class="concept-desc">Trust-oriented shield mark with agent "eye" — communicates security and intelligent oversight. Light mode variant for versatile branding. The dot separator adds structure.</div>
+    </div>
+  </div>
+
+  <!-- CONCEPT D — Stacked Document Layers -->
+  <div class="concept-card concept-d">
+    <div class="concept-preview">
+      <div class="logo-wrap">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Back layer -->
+          <rect x="14" y="4" width="36" height="44" rx="3" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+          <!-- Middle layer -->
+          <rect x="10" y="10" width="36" height="44" rx="3" fill="#0F172A" stroke="#334155" stroke-width="1.5"/>
+          <!-- Front layer -->
+          <rect x="6" y="16" width="36" height="44" rx="3" fill="#09090B" stroke="#475569" stroke-width="1.5"/>
+          <!-- Front layer content lines -->
+          <line x1="14" y1="28" x2="34" y2="28" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="14" y1="34" x2="30" y2="34" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="14" y1="40" x2="26" y2="40" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Agent connector -->
+          <circle cx="52" cy="38" r="8" fill="none" stroke="#14B8A6" stroke-width="2"/>
+          <circle cx="52" cy="38" r="3" fill="#14B8A6"/>
+          <line x1="42" y1="38" x2="44" y2="38" stroke="#14B8A6" stroke-width="2" stroke-linecap="round"/>
+          <!-- Neural connections -->
+          <line x1="46" y1="32" x2="34" y2="28" stroke="#14B8A6" stroke-width="1" opacity="0.3" stroke-dasharray="2 3"/>
+          <line x1="46" y1="38" x2="34" y2="34" stroke="#14B8A6" stroke-width="1" opacity="0.3" stroke-dasharray="2 3"/>
+          <line x1="46" y1="44" x2="34" y2="40" stroke="#14B8A6" stroke-width="1" opacity="0.3" stroke-dasharray="2 3"/>
+        </svg>
+        <div class="wordmark">
+          <span class="doc">doc</span><span class="agent">Agent</span>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-label">Concept D</div>
+      <div class="concept-title">Document Layers + Agent</div>
+      <div class="concept-desc">Stacked document layers with an connected agent node. Shows multi-document processing with intelligent analysis. Teal accent differentiates from typical blue AI branding.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPT E — Full Width Premium -->
+<div class="concept-full concept-e">
+  <div class="concept-preview">
+    <div class="logo-wrap">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer ring -->
+        <circle cx="40" cy="40" r="36" stroke="#1E293B" stroke-width="1"/>
+
+        <!-- Abstract document shape - folded corner -->
+        <path d="M24 16H48L56 24V64H24V16Z" fill="none" stroke="#06B6D4" stroke-width="2"/>
+        <path d="M48 16V24H56" fill="none" stroke="#06B6D4" stroke-width="2"/>
+
+        <!-- Agent pulse rings -->
+        <circle cx="40" cy="44" r="10" stroke="#06B6D4" stroke-width="1.5" opacity="0.6" fill="none"/>
+        <circle cx="40" cy="44" r="5" stroke="#06B6D4" stroke-width="1.5" opacity="0.8" fill="none"/>
+        <circle cx="40" cy="44" r="2.5" fill="#06B6D4"/>
+
+        <!-- Data extraction lines -->
+        <line x1="30" y1="32" x2="44" y2="32" stroke="#334155" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="30" y1="37" x2="38" y2="37" stroke="#334155" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- Corner accent dots -->
+        <circle cx="56" cy="24" r="2" fill="#06B6D4" opacity="0.5"/>
+      </svg>
+      <div class="wordmark">
+        <span class="doc">doc</span><span class="agent">Agent</span>
+      </div>
+    </div>
+  </div>
+  <div class="concept-info">
+    <div class="concept-label">Concept E — Recommended</div>
+    <div class="concept-title">Document Pulse</div>
+    <div class="concept-desc">The hero concept. A document icon with radiating pulse rings — the agent "heartbeat" analyzing content. Combines the document metaphor with an intelligent scanning presence. Works at all sizes, from favicon to billboard. The concentric circles suggest both radar/scanning and the ripple effect of AI-powered insight.</div>
+  </div>
+</div>
+
+<!-- VARIANTS SECTION -->
+<div class="variants-section">
+  <div class="section-title">Logo Variants — Concept E</div>
+  <div class="variants-row">
+    <!-- Dark horizontal -->
+    <div class="variant-card">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <svg width="36" height="36" viewBox="0 0 80 80" fill="none">
+          <path d="M24 16H48L56 24V64H24V16Z" fill="none" stroke="#06B6D4" stroke-width="3"/>
+          <path d="M48 16V24H56" fill="none" stroke="#06B6D4" stroke-width="3"/>
+          <circle cx="40" cy="44" r="8" stroke="#06B6D4" stroke-width="2" opacity="0.6" fill="none"/>
+          <circle cx="40" cy="44" r="2.5" fill="#06B6D4"/>
+        </svg>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 600; letter-spacing: -1px;">
+          <span style="color: #06B6D4;">doc</span><span style="color: #FAFAFA;">Agent</span>
+        </span>
+      </div>
+      <div class="variant-label">Horizontal — Dark</div>
+    </div>
+
+    <!-- Light horizontal -->
+    <div class="variant-card light">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <svg width="36" height="36" viewBox="0 0 80 80" fill="none">
+          <path d="M24 16H48L56 24V64H24V16Z" fill="none" stroke="#0891B2" stroke-width="3"/>
+          <path d="M48 16V24H56" fill="none" stroke="#0891B2" stroke-width="3"/>
+          <circle cx="40" cy="44" r="8" stroke="#0891B2" stroke-width="2" opacity="0.6" fill="none"/>
+          <circle cx="40" cy="44" r="2.5" fill="#0891B2"/>
+        </svg>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 600; letter-spacing: -1px;">
+          <span style="color: #0891B2;">doc</span><span style="color: #09090B;">Agent</span>
+        </span>
+      </div>
+      <div class="variant-label" style="color: #71717A;">Horizontal — Light</div>
+    </div>
+
+    <!-- Icon only dark -->
+    <div class="variant-card">
+      <svg width="56" height="56" viewBox="0 0 80 80" fill="none">
+        <path d="M24 16H48L56 24V64H24V16Z" fill="none" stroke="#06B6D4" stroke-width="2.5"/>
+        <path d="M48 16V24H56" fill="none" stroke="#06B6D4" stroke-width="2.5"/>
+        <circle cx="40" cy="44" r="10" stroke="#06B6D4" stroke-width="1.5" opacity="0.5" fill="none"/>
+        <circle cx="40" cy="44" r="5" stroke="#06B6D4" stroke-width="1.5" opacity="0.7" fill="none"/>
+        <circle cx="40" cy="44" r="2.5" fill="#06B6D4"/>
+      </svg>
+      <div class="variant-label">Icon Only</div>
+    </div>
+
+    <!-- Favicon -->
+    <div class="variant-card">
+      <div style="width: 48px; height: 48px; background: #06B6D4; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+        <svg width="28" height="28" viewBox="0 0 80 80" fill="none">
+          <path d="M24 16H48L56 24V64H24V16Z" fill="none" stroke="#09090B" stroke-width="4"/>
+          <path d="M48 16V24H56" fill="none" stroke="#09090B" stroke-width="4"/>
+          <circle cx="40" cy="44" r="6" stroke="#09090B" stroke-width="3" opacity="0.6" fill="none"/>
+          <circle cx="40" cy="44" r="2.5" fill="#09090B"/>
+        </svg>
+      </div>
+      <div class="variant-label">Favicon / App Icon</div>
+    </div>
+  </div>
+</div>
+
+<!-- COLOR PALETTE -->
+<div class="palette-section">
+  <div class="section-title">Color Palette</div>
+  <div class="palette-grid">
+    <div class="color-swatch" style="background: #09090B;">
+      <div class="color-name" style="color: #71717A;">Void</div>
+      <div class="color-hex" style="color: #52525B;">#09090B</div>
+    </div>
+    <div class="color-swatch" style="background: #18181B;">
+      <div class="color-name" style="color: #71717A;">Carbon</div>
+      <div class="color-hex" style="color: #52525B;">#18181B</div>
+    </div>
+    <div class="color-swatch" style="background: #0F172A;">
+      <div class="color-name" style="color: #64748B;">Navy</div>
+      <div class="color-hex" style="color: #475569;">#0F172A</div>
+    </div>
+    <div class="color-swatch" style="background: #06B6D4;">
+      <div class="color-name" style="color: #083344;">Cyan</div>
+      <div class="color-hex" style="color: #0E7490;">#06B6D4</div>
+    </div>
+    <div class="color-swatch" style="background: #14B8A6;">
+      <div class="color-name" style="color: #042F2E;">Teal</div>
+      <div class="color-hex" style="color: #0F766E;">#14B8A6</div>
+    </div>
+    <div class="color-swatch" style="background: #F59E0B;">
+      <div class="color-name" style="color: #451A03;">Amber</div>
+      <div class="color-hex" style="color: #78350F;">#F59E0B</div>
+    </div>
+    <div class="color-swatch" style="background: #FAFAFA; border-color: #E4E4E7;">
+      <div class="color-name" style="color: #A1A1AA;">Snow</div>
+      <div class="color-hex" style="color: #A1A1AA;">#FAFAFA</div>
+    </div>
+  </div>
+</div>
+
+<!-- TYPOGRAPHY -->
+<div class="typo-section">
+  <div class="section-title">Typography System</div>
+  <div class="typo-grid">
+    <div class="typo-card">
+      <div class="typo-label">Logo / Headlines</div>
+      <div class="typo-sample" style="font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 16px;">
+        Space Grotesk
+      </div>
+      <div class="typo-sample" style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 500; color: var(--text-secondary);">
+        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+      </div>
+      <div class="typo-sample" style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 400; color: var(--text-muted);">
+        abcdefghijklmnopqrstuvwxyz 0123456789
+      </div>
+      <div class="typo-meta" style="margin-top: 12px;">Semi-Bold 600 · Tracking -1px · Google Fonts (Free)</div>
+    </div>
+    <div class="typo-card">
+      <div class="typo-label">UI / Body Text</div>
+      <div class="typo-sample" style="font-family: 'Inter', sans-serif; font-size: 36px; font-weight: 600; margin-bottom: 16px;">
+        Inter
+      </div>
+      <div class="typo-sample" style="font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 500; color: var(--text-secondary);">
+        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+      </div>
+      <div class="typo-sample" style="font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 400; color: var(--text-muted);">
+        abcdefghijklmnopqrstuvwxyz 0123456789
+      </div>
+      <div class="typo-meta" style="margin-top: 12px;">Regular 400 / Medium 500 · Google Fonts (Free)</div>
+    </div>
+    <div class="typo-card">
+      <div class="typo-label">Code / Data</div>
+      <div class="typo-sample" style="font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 500; margin-bottom: 16px;">
+        JetBrains Mono
+      </div>
+      <div class="typo-sample" style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 400; color: var(--text-secondary);">
+        ABCDEFGHIJKLMNOPQRSTUVWXYZ
+      </div>
+      <div class="typo-sample" style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 400; color: var(--text-muted);">
+        abcdefghijklmnopqrstuvwxyz 0123456789
+      </div>
+      <div class="typo-meta" style="margin-top: 12px;">Regular 400 / Medium 500 · Google Fonts (Free)</div>
+    </div>
+    <div class="typo-card">
+      <div class="typo-label">Name Treatment</div>
+      <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 8px;">
+        <div>
+          <div class="typo-sample" style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 600; letter-spacing: -1px;">
+            <span style="color: #06B6D4;">doc</span><span style="color: #FAFAFA;">Agent</span>
+          </div>
+          <div class="typo-meta">Primary — Colored split</div>
+        </div>
+        <div>
+          <div class="typo-sample" style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 600; letter-spacing: -1px; color: #FAFAFA;">
+            docAgent
+          </div>
+          <div class="typo-meta">Monochrome — All white</div>
+        </div>
+        <div>
+          <div class="typo-sample" style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 600; letter-spacing: -1px; color: #09090B; -webkit-text-stroke: 0.5px #3F3F46; paint-order: stroke;">
+            docAgent
+          </div>
+          <div class="typo-meta" style="color: #52525B;">Monochrome — All dark (for light bg)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

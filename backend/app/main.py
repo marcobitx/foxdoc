@@ -31,11 +31,13 @@ app.add_middleware(
 
 # ── Include routers ────────────────────────────────────────────────────────────
 
-from app.routers import analyze, models, settings  # noqa: E402
+from app.routers import analyze, models, notes, settings, user  # noqa: E402
 
 app.include_router(analyze.router)
 app.include_router(models.router)
+app.include_router(notes.router)
 app.include_router(settings.router)
+app.include_router(user.router)
 
 
 @app.get("/health")

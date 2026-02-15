@@ -5,6 +5,7 @@
 
 import { AlertTriangle, X, ChevronRight, Home, XCircle } from 'lucide-react';
 import { appStore, useStore, type AppView } from '../lib/store';
+import Tooltip from './Tooltip';
 
 interface Props {
   currentView: AppView;
@@ -31,6 +32,8 @@ function getBreadcrumbs(view: AppView, reviewMode: boolean): BreadcrumbSegment[]
       return [{ label: 'Istorija' }];
     case 'settings':
       return [{ label: 'Nustatymai' }];
+    case 'notes':
+      return [{ label: 'Užrašai' }];
     default:
       return [{ label: 'Pradžia' }];
   }
@@ -59,19 +62,21 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
   const crumbs = getBreadcrumbs(currentView, state.reviewMode);
 
   return (
-    <header className="flex-shrink-0 border-b border-surface-700/50 bg-surface-950/20 backdrop-blur-md">
+    <header className="flex-shrink-0 border-b border-surface-700/20">
       <div className="flex items-center justify-between h-16 px-6 md:px-10">
         {/* Left — interactive breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-0 min-w-0">
           {/* Home root */}
-          <button
-            onClick={() => onNavigate('upload')}
-            className="flex items-center gap-1 text-surface-500 hover:text-brand-400
-                       transition-colors duration-200 group shrink-0"
-            aria-label="Pradžia"
-          >
-            <Home className="w-3.5 h-3.5 group-hover:scale-110 transition-transform duration-200" />
-          </button>
+          <Tooltip content="Pradžia" side="bottom">
+            <button
+              onClick={() => onNavigate('upload')}
+              className="flex items-center gap-1 text-surface-500 hover:text-brand-400
+                         transition-colors duration-200 group shrink-0"
+              aria-label="Pradžia"
+            >
+              <Home className="w-3.5 h-3.5 group-hover:scale-110 transition-transform duration-200" />
+            </button>
+          </Tooltip>
 
           {/* Segments */}
           {crumbs.map((seg, i) => {
@@ -154,15 +159,17 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
         {/* Right — actions */}
         <div className="flex items-center gap-4">
           {status && !['COMPLETED', 'FAILED', 'CANCELED'].includes(status) && !error && onCancel && (
-            <button
-              onClick={onCancel}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg
-                       bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300
-                       border border-red-500/10 transition-all text-[12px] font-semibold"
-            >
-              <XCircle className="w-3.5 h-3.5" />
-              Nutraukti
-            </button>
+            <Tooltip content="Nutraukti vykdomą analizę" side="bottom">
+              <button
+                onClick={onCancel}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                         bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300
+                         border border-red-500/10 transition-all text-[12px] font-semibold"
+              >
+                <XCircle className="w-3.5 h-3.5" />
+                Nutraukti
+              </button>
+            </Tooltip>
           )}
         </div>
       </div>

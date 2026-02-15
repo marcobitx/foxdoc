@@ -14,6 +14,7 @@ import {
 import { appStore, useStore } from '../../lib/store';
 import { getAnalysis, type Analysis } from '../../lib/api';
 import ChatPanel from '../ChatPanel';
+import Tooltip from '../Tooltip';
 
 export default function ResultsPanel({ analysisId }: { analysisId: string }) {
   const state = useStore(appStore);
@@ -50,7 +51,7 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
   if (loading) {
     return (
       <>
-        <div className="px-5 h-12 flex items-center border-b border-surface-700/50">
+        <div className="px-5 h-12 flex items-center border-b border-surface-700/20">
           <h3 className="text-[13px] font-bold text-surface-200 tracking-tight">Įrankiai</h3>
         </div>
         <div className="flex-1 flex items-center justify-center">
@@ -65,13 +66,14 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
 
   return (
     <>
-      <div className="px-6 h-16 flex items-center border-b border-surface-700/50 bg-surface-950/20 backdrop-blur-md">
+      <div className="px-6 h-14 flex items-center border-b border-surface-700/20">
         <h3 className="text-[13px] font-bold text-surface-400 tracking-wider uppercase">Įrankiai</h3>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-5 animate-fade-in">
         {/* Open sources panel button */}
         {r?.source_documents?.length > 0 && (
+          <Tooltip content="Peržiūrėti šaltinių dokumentus" side="left">
           <button
             onClick={() => appStore.setState({ sourcesPanelOpen: true })}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-surface-800/20 border border-surface-700/30 hover:border-brand-500/30 hover:bg-brand-500/5 transition-all duration-200 group"
@@ -85,6 +87,7 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
             </div>
             <span className="text-[10px] text-surface-600 group-hover:text-brand-400 transition-colors">&rsaquo;</span>
           </button>
+          </Tooltip>
         )}
 
         {/* QA Missing fields */}
@@ -106,7 +109,8 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
 
         {/* QA Score mini */}
         {qa && (
-          <div className="p-4 rounded-2xl bg-surface-950/40 border border-surface-700/50">
+          <Tooltip content="Automatinis ataskaitos pilnumo vertinimas" side="left">
+          <div className="p-4 rounded-2xl bg-surface-950/40 border border-surface-700/50 w-full">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Kokybės balas</span>
               <span className={`text-[15px] font-black font-mono tracking-tighter ${(qa.completeness_score ?? 0) >= 80 ? 'text-emerald-400' :
@@ -131,18 +135,21 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
               />
             </div>
           </div>
+          </Tooltip>
         )}
       </div>
 
       {/* Chat button */}
-      <div className="p-4 border-t border-surface-700/50">
-        <button
-          onClick={() => setChatOpen(true)}
-          className="btn-secondary-professional w-full"
-        >
-          <MessageSquare className="w-4 h-4" />
-          AI Agentas
-        </button>
+      <div className="p-4 border-t border-surface-700/20">
+        <Tooltip content="Klausti AI apie analizės rezultatus" side="top">
+          <button
+            onClick={() => setChatOpen(true)}
+            className="btn-secondary-professional w-full"
+          >
+            <MessageSquare className="w-4 h-4" />
+            AI Agentas
+          </button>
+        </Tooltip>
       </div>
 
       {/* Chat overlay */}

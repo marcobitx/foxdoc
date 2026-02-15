@@ -29,7 +29,7 @@ export default function SectionModelSelector() {
 
       <button
         onClick={() => appStore.setState({ modelPanelOpen: true })}
-        className="w-full text-left p-3 rounded-xl border border-surface-700/50 bg-surface-900/40 hover:bg-surface-800/50 hover:border-surface-600/60 transition-all group overflow-hidden"
+        className="w-full text-left p-3 rounded-xl border border-surface-600/30 bg-surface-800/50 hover:bg-surface-700/55 hover:border-surface-500/40 transition-all group overflow-hidden"
       >
         {/* Left accent stripe */}
         <div className="flex items-start gap-3">

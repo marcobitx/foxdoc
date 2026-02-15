@@ -9,6 +9,7 @@ import { appStore, useStore, startAnalysisStream } from '../../lib/store';
 import { createAnalysis } from '../../lib/api';
 import { ACCEPTED, MAX_SIZE_MB, formatSize } from './panelHelpers';
 import { FileTypeStripCompact, FILE_TYPE_INFO } from '../FileTypeLogos';
+import Tooltip from '../Tooltip';
 
 function getExtension(name: string): string {
   return name.split('.').pop()?.toLowerCase() || '';
@@ -95,7 +96,7 @@ export default function UploadPanel() {
   return (
     <>
       {/* Header */}
-      <div className="px-5 h-12 flex items-center border-b border-surface-700/50">
+      <div className="px-5 h-12 flex items-center border-b border-surface-700/20">
         <FolderOpen className="w-3.5 h-3.5 text-brand-400" />
         <h3 className="text-[11px] font-bold text-surface-400 tracking-widest uppercase ml-2">Dokumentai</h3>
       </div>
@@ -136,7 +137,7 @@ export default function UploadPanel() {
             onClick={openFilesPanel}
             className="w-full group animate-fade-in"
           >
-            <div className="flex items-center gap-3 px-3.5 py-3 rounded-xl bg-surface-900/50 border border-surface-700/50 hover:border-brand-500/20 hover:bg-surface-800/50 transition-all duration-200">
+            <div className="flex items-center gap-3 px-3.5 py-3 rounded-xl bg-surface-800/60 border border-surface-600/30 hover:border-brand-500/20 hover:bg-surface-700/60 transition-all duration-200">
               {/* Left — icon */}
               <div className="w-9 h-9 rounded-lg bg-brand-500/8 border border-brand-500/15 flex items-center justify-center flex-shrink-0">
                 <FolderOpen className="w-4 h-4 text-brand-400" />
@@ -186,24 +187,26 @@ export default function UploadPanel() {
 
       {/* Submit */}
       {state.files.length > 0 && (
-        <div className="p-4 border-t border-surface-700/50 animate-fade-in">
-          <button
-            onClick={handleSubmit}
-            disabled={state.uploading}
-            className="btn-professional w-full"
-          >
-            {state.uploading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Įkeliama...</span>
-              </>
-            ) : (
-              <>
-                <Cpu className="w-4 h-4" />
-                <span>Vykdyti analizę</span>
-              </>
-            )}
-          </button>
+        <div className="p-4 border-t border-surface-700/20 animate-fade-in">
+          <Tooltip content="Pradėti AI dokumentų analizę" side="top">
+            <button
+              onClick={handleSubmit}
+              disabled={state.uploading}
+              className="btn-professional w-full"
+            >
+              {state.uploading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Įkeliama...</span>
+                </>
+              ) : (
+                <>
+                  <Cpu className="w-4 h-4" />
+                  <span>Vykdyti analizę</span>
+                </>
+              )}
+            </button>
+          </Tooltip>
         </div>
       )}
     </>

@@ -9,6 +9,7 @@ import { appStore, useStore } from '../lib/store';
 import { useFocusTrap } from '../lib/useFocusTrap';
 import { FileTypeLogo, FILE_TYPE_INFO } from './FileTypeLogos';
 import ScrollText from './ScrollText';
+import Tooltip from './Tooltip';
 import { clsx } from 'clsx';
 
 const ACCEPTED = '.pdf,.docx,.xlsx,.pptx,.png,.jpg,.jpeg,.zip';
@@ -162,7 +163,7 @@ export default function FilesPanel() {
             className={clsx(
               "flex flex-col rounded-[10px] overflow-hidden shadow-2xl",
               "bg-surface-950 border border-surface-700/60",
-              "w-[580px] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              "w-[820px] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
               "animate-fade-in"
             )}
           >
@@ -173,17 +174,18 @@ export default function FilesPanel() {
                 <ScrollText className="text-[13px] font-semibold text-surface-200">{previewFile!.name}</ScrollText>
                 <span className="text-[10px] font-mono text-surface-500 flex-shrink-0">{formatSize(previewFile!.size)}</span>
               </div>
-              <button
-                onClick={closePreview}
-                className="p-1.5 rounded-lg hover:bg-white/[0.06] text-surface-400 hover:text-surface-200 transition-colors flex-shrink-0 ml-3"
-                title="Uždaryti peržiūrą"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <Tooltip content="Uždaryti peržiūrą" side="bottom">
+                <button
+                  onClick={closePreview}
+                  className="p-1.5 rounded-lg hover:bg-white/[0.06] text-surface-400 hover:text-surface-200 transition-colors flex-shrink-0 ml-3"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </Tooltip>
             </div>
 
             {/* Preview content — fills all available space */}
-            <div className="flex-1 overflow-auto bg-surface-900/30 p-3">
+            <div className="flex-1 overflow-auto bg-surface-800/40 p-3">
               {['png', 'jpg', 'jpeg'].includes(previewExt) ? (
                 <div className="flex items-center justify-center h-full min-h-[400px]">
                   <img
@@ -194,7 +196,7 @@ export default function FilesPanel() {
                 </div>
               ) : previewExt === 'pdf' ? (
                 <iframe
-                  src={previewUrl!}
+                  src={`${previewUrl!}#navpanes=0&scrollbar=1&view=FitH`}
                   title={previewFile!.name}
                   className="w-full h-full min-h-[500px] rounded-lg border border-surface-700/40 bg-white"
                 />
@@ -228,17 +230,19 @@ export default function FilesPanel() {
                 </span>
               )}
             </div>
-            <button
-              onClick={handleClose}
-              className="p-1.5 rounded-lg hover:bg-white/[0.06] text-surface-400 hover:text-surface-200 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <Tooltip content="Uždaryti failų sąrašą" side="bottom">
+              <button
+                onClick={handleClose}
+                className="p-1.5 rounded-lg hover:bg-white/[0.06] text-surface-400 hover:text-surface-200 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </Tooltip>
           </div>
 
           {/* Stats bar */}
           {state.files.length > 0 && (
-            <div className="px-5 py-3 border-b border-surface-700/40 bg-surface-900/30 flex-shrink-0">
+            <div className="px-5 py-3 border-b border-surface-700/40 bg-surface-800/40 flex-shrink-0">
               <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
@@ -253,15 +257,17 @@ export default function FilesPanel() {
                     <span className="text-[11px] font-mono text-surface-400">{formatSize(totalSize)}</span>
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    appStore.setState({ files: [] });
-                    closePreview();
-                  }}
-                  className="text-[10px] font-bold text-surface-600 hover:text-red-400 transition-colors uppercase tracking-wider"
-                >
-                  Išvalyti
-                </button>
+                <Tooltip content="Pašalinti visus failus" side="top">
+                  <button
+                    onClick={() => {
+                      appStore.setState({ files: [] });
+                      closePreview();
+                    }}
+                    className="text-[10px] font-bold text-surface-600 hover:text-red-400 transition-colors uppercase tracking-wider"
+                  >
+                    Išvalyti
+                  </button>
+                </Tooltip>
               </div>
               <div className="flex items-center gap-1.5 flex-wrap">
                 {formats.map(({ ext, count, color }) => (
@@ -308,7 +314,7 @@ export default function FilesPanel() {
                         "group flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-200 cursor-pointer",
                         isActive
                           ? "bg-brand-500/5 border-brand-500/20"
-                          : "bg-surface-900/40 border-surface-700/40 hover:border-surface-600/60 hover:bg-surface-800/40"
+                          : "bg-surface-800/50 border-surface-600/30 hover:border-surface-500/50 hover:bg-surface-700/50"
                       )}
                       onClick={() => isPreviewable && openPreview(f)}
                     >
@@ -333,26 +339,28 @@ export default function FilesPanel() {
                       {/* Actions */}
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {isPreviewable && (
-                          <button
-                            onClick={(e) => { e.stopPropagation(); openPreview(f); }}
-                            className={clsx(
-                              "p-1.5 rounded-lg transition-all",
-                              isActive
-                                ? "bg-brand-500/10 text-brand-400"
-                                : "opacity-0 group-hover:opacity-100 hover:bg-brand-500/10 text-surface-500 hover:text-brand-400"
-                            )}
-                            title="Peržiūrėti"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                          </button>
+                          <Tooltip content="Peržiūrėti" side="top">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); openPreview(f); }}
+                              className={clsx(
+                                "p-1.5 rounded-lg transition-all",
+                                isActive
+                                  ? "bg-brand-500/10 text-brand-400"
+                                  : "opacity-0 group-hover:opacity-100 hover:bg-brand-500/10 text-surface-500 hover:text-brand-400"
+                              )}
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                          </Tooltip>
                         )}
-                        <button
-                          onClick={(e) => { e.stopPropagation(); removeFile(f.name); }}
-                          className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-surface-500 hover:text-red-400 transition-all"
-                          title="Pašalinti"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <Tooltip content="Pašalinti" side="top">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); removeFile(f.name); }}
+                            className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-surface-500 hover:text-red-400 transition-all"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </Tooltip>
                       </div>
                     </div>
                   );
@@ -366,7 +374,7 @@ export default function FilesPanel() {
             onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
             onDrop={handleDrop}
-            className="border-t border-surface-700/50 bg-surface-900/40 flex-shrink-0"
+            className="border-t border-surface-700/50 bg-surface-800/50 flex-shrink-0"
           >
             <input
               ref={inputRef}

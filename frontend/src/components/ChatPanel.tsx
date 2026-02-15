@@ -3,10 +3,11 @@
 // Fixed right panel with message history, suggested questions, and input
 // Related: api.ts (streamChat, getChatHistory), ResultsView.tsx
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Send, Loader2, MessageSquare, Bot, User, Cpu, RotateCcw } from 'lucide-react';
 import { streamChat, getChatHistory, type ChatMessage } from '../lib/api';
 import { SUGGESTIONS } from '../lib/chatConfig';
+import Tooltip from './Tooltip';
 
 interface Props {
   analysisId: string;
@@ -18,7 +19,21 @@ export default function ChatPanel({ analysisId, onClose }: Props) {
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [currentChunks, setCurrentChunks] = useState('');
+  const [animating, setAnimating] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Animate in on mount
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setAnimating(true));
+    });
+  }, []);
+
+  // Smooth close handler
+  const handleClose = useCallback(() => {
+    setAnimating(false);
+    setTimeout(() => onClose(), 300);
+  }, [onClose]);
 
   useEffect(() => {
     (async () => {
@@ -63,9 +78,11 @@ export default function ChatPanel({ analysisId, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-md z-50 flex flex-col
+    <div className={`fixed inset-y-0 right-0 w-full max-w-md z-50 flex flex-col
                     bg-surface-950/98 backdrop-blur-3xl border-l border-surface-700/50
-                    shadow-[-12px_0_60px_rgba(0,0,0,0.5)] animate-slide-in-right">
+                    shadow-[-12px_0_60px_rgba(0,0,0,0.5)]
+                    transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
+                    ${animating ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
 
       {/* ── Header ────────────────────────────────────────────── */}
       <div className="flex items-center gap-3 px-5 h-14 border-b border-surface-700/50 flex-shrink-0">
@@ -73,12 +90,14 @@ export default function ChatPanel({ analysisId, onClose }: Props) {
         <span className="text-[14px] font-bold text-surface-100 flex-1 tracking-tight">
           AI Agentas
         </span>
-        <button
-          onClick={onClose}
-          className="p-2 rounded-xl hover:bg-surface-700/40 text-surface-500 hover:text-surface-300 transition-all"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        <Tooltip content="Uždaryti pokalbį" side="bottom">
+          <button
+            onClick={handleClose}
+            className="p-2 rounded-xl hover:bg-surface-700/40 text-surface-500 hover:text-surface-300 transition-all"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </Tooltip>
       </div>
 
       {/* ── Messages ──────────────────────────────────────────── */}
@@ -197,13 +216,15 @@ export default function ChatPanel({ analysisId, onClose }: Props) {
             className="input-field flex-1 text-[13px]"
             disabled={streaming}
           />
-          <button
-            onClick={() => handleSend()}
-            disabled={!input.trim() || streaming}
-            className="btn-professional px-3"
-          >
-            <Send className="w-3.5 h-3.5" />
-          </button>
+          <Tooltip content="Siųsti žinutę" side="top">
+            <button
+              onClick={() => handleSend()}
+              disabled={!input.trim() || streaming}
+              className="btn-professional px-3"
+            >
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </Tooltip>
         </div>
       </div>
     </div>

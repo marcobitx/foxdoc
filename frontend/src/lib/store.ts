@@ -4,7 +4,17 @@
 // Related: api.ts (streamProgress), AnalyzingView.tsx, App.tsx
 
 import { useState, useEffect } from 'react';
-import { streamProgress, type SSEEvent } from './api';
+import {
+  streamProgress,
+  type SSEEvent,
+  listNotes,
+  createNoteApi,
+  updateNoteApi,
+  deleteNoteApi,
+  bulkDeleteNotes as bulkDeleteNotesApi,
+  bulkUpdateNotesStatus as bulkUpdateNotesStatusApi,
+  type NoteData,
+} from './api';
 
 type Listener = () => void;
 
@@ -37,7 +47,7 @@ export function useStore<T>(store: ReturnType<typeof createStore<T>>): T {
   return snapshot;
 }
 
-export type AppView = 'upload' | 'analyzing' | 'results' | 'history' | 'settings';
+export type AppView = 'upload' | 'analyzing' | 'results' | 'history' | 'settings' | 'notes';
 
 export interface ParsedDocInfo {
   filename: string;
@@ -53,6 +63,35 @@ export interface AnalysisSnapshot {
   stepTimes: Record<number, { start: number; end?: number }>;
   finalStatus: string;
   elapsedSec: number;
+}
+
+export type NoteStatus = 'idea' | 'in_progress' | 'done' | 'archived';
+export type NotePriority = 'low' | 'medium' | 'high';
+export type NoteColor = 'default' | 'amber' | 'emerald' | 'blue' | 'red' | 'purple';
+export type NotesViewMode = 'grid' | 'list' | 'kanban';
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  status: NoteStatus;
+  priority: NotePriority;
+  tags: string[];
+  color: NoteColor;
+  pinned: boolean;
+  analysisId: string | null;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface NotesFilters {
+  search: string;
+  status: NoteStatus | 'all';
+  priority: NotePriority | 'all';
+  tags: string[];
+  dateFrom: number | null;
+  dateTo: number | null;
+  analysisId: string | 'all';
 }
 
 export interface AppState {
@@ -75,6 +114,20 @@ export interface AppState {
   cachedAnalysis: { id: string; data: any } | null;
   reviewMode: boolean;
   analysisSnapshot: AnalysisSnapshot | null;
+  helpPanelOpen: boolean;
+  notesList: Note[];
+  activeNoteId: string | null;
+  notesLoading: boolean;
+  notesError: string | null;
+  notesViewMode: NotesViewMode;
+  notesFilters: NotesFilters;
+  notesSortField: 'updated_at' | 'created_at' | 'title' | 'priority';
+  notesSortDir: 'asc' | 'desc';
+  notesSelectedIds: Set<string>;
+  notesPage: number;
+  notesPerPage: number;
+  tipsPanelOpen: boolean;
+  previousView: AppView | null;
   // Stream state — managed by the global stream manager, read by AnalyzingView
   streamEvents: Array<{ event: string; data: any; ts: number }>;
   streamStatus: string;
@@ -85,6 +138,24 @@ export interface AppState {
   streamStartTime: number | null;
 }
 
+// ── NoteData → Note mapper ────────────────────────────────────────────────────
+
+function mapNoteData(d: NoteData): Note {
+  return {
+    id: d._id,
+    title: d.title,
+    content: d.content,
+    status: (d.status || 'idea') as NoteStatus,
+    priority: (d.priority || 'medium') as NotePriority,
+    tags: d.tags || [],
+    color: (d.color || 'default') as NoteColor,
+    pinned: d.pinned,
+    analysisId: d.analysis_id || null,
+    createdAt: d._creationTime,
+    updatedAt: d.updated_at,
+  };
+}
+
 export const appStore = createStore<AppState>({
   view: 'upload',
   currentAnalysisId: null,
@@ -93,11 +164,25 @@ export const appStore = createStore<AppState>({
   error: null,
   files: [],
   uploading: false,
-  rightPanelOpen: true,
+  rightPanelOpen: false,
   selectedModel: null,
   modelPanelOpen: false,
   filesPanelOpen: false,
   sourcesPanelOpen: false,
+  helpPanelOpen: false,
+  notesList: [],
+  activeNoteId: null,
+  notesLoading: false,
+  notesError: null,
+  notesViewMode: 'grid',
+  notesFilters: { search: '', status: 'all', priority: 'all', tags: [], dateFrom: null, dateTo: null, analysisId: 'all' },
+  notesSortField: 'updated_at',
+  notesSortDir: 'desc',
+  notesSelectedIds: new Set<string>(),
+  notesPage: 0,
+  notesPerPage: 10,
+  tipsPanelOpen: false,
+  previousView: null,
   analysisStatus: null,
   analysisElapsedSec: 0,
   parsedDocs: [],
@@ -113,6 +198,183 @@ export const appStore = createStore<AppState>({
   streamElapsedSec: 0,
   streamStartTime: null,
 });
+
+// ── Notes CRUD helpers (API-backed with optimistic updates) ───────────────────
+
+let _notesMigrated = false;
+
+export async function loadNotesFromServer() {
+  appStore.setState({ notesLoading: true, notesError: null });
+  try {
+    // One-time migration from localStorage
+    if (!_notesMigrated) {
+      _notesMigrated = true;
+      try {
+        const raw = localStorage.getItem('procurement-analyzer-notes');
+        if (raw) {
+          const old = JSON.parse(raw) as Array<{
+            id: string; title: string; content: string;
+            createdAt: number; updatedAt: number; pinned: boolean;
+          }>;
+          if (old.length > 0) {
+            for (const n of old) {
+              await createNoteApi({
+                title: n.title,
+                content: n.content,
+                pinned: n.pinned,
+                status: 'idea',
+                priority: 'medium',
+                tags: [],
+                color: 'default',
+              });
+            }
+            localStorage.removeItem('procurement-analyzer-notes');
+          }
+        }
+      } catch { /* ignore migration errors */ }
+    }
+
+    const data = await listNotes(200, 0);
+    appStore.setState({ notesList: data.map(mapNoteData), notesLoading: false });
+  } catch (e: any) {
+    appStore.setState({ notesError: e.message || 'Nepavyko užkrauti užrašų', notesLoading: false });
+  }
+}
+
+export async function createNote(analysisId?: string): Promise<string | null> {
+  try {
+    const { id } = await createNoteApi({
+      title: '',
+      content: '',
+      status: 'idea',
+      priority: 'medium',
+      tags: [],
+      color: 'default',
+      pinned: false,
+      analysis_id: analysisId || null,
+    });
+    await loadNotesFromServer();
+    appStore.setState({ activeNoteId: id });
+    return id;
+  } catch (e: any) {
+    appStore.setState({ notesError: e.message });
+    return null;
+  }
+}
+
+export async function updateNote(
+  id: string,
+  patch: Partial<Pick<Note, 'title' | 'content' | 'pinned' | 'status' | 'priority' | 'tags' | 'color' | 'analysisId'>>,
+) {
+  // Optimistic update
+  const updated = appStore.getState().notesList.map((n) =>
+    n.id === id ? { ...n, ...patch, updatedAt: Date.now() } : n,
+  );
+  appStore.setState({ notesList: updated });
+
+  try {
+    // Map analysisId → analysis_id for the API
+    const { analysisId, ...rest } = patch as any;
+    const apiPatch: Record<string, any> = { ...rest };
+    if (analysisId !== undefined) {
+      apiPatch.analysis_id = analysisId;
+    }
+    await updateNoteApi(id, apiPatch);
+  } catch (e: any) {
+    // Revert on failure — reload from server
+    await loadNotesFromServer();
+  }
+}
+
+export async function deleteNote(id: string) {
+  // Optimistic remove
+  const prev = appStore.getState().notesList;
+  const activeId = appStore.getState().activeNoteId;
+  appStore.setState({
+    notesList: prev.filter((n) => n.id !== id),
+    activeNoteId: activeId === id ? null : activeId,
+    notesSelectedIds: (() => {
+      const s = new Set(appStore.getState().notesSelectedIds);
+      s.delete(id);
+      return s;
+    })(),
+  });
+
+  try {
+    await deleteNoteApi(id);
+  } catch {
+    await loadNotesFromServer();
+  }
+}
+
+export async function togglePinNote(id: string) {
+  const note = appStore.getState().notesList.find((n) => n.id === id);
+  if (note) await updateNote(id, { pinned: !note.pinned });
+}
+
+export async function bulkDeleteSelectedNotes() {
+  const ids = [...appStore.getState().notesSelectedIds];
+  if (ids.length === 0) return;
+
+  // Optimistic
+  const remaining = appStore.getState().notesList.filter((n) => !ids.includes(n.id));
+  appStore.setState({ notesList: remaining, notesSelectedIds: new Set() });
+
+  try {
+    await bulkDeleteNotesApi(ids);
+  } catch {
+    await loadNotesFromServer();
+  }
+}
+
+export async function bulkChangeStatus(status: NoteStatus) {
+  const ids = [...appStore.getState().notesSelectedIds];
+  if (ids.length === 0) return;
+
+  // Optimistic
+  const updated = appStore.getState().notesList.map((n) =>
+    ids.includes(n.id) ? { ...n, status, updatedAt: Date.now() } : n,
+  );
+  appStore.setState({ notesList: updated, notesSelectedIds: new Set() });
+
+  try {
+    await bulkUpdateNotesStatusApi(ids, status);
+  } catch {
+    await loadNotesFromServer();
+  }
+}
+
+// ── Notes filter/sort/selection helpers ───────────────────────────────────────
+
+export function setNotesFilter(patch: Partial<NotesFilters>) {
+  const cur = appStore.getState().notesFilters;
+  appStore.setState({ notesFilters: { ...cur, ...patch } });
+}
+
+export function resetNotesFilters() {
+  appStore.setState({
+    notesFilters: { search: '', status: 'all', priority: 'all', tags: [], dateFrom: null, dateTo: null, analysisId: 'all' },
+  });
+}
+
+export function setNotesSort(field: AppState['notesSortField'], dir?: 'asc' | 'desc') {
+  const s = appStore.getState();
+  if (field === s.notesSortField && !dir) {
+    appStore.setState({ notesSortDir: s.notesSortDir === 'asc' ? 'desc' : 'asc' });
+  } else {
+    appStore.setState({ notesSortField: field, notesSortDir: dir ?? 'desc' });
+  }
+}
+
+export function toggleNoteSelection(id: string) {
+  const s = new Set(appStore.getState().notesSelectedIds);
+  if (s.has(id)) s.delete(id); else s.add(id);
+  appStore.setState({ notesSelectedIds: s });
+}
+
+export function clearNoteSelection() {
+  appStore.setState({ notesSelectedIds: new Set() });
+}
 
 // ── Step helpers (shared with AnalyzingView) ──────────────────────────────────
 

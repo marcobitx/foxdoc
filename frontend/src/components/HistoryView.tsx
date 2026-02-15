@@ -20,14 +20,17 @@ import {
   ArrowDown,
   SlidersHorizontal,
   Eye,
+  StickyNote,
 } from 'lucide-react';
-import { listAnalyses, deleteAnalysis, type AnalysisSummary } from '../lib/api';
+import { listAnalyses, deleteAnalysis, listNotes, type AnalysisSummary } from '../lib/api';
 import CustomSelect from './CustomSelect';
 import ScrollText from './ScrollText';
+import Tooltip from './Tooltip';
 
 interface Props {
   onSelect: (id: string) => void;
   onNew: () => void;
+  onViewNotes?: (analysisId: string) => void;
 }
 
 const STATUS_META: Record<string, { label: string; cls: string }> = {
@@ -102,7 +105,7 @@ function timeAgo(iso: string): string {
   return formatDate(iso);
 }
 
-export default function HistoryView({ onSelect, onNew }: Props) {
+export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
   const [analyses, setAnalyses] = useState<AnalysisSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -111,10 +114,13 @@ export default function HistoryView({ onSelect, onNew }: Props) {
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [procTypeFilter, setProcTypeFilter] = useState<string>('all');
+  const [projectFilter, setProjectFilter] = useState<string>('all');
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [notesCountMap, setNotesCountMap] = useState<Map<string, number>>(new Map());
 
   useEffect(() => {
     (async () => {
@@ -126,6 +132,18 @@ export default function HistoryView({ onSelect, onNew }: Props) {
         setLoading(false);
       }
     })();
+    // Fetch notes to build per-analysis count map
+    listNotes(500, 0)
+      .then((notes) => {
+        const counts = new Map<string, number>();
+        for (const n of notes) {
+          if (n.analysis_id) {
+            counts.set(n.analysis_id, (counts.get(n.analysis_id) || 0) + 1);
+          }
+        }
+        setNotesCountMap(counts);
+      })
+      .catch(() => {});
   }, []);
 
   // ── Computed analytics ───────────────────────────────────────────────
@@ -151,6 +169,23 @@ export default function HistoryView({ onSelect, onNew }: Props) {
     };
   }, [analyses]);
 
+  // ── Dropdown options for filters ────────────────────────────────────
+  const procTypeOptions = useMemo(() => {
+    const types = [...new Set(analyses.map((a) => a.procurement_type).filter(Boolean))] as string[];
+    return [
+      { value: 'all', label: 'Visi prior.' },
+      ...types.map((t) => ({ value: t, label: t.length > 25 ? t.slice(0, 25) + '…' : t })),
+    ];
+  }, [analyses]);
+
+  const projectOptions = useMemo(() => {
+    const titles = [...new Set(analyses.map((a) => a.project_title).filter(Boolean))] as string[];
+    return [
+      { value: 'all', label: 'Visi projektai' },
+      ...titles.map((t) => ({ value: t, label: t.length > 30 ? t.slice(0, 30) + '…' : t })),
+    ];
+  }, [analyses]);
+
   // ── Filtered & sorted list ──────────────────────────────────────────
   const filteredAnalyses = useMemo(() => {
     let list = [...analyses];
@@ -158,6 +193,16 @@ export default function HistoryView({ onSelect, onNew }: Props) {
     // Status filter
     if (statusFilter !== 'all') {
       list = list.filter((a) => a.status === statusFilter);
+    }
+
+    // Procurement type filter
+    if (procTypeFilter !== 'all') {
+      list = list.filter((a) => a.procurement_type === procTypeFilter);
+    }
+
+    // Project filter
+    if (projectFilter !== 'all') {
+      list = list.filter((a) => a.project_title === projectFilter);
     }
 
     // Search
@@ -197,10 +242,10 @@ export default function HistoryView({ onSelect, onNew }: Props) {
     });
 
     return list;
-  }, [analyses, search, sortField, sortDir, statusFilter]);
+  }, [analyses, search, sortField, sortDir, statusFilter, procTypeFilter, projectFilter]);
 
   // Reset to page 0 when filters change
-  useEffect(() => { setCurrentPage(0); }, [search, statusFilter, sortField, sortDir, pageSize]);
+  useEffect(() => { setCurrentPage(0); }, [search, statusFilter, procTypeFilter, projectFilter, sortField, sortDir, pageSize]);
 
   const totalPages = Math.max(1, Math.ceil(filteredAnalyses.length / pageSize));
   const paginatedAnalyses = useMemo(() => {
@@ -285,21 +330,24 @@ export default function HistoryView({ onSelect, onNew }: Props) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in-up">
+    <div className="w-full animate-fade-in-up">
       {/* ── Header ────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">
+      <div className="flex items-center justify-between mb-6 md:mb-8 gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
             Analizių istorija
           </h1>
-          <p className="text-[12px] text-surface-500 mt-1.5 font-bold uppercase tracking-widest">
+          <p className="text-[11px] md:text-[12px] text-surface-500 mt-1.5 font-bold uppercase tracking-widest truncate">
             {loading ? '...' : `${analyses.length} analizių · ${stats.totalFiles} dokumentų`}
           </p>
         </div>
-        <button onClick={onNew} className="btn-professional group">
-          <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
-          Nauja analizė
-        </button>
+        <Tooltip content="Pradėti naują dokumentų analizę" side="bottom">
+          <button onClick={onNew} className="btn-professional group flex-shrink-0">
+            <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
+            <span className="hidden sm:inline">Nauja analizė</span>
+            <span className="sm:hidden">Nauja</span>
+          </button>
+        </Tooltip>
       </div>
 
       {/* ── Loading ───────────────────────────────────────────── */}
@@ -329,7 +377,7 @@ export default function HistoryView({ onSelect, onNew }: Props) {
       {!loading && analyses.length > 0 && (
         <>
           {/* ── KPI Strip ──────────────────────────────────────── */}
-          <div className="relative rounded-2xl border border-surface-700/60 bg-surface-950/60 backdrop-blur-sm mb-6 overflow-hidden">
+          <div className="relative rounded-2xl border border-surface-600/30 bg-surface-800/55 mb-6 overflow-hidden">
             {/* Decorative top gradient line */}
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-brand-500/0 via-brand-500/40 to-brand-500/0" />
 
@@ -423,35 +471,95 @@ export default function HistoryView({ onSelect, onNew }: Props) {
             </div>
           </div>
 
-          {/* ── Filters Row ──────────────────────────────────────── */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4">
+          {/* ── Filters Row 1: Search + Dropdowns ────────────────── */}
+          <div className="flex items-center gap-2 mb-2">
             {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-500" />
+            <div className="relative flex-shrink-0">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-surface-500" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Ieškoti pagal pavadinimą, organizaciją..."
-                className="input-field w-full pl-10 py-2.5 text-[13px]"
+                placeholder="Ieškoti..."
+                className="input-field w-10 focus:w-[200px] pl-9 py-2 text-[13px] transition-all duration-300"
               />
             </div>
 
             {/* Status filter */}
-            <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-surface-500 flex-shrink-0" />
-              <CustomSelect
-                value={statusFilter}
-                onChange={setStatusFilter}
-                options={[
-                  { value: 'all', label: 'Visi statusai' },
-                  { value: 'COMPLETED', label: 'Baigtos' },
-                  { value: 'FAILED', label: 'Su klaidomis' },
-                  { value: 'PENDING', label: 'Laukiančios' },
-                ]}
-                className="text-[13px] min-w-[160px]"
-              />
+            <CustomSelect
+              value={statusFilter}
+              onChange={setStatusFilter}
+              options={[
+                { value: 'all', label: 'Visi statusai' },
+                { value: 'COMPLETED', label: 'Baigtos' },
+                { value: 'FAILED', label: 'Su klaidomis' },
+                { value: 'PENDING', label: 'Laukiančios' },
+              ]}
+              className="text-[13px] min-w-[140px]"
+            />
+
+            {/* Procurement type filter */}
+            <CustomSelect
+              value={procTypeFilter}
+              onChange={setProcTypeFilter}
+              options={procTypeOptions}
+              className="text-[13px] min-w-[140px]"
+            />
+
+            {/* Project filter */}
+            <CustomSelect
+              value={projectFilter}
+              onChange={setProjectFilter}
+              options={projectOptions}
+              className="text-[13px] min-w-[150px]"
+            />
+          </div>
+
+          {/* ── Filters Row 2: Sort + View ────────────────────────── */}
+          <div className="flex items-center gap-2 mb-4">
+            {/* Sort toggle buttons */}
+            <div className="flex items-center bg-surface-800/60 rounded-lg border border-surface-700/30 p-0.5">
+              <Tooltip content="Rūšiuoti pagal vertę" side="top">
+                <button
+                  onClick={() => {
+                    if (sortField === 'estimated_value') setSortDir((d) => (d === 'desc' ? 'asc' : 'desc'));
+                    else { setSortField('estimated_value'); setSortDir('desc'); }
+                  }}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-all duration-200
+                    ${sortField === 'estimated_value' ? 'bg-brand-500/15 text-brand-400' : 'text-surface-500 hover:text-surface-300'}`}
+                >
+                  Red.
+                  {sortField === 'estimated_value' && (
+                    sortDir === 'desc' ? <ArrowDown className="w-3 h-3" /> : <ArrowUp className="w-3 h-3" />
+                  )}
+                </button>
+              </Tooltip>
+              <Tooltip content="Rūšiuoti pagal datą" side="top">
+                <button
+                  onClick={() => {
+                    if (sortField === 'created_at') setSortDir((d) => (d === 'desc' ? 'asc' : 'desc'));
+                    else { setSortField('created_at'); setSortDir('desc'); }
+                  }}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] font-bold transition-all duration-200
+                    ${sortField === 'created_at' ? 'bg-brand-500/15 text-brand-400' : 'text-surface-500 hover:text-surface-300'}`}
+                >
+                  Sukurta
+                  {sortField === 'created_at' && (
+                    sortDir === 'desc' ? <ArrowDown className="w-3 h-3" /> : <ArrowUp className="w-3 h-3" />
+                  )}
+                </button>
+              </Tooltip>
             </div>
+
+            <div className="flex-1" />
+
+            {/* View density selector */}
+            <Tooltip content="Filtruotų analizių skaičius" side="top">
+              <div className="flex items-center gap-1.5 text-[11px] text-surface-500">
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline font-medium">{filteredAnalyses.length} rezultatų</span>
+              </div>
+            </Tooltip>
           </div>
 
           {/* ── Delete error ──────────────────────────────────────── */}
@@ -475,31 +583,37 @@ export default function HistoryView({ onSelect, onNew }: Props) {
                   Atšaukti
                 </button>
               </div>
-              <button
-                onClick={handleBulkDelete}
-                disabled={bulkDeleting}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold
-                           text-red-400 bg-red-500/10 border border-red-500/20
-                           hover:bg-red-500/20 transition-all duration-200
-                           disabled:opacity-50"
-              >
-                {bulkDeleting ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Trash2 className="w-3.5 h-3.5" />
-                )}
-                Ištrinti
-              </button>
+              <Tooltip content={`Ištrinti ${selectedIds.size} pasirinktų analizių`} side="top">
+                <button
+                  onClick={handleBulkDelete}
+                  disabled={bulkDeleting}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold
+                             text-red-400 bg-red-500/10 border border-red-500/20
+                             hover:bg-red-500/20 transition-all duration-200
+                             disabled:opacity-50"
+                >
+                  {bulkDeleting ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-3.5 h-3.5" />
+                  )}
+                  Ištrinti
+                </button>
+              </Tooltip>
             </div>
           )}
 
           {/* ── Table ──────────────────────────────────────────────── */}
-          <div className="enterprise-card overflow-hidden flex flex-col" style={{ maxHeight: 'calc(100vh - 22rem)' }}>
+          <div className="enterprise-card overflow-hidden flex flex-col" style={{ maxHeight: 'calc(100vh - 20rem)' }}>
             {/* Table header */}
-            <div className="grid grid-cols-[36px_1fr_180px_120px_120px_100px_48px] gap-0 px-5 py-3 border-b border-surface-700/40
-                            text-[11px] text-surface-500 font-bold uppercase tracking-widest">
+            <div className="grid gap-0 px-3 sm:px-5 py-3 border-b border-surface-700/40
+                            text-[11px] text-surface-500 font-bold uppercase tracking-widest
+                            grid-cols-[32px_1fr_auto_36px]
+                            md:grid-cols-[36px_1fr_100px_100px_90px_40px]
+                            lg:grid-cols-[36px_1fr_150px_100px_100px_90px_44px]">
               {/* Select all checkbox */}
               <div className="flex items-center justify-center">
+                <Tooltip content="Pažymėti visus" side="bottom">
                 <button
                   onClick={toggleSelectAll}
                   className="w-4 h-4 rounded border border-surface-600 flex items-center justify-center
@@ -520,6 +634,7 @@ export default function HistoryView({ onSelect, onNew }: Props) {
                     <div className="w-2 h-0.5 bg-brand-400 rounded-full" />
                   )}
                 </button>
+                </Tooltip>
               </div>
               <button
                 onClick={() => toggleSort('project_title')}
@@ -531,7 +646,7 @@ export default function HistoryView({ onSelect, onNew }: Props) {
               <span className="hidden md:flex items-center">Terminas</span>
               <button
                 onClick={() => toggleSort('estimated_value')}
-                className="flex items-center gap-1.5 text-right justify-end hover:text-surface-300 transition-colors"
+                className="hidden md:flex items-center gap-1.5 text-right justify-end hover:text-surface-300 transition-colors"
               >
                 Vertė <SortIcon field="estimated_value" />
               </button>
@@ -561,7 +676,10 @@ export default function HistoryView({ onSelect, onNew }: Props) {
                 <div
                   key={a.id}
                   onClick={() => clickable && onSelect(a.id)}
-                  className={`grid grid-cols-[36px_1fr_180px_120px_120px_100px_48px] gap-0 px-5 py-3.5 w-full text-left
+                  className={`grid gap-0 px-3 sm:px-5 py-3.5 w-full text-left
+                             grid-cols-[32px_1fr_auto_36px]
+                             md:grid-cols-[36px_1fr_100px_100px_90px_40px]
+                             lg:grid-cols-[36px_1fr_150px_100px_100px_90px_44px]
                              border-b border-surface-700/20 last:border-b-0 group
                              transition-all duration-200
                              hover:bg-surface-800/50 animate-stagger
@@ -588,23 +706,45 @@ export default function HistoryView({ onSelect, onNew }: Props) {
                     </button>
                   </div>
                   {/* Project name + meta */}
-                  <div className="min-w-0 pr-4">
-                    <p className="text-[13px] font-bold text-surface-100 truncate tracking-tight group-hover:text-brand-300 transition-colors">
+                  <div className="min-w-0 pr-2 md:pr-4">
+                    <ScrollText className="text-[13px] font-bold text-surface-100 tracking-tight group-hover:text-brand-300 transition-colors">
                       {a.project_title || `Analizė #${a.id.slice(0, 8)}`}
-                    </p>
-                    <div className="flex items-center gap-2.5 mt-1">
+                    </ScrollText>
+                    <div className="flex items-center gap-2 md:gap-2.5 mt-1 flex-wrap">
                       <span className="flex items-center gap-1 text-[11px] text-surface-500">
-                        <FileText className="w-3 h-3" />
+                        <FileText className="w-3 h-3 flex-shrink-0" />
                         {a.file_count} {a.file_count === 1 ? 'failas' : 'failai'}
                       </span>
                       <span className="flex items-center gap-1 text-[11px] text-surface-500">
-                        <Clock className="w-3 h-3" />
+                        <Clock className="w-3 h-3 flex-shrink-0" />
                         {timeAgo(a.created_at)}
                       </span>
+                      {/* Value inline — mobile only */}
+                      {a.estimated_value != null && (
+                        <span className="md:hidden text-[11px] font-bold text-amber-400">
+                          {formatValue(a.estimated_value, a.currency)}
+                        </span>
+                      )}
                       {a.model && (
-                        <span className="font-mono text-[10px] bg-white/[0.04] px-1.5 py-0.5 rounded-full border border-surface-700/50 text-surface-500">
+                        <span className="hidden sm:inline-flex font-mono text-[10px] bg-white/[0.04] px-1.5 py-0.5 rounded-full border border-surface-700/50 text-surface-500">
                           {a.model.split('/').pop()}
                         </span>
+                      )}
+                      {(notesCountMap.get(a.id) || 0) > 0 && (
+                        <Tooltip content={`${notesCountMap.get(a.id)} ${notesCountMap.get(a.id) === 1 ? 'užrašas' : 'užrašai'} — spustelėkite peržiūrėti`} side="top">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onViewNotes?.(a.id);
+                            }}
+                            className="flex items-center gap-1 text-[11px] text-amber-400/80 hover:text-amber-300
+                                       px-1.5 py-0.5 -mx-1.5 -my-0.5 rounded-md
+                                       hover:bg-amber-500/10 transition-all duration-150"
+                          >
+                            <StickyNote className="w-3 h-3 flex-shrink-0" />
+                            {notesCountMap.get(a.id)}
+                          </button>
+                        </Tooltip>
                       )}
                     </div>
                   </div>
@@ -633,8 +773,8 @@ export default function HistoryView({ onSelect, onNew }: Props) {
                     )}
                   </div>
 
-                  {/* Value */}
-                  <div className="flex items-center justify-end pr-3">
+                  {/* Value — hidden on mobile, shown md+ */}
+                  <div className="hidden md:flex items-center justify-end pr-3">
                     <span className={`text-[13px] font-bold tracking-tight ${
                       a.estimated_value ? 'text-amber-400' : 'text-surface-600'
                     }`}>
@@ -651,20 +791,33 @@ export default function HistoryView({ onSelect, onNew }: Props) {
 
                   {/* Actions */}
                   <div className="flex items-center justify-end gap-1">
-                    <button
-                      onClick={(e) => handleDelete(a.id, e)}
-                      disabled={deleting === a.id}
-                      className="p-1.5 rounded-lg text-surface-600 hover:text-red-400 hover:bg-red-500/8
-                               opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-200"
-                    >
-                      {deleting === a.id ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Trash2 className="w-3.5 h-3.5" />
-                      )}
-                    </button>
                     {clickable && (
-                      <ChevronRight className="w-4 h-4 text-surface-600 group-hover:text-surface-400 transition-colors" />
+                      <Tooltip content="Peržiūrėti ataskaitą" side="top">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); onSelect(a.id); }}
+                          className="p-1.5 rounded-lg text-surface-500 hover:text-brand-400 hover:bg-brand-500/8
+                                   opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-200"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                      </Tooltip>
+                    )}
+                    <Tooltip content="Ištrinti analizę" side="top">
+                      <button
+                        onClick={(e) => handleDelete(a.id, e)}
+                        disabled={deleting === a.id}
+                        className="p-1.5 rounded-lg text-surface-600 hover:text-red-400 hover:bg-red-500/8
+                                 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-200"
+                      >
+                        {deleting === a.id ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </Tooltip>
+                    {clickable && (
+                      <ChevronRight className="w-4 h-4 text-surface-600 group-hover:text-brand-400 transition-colors" />
                     )}
                   </div>
                 </div>
@@ -673,9 +826,9 @@ export default function HistoryView({ onSelect, onNew }: Props) {
             </div>
 
             {/* ── Pagination bar ──────────────────────────────── */}
-            <div className="flex items-center justify-between px-5 py-3 border-t border-surface-700/40 flex-shrink-0">
+            <div className="flex items-center justify-between px-3 sm:px-5 py-3 border-t border-surface-700/40 flex-shrink-0 gap-2">
               {/* Page size selector */}
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <span className="text-[11px] text-surface-500">Rodyti</span>
                 {[10, 25, 50].map((size) => (
                   <button

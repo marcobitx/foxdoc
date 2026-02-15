@@ -4,6 +4,7 @@
 // Related: UploadView.tsx, UploadPanel.tsx
 
 import React from 'react';
+import Tooltip from './Tooltip';
 
 const SIZE = 20;
 
@@ -142,19 +143,19 @@ export function FileTypeStripCompact({ iconSize = 14 }: { iconSize?: number }) {
       {FILE_TYPES.map((ext) => {
         const { logo: Logo, color } = FILE_TYPE_INFO[ext];
         return (
-          <div
-            key={ext}
-            className="inline-flex items-center justify-center rounded transition-all duration-200"
-            style={{
-              width: iconSize + 6,
-              height: iconSize + 6,
-              backgroundColor: `${color}10`,
-              border: `1px solid ${color}15`,
-            }}
-            title={ext.toUpperCase()}
-          >
-            <Logo size={iconSize} />
-          </div>
+          <Tooltip key={ext} content={ext.toUpperCase()} side="top">
+            <div
+              className="inline-flex items-center justify-center rounded transition-all duration-200"
+              style={{
+                width: iconSize + 6,
+                height: iconSize + 6,
+                backgroundColor: `${color}10`,
+                border: `1px solid ${color}15`,
+              }}
+            >
+              <Logo size={iconSize} />
+            </div>
+          </Tooltip>
         );
       })}
     </div>

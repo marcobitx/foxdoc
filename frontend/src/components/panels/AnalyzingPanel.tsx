@@ -33,7 +33,7 @@ export default function AnalyzingPanel() {
 
   return (
     <>
-      <div className="px-6 h-16 flex items-center border-b border-surface-700/50 bg-surface-950/20 backdrop-blur-md">
+      <div className="px-6 h-14 flex items-center border-b border-surface-700/20">
         <h3 className="text-[13px] font-bold text-surface-400 tracking-wider uppercase">Analizė</h3>
       </div>
 
@@ -51,7 +51,7 @@ export default function AnalyzingPanel() {
 
         {/* Document section — collapsible with file/page summary */}
         {totalFiles > 0 && (
-          <div className="rounded-xl bg-surface-950/40 border border-surface-700/50 overflow-hidden">
+          <div className="rounded-xl bg-surface-950/40 border border-surface-700/30 overflow-hidden">
             <button
               onClick={() => setDocsExpanded((prev) => !prev)}
               className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.03] transition-colors"
@@ -98,7 +98,7 @@ export default function AnalyzingPanel() {
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-300 ${
                         isParsed
                           ? 'bg-emerald-500/[0.04] border-emerald-500/10'
-                          : 'bg-surface-950/40 border-surface-700/50'
+                          : 'bg-surface-950/40 border-surface-700/30'
                       }`}
                     >
                       <FileTypeLogo extension={ext} size={16} />
@@ -134,7 +134,7 @@ export default function AnalyzingPanel() {
         )}
 
         {/* AI indicator */}
-        <div className="px-3.5 py-3 rounded-xl bg-surface-800/40 border border-surface-700/50">
+        <div className="px-3.5 py-3 rounded-xl bg-surface-800/40 border border-surface-700/30">
           <div className="flex items-center gap-2 mb-1.5">
             <Cpu className="w-3.5 h-3.5 text-brand-400" />
             <span className="text-[11px] font-bold text-brand-300 uppercase tracking-widest">Vykdymas</span>
