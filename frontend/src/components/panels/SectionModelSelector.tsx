@@ -45,18 +45,20 @@ export default function SectionModelSelector() {
               {m ? m.name : 'Nepasirinkta'}
             </p>
             {m && (
-              <div className="flex items-center gap-2 mt-1.5">
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded text-brand-400 bg-brand-500/5 border border-brand-500/10">
-                  {Math.round(m.context_length / 1000)}k ctx
-                </span>
-                <span className="text-surface-700">·</span>
-                <span className="text-[10px] font-mono text-surface-400">
-                  <span className="text-surface-600">IN:</span> ${m.pricing_prompt.toFixed(2)}/1M
-                </span>
-                <span className="text-surface-700">·</span>
-                <span className="text-[10px] font-mono text-surface-400">
-                  <span className="text-surface-600">OUT:</span> ${m.pricing_completion.toFixed(2)}/1M
-                </span>
+              <div className="mt-2 space-y-1.5">
+                <div>
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded text-brand-400 bg-brand-500/5 border border-brand-500/10">
+                    {Math.round(m.context_length / 1000)}k ctx
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-[10px] font-mono text-surface-400">
+                    <span className="text-surface-600">IN:</span> ${m.pricing_prompt.toFixed(2)}/1M
+                  </span>
+                  <span className="text-[10px] font-mono text-surface-400">
+                    <span className="text-surface-600">OUT:</span> ${m.pricing_completion.toFixed(2)}/1M
+                  </span>
+                </div>
               </div>
             )}
           </div>

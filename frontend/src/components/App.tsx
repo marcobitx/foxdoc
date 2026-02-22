@@ -222,7 +222,7 @@ export default function App() {
           onNewAnalysis={handleNewAnalysis}
         />
 
-        <div className="flex-1 flex overflow-hidden min-h-0">
+        <div className="flex-1 flex overflow-hidden min-h-0 scroll-fade">
           <main className="flex-1 overflow-y-auto pb-24 lg:pb-0 scrollbar-thin">
             <div className={clsx(
                 'animate-fade-in',

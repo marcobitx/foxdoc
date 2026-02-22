@@ -78,7 +78,7 @@ export default function AnalyzingPanel() {
             <span className="text-[11px] font-bold text-brand-300 uppercase tracking-widest">Vykdymas</span>
           </div>
           <p className="text-[10px] text-surface-500 leading-relaxed">
-            Claude Sonnet 4 apdoroja jūsų dokumentus ir generuoja struktūrizuotą ataskaitą.
+            <span className="text-surface-400 font-medium">{state.selectedModel?.name || 'AI modelis'}</span> apdoroja jūsų dokumentus ir generuoja struktūrizuotą ataskaitą.
           </p>
         </div>
       </div>

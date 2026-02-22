@@ -21,7 +21,11 @@
       "mcp__exa__get_code_context_exa",
       "WebSearch",
       "Bash(cd:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(done)",
+      "Bash(tail:*)",
+      "Bash(echo:*)",
+      "Bash(printenv GEMINI_API_KEY:*)"
     ]
   },
   "outputStyle": "Metodas → Kodėl → Sprendimas"

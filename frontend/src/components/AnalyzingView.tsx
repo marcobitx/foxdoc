@@ -383,7 +383,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
           )}
         </div>
       )}
-      <div className="rounded-2xl bg-surface-800/55 border border-surface-600/30 overflow-hidden py-2 space-y-3">
+      <div className="rounded-[6px] bg-surface-800/55 border border-surface-600/30 overflow-hidden py-2 space-y-3">
       {steps.map((step, i) => {
         const Icon = step.icon;
         const eventsForStep = stepEvents[i];
@@ -415,7 +415,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
               </div>
               {/* CoT bar — always visible when thinking was captured, content toggleable */}
               {hasCot && (
-                <div className="ml-[4.5rem] mr-5 mb-1 rounded-xl border border-surface-500/50 overflow-hidden">
+                <div className="ml-[4.5rem] mr-5 mb-1 rounded-[6px] border border-surface-500/50 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setCotCollapsedMap((prev) => ({ ...prev, [i]: prev[i] === false ? true : false }))}
@@ -446,7 +446,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
               {i === 1 && extractionDocs.length > 0 ? (() => {
                 const isLogOpen = logCollapsedMap[i] === false;
                 return (
-                  <div className="ml-[4.5rem] mr-5 mb-1 rounded-xl border border-surface-500/50 overflow-hidden">
+                  <div className="ml-[4.5rem] mr-5 mb-1 rounded-[6px] border border-surface-500/50 overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setLogCollapsedMap((prev) => ({ ...prev, [i]: isLogOpen }))}
@@ -469,7 +469,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
                           const ext = doc.filename.split('.').pop() || '';
                           const durationMs = doc.startTime && doc.endTime ? doc.endTime - doc.startTime : null;
                           return (
-                            <div key={doc.filename} className="flex items-center gap-3 px-2 py-1.5 rounded-lg">
+                            <div key={doc.filename} className="flex items-center gap-3 px-2 py-1.5 rounded-[6px]">
                               <div className="w-4 h-4 rounded bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
                                 <Check className="w-2.5 h-2.5 text-emerald-400" strokeWidth={3} />
                               </div>
@@ -496,7 +496,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
                 const c = LOG_COLORS[i];
                 const isLogOpen = logCollapsedMap[i] === false;
                 return (
-                  <div className="ml-[4.5rem] mr-5 mb-1 rounded-xl border border-surface-500/50 overflow-hidden">
+                  <div className="ml-[4.5rem] mr-5 mb-1 rounded-[6px] border border-surface-500/50 overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setLogCollapsedMap((prev) => ({ ...prev, [i]: isLogOpen }))}
@@ -568,7 +568,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
 
               {/* CoT box — manually toggleable card */}
               {stepThinking[i] && (
-                <div className="ml-[4.5rem] mr-5 rounded-xl border border-surface-500/50 overflow-hidden">
+                <div className="ml-[4.5rem] mr-5 rounded-[6px] border border-surface-500/50 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setCotCollapsedMap((prev) => ({ ...prev, [i]: !prev[i] }))}
@@ -600,7 +600,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
               {/* Extraction step (i===1): document checklist instead of event log */}
               {/* Other steps: standard event log */}
               {i === 1 && extractionDocs.length > 0 ? (
-                <div className="ml-[4.5rem] mr-5 rounded-xl border border-surface-500/50 overflow-hidden">
+                <div className="ml-[4.5rem] mr-5 rounded-[6px] border border-surface-500/50 overflow-hidden">
                   <div className="px-3 py-2 max-h-[280px] overflow-y-auto scrollbar-thin space-y-1" aria-live="polite" aria-label="Dokumentų ištraukimo progresas">
                     {extractionDocs.map((doc) => {
                       const ext = doc.filename.split('.').pop() || '';
@@ -608,7 +608,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
                       return (
                         <div
                           key={doc.filename}
-                          className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 ${
+                          className={`flex items-center gap-3 px-3 py-2 rounded-[6px] transition-all duration-300 ${
                             doc.status === 'pending' ? 'opacity-40' : ''
                           }`}
                         >
@@ -652,7 +652,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
                 const c = LOG_COLORS[i];
                 const isLogOpen = logCollapsedMap[i] !== true; // open by default for active step
                 return (
-                  <div className="ml-[4.5rem] mr-5 rounded-xl border border-surface-500/50 overflow-hidden">
+                  <div className="ml-[4.5rem] mr-5 rounded-[6px] border border-surface-500/50 overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setLogCollapsedMap((prev) => ({ ...prev, [i]: isLogOpen }))}
@@ -705,7 +705,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
               key={i}
               className="px-5 py-3 flex items-center gap-4 animate-fade-in"
             >
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-red-500/15 border border-red-500/25 flex-shrink-0">
+              <div className="w-9 h-9 rounded-[6px] flex items-center justify-center bg-red-500/15 border border-red-500/25 flex-shrink-0">
                 <AlertCircle className="w-[18px] h-[18px] text-red-400" />
               </div>
               <p className="text-[14px] font-bold text-red-300 tracking-tight">{step.label}</p>
@@ -714,18 +714,8 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
           );
         }
 
-        // ── Pending step: dimmed ──
-        return (
-          <div
-            key={i}
-            className="px-5 py-3 flex items-center gap-4 opacity-40"
-          >
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-surface-950/50 border border-surface-700/50 flex-shrink-0">
-              <Icon className="w-[18px] h-[18px] text-surface-700" />
-            </div>
-            <p className="text-[14px] font-bold text-surface-600 tracking-tight">{step.label}</p>
-          </div>
-        );
+        // ── Pending step: hidden until started ──
+        return null;
       })}
       </div>
       {/* Sticky bottom fade — content dissolves at the bottom */}

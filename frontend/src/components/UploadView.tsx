@@ -1,10 +1,8 @@
 // frontend/src/components/UploadView.tsx
 // Upload view — centered hero with title, features grid, and model carousel
 // File upload handled via FilesPanel; this shows the landing page
-// Related: FilesPanel.tsx, RightPanel.tsx, store.ts
 
 import { FileText, ExternalLink } from 'lucide-react';
-import { FoxBrain, FoxGuard, FoxScroll } from './FoxIcons';
 import { appStore, useStore } from '../lib/store';
 import ModelCarousel from './ModelCarousel';
 import Tooltip from './Tooltip';
@@ -14,87 +12,88 @@ export default function UploadView() {
 
   return (
     <div className="w-full animate-fade-in-up">
-      {/* ── Compact Header — title + subtitle tightly grouped ──── */}
-      <div className="text-center mb-6 pt-2 md:pt-4">
-        {/* Brand + status — single compact row */}
-        <div className="flex items-center justify-center gap-3 mb-4">
+      {/* ── Compact Header ──── */}
+      <div className="text-center mb-10 pt-4 md:pt-6">
+        <div className="flex items-center justify-center gap-3 mb-6">
           <a
             href="https://viesiejipirkimai.lt"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-surface-700/30 hover:border-surface-600/50 hover:bg-white/[0.05] transition-all duration-200 group"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.05] border border-surface-700/30 hover:bg-white/[0.1] transition-all"
           >
-            <img src="/cvpis-logo.png" alt="CVP IS" className="h-5 w-auto" />
-            <span className="text-[10px] font-semibold text-surface-500 group-hover:text-surface-300 transition-colors hidden sm:inline">
-              CVP IS
-            </span>
-            <ExternalLink className="w-2.5 h-2.5 text-surface-600 group-hover:text-surface-400 transition-colors" />
+            <img src="/cvpis-logo.png" alt="CVP IS" className="h-6 w-auto" />
+            <ExternalLink className="w-3 h-3 text-surface-500" />
           </a>
           <div className="h-4 w-px bg-surface-700/40" />
-          <Tooltip content="AI modelis paruoštas analizei" side="bottom">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/5 border border-emerald-500/10">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] font-bold text-emerald-400/80 tracking-wide uppercase">
-                AI aktyvus
-              </span>
-            </div>
-          </Tooltip>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest">AI paruošta</span>
+          </div>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tighter leading-[1.1] mb-3">
-          Viešųjų pirkimų <span className="text-brand-400">analizė</span>
+        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-4">
+          Analizė dabar <span className="text-brand-400">dar lengvesnė!</span>
         </h1>
 
-        <p className="text-surface-400 text-[13px] md:text-[14px] leading-relaxed max-w-lg mx-auto font-medium">
-          Automatizuotas dokumentų vertinimas, rizikų nustatymas ir metrikų generavimas naudojant AI.
+        <p className="text-surface-400 text-base md:text-lg max-w-xl mx-auto font-medium">
+          Mūsų lapė pasiruošusi suuosti visas rizikas jūsų dokumentuose.
         </p>
       </div>
 
-      {/* ── File count indicator — click to open files panel ──── */}
-      {state.files.length > 0 && (
-        <div className="mt-5 text-center animate-fade-in">
-          <Tooltip content="Atidaryti failų sąrašą" side="top">
-            <button
-              onClick={() => appStore.setState({ filesPanelOpen: true })}
-              className="group inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-brand-500/5 border border-brand-500/10 hover:border-brand-500/25 hover:bg-brand-500/8 transition-all duration-200 cursor-pointer"
-            >
-              <FileText className="w-3.5 h-3.5 text-brand-400" />
-              <span className="text-[12px] font-bold text-brand-100">
-                {state.files.length} {state.files.length === 1 ? 'failas paruoštas' : state.files.length < 10 ? 'failai paruošti' : 'failų paruošta'}
-              </span>
-              <span className="text-[10px] text-brand-500/60 group-hover:text-brand-400 transition-colors">Peržiūrėti &rarr;</span>
-            </button>
-          </Tooltip>
-        </div>
-      )}
-
-      {/* ── Features — clear cards, responsive grid ────────────── */}
-      <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 animate-fade-in" style={{ animationDelay: '300ms' }}>
-        <Tooltip content="Dokumentai analizuojami AI modeliu" side="top">
-          <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-800/60 border border-surface-600/25 w-full">
-            <FoxBrain className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400/80 flex-shrink-0" />
-            <div className="flex sm:flex-col items-center sm:items-center gap-1.5 sm:gap-1 min-w-0">
-              <span className="text-[12px] font-semibold text-surface-300 whitespace-nowrap">AI analizė</span>
-              <span className="text-[11px] text-surface-500 font-medium truncate">{state.selectedModel?.name?.split(':').pop()?.trim() || 'Claude'}</span>
-            </div>
-          </div>
-        </Tooltip>
-        <Tooltip content="Duomenys perduodami šifruotu kanalu" side="top">
-          <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-800/60 border border-surface-600/25 w-full">
-            <FoxGuard className="w-4 h-4 sm:w-5 sm:h-5 text-brand-400/80 flex-shrink-0" />
-            <span className="text-[12px] font-semibold text-surface-300">Šifruota sesija</span>
-          </div>
-        </Tooltip>
-        <Tooltip content="Visa analizės eiga matoma realiu laiku" side="top">
-          <div className="flex sm:flex-col items-center sm:items-center gap-2.5 sm:gap-2 px-4 py-3 sm:py-4 rounded-xl bg-surface-800/60 border border-surface-600/25 w-full">
-            <FoxScroll className="w-4 h-4 sm:w-5 sm:h-5 text-violet-400/80 flex-shrink-0" />
-            <span className="text-[12px] font-semibold text-surface-300">Pilnas žurnalas</span>
-          </div>
-        </Tooltip>
+      {/* ── High-Energy Fun Cards ────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 animate-fade-in">
+        <FeatureCard
+          title="Vienas, du ir baigta!"
+          desc="AI analizė už jus"
+          image="https://images.unsplash.com/photo-1516934023934-897bd4eb9d14?auto=format&fit=crop&q=80&w=600"
+          color="emerald"
+        />
+        <FeatureCard
+          title="Saugu kaip landoje"
+          desc="Privati sesija"
+          image="https://images.unsplash.com/photo-1474511320721-9a6ee0738356?auto=format&fit=crop&q=80&w=600"
+          color="brand"
+        />
+        <FeatureCard
+          title="Laimingas finalas"
+          desc="Visas žurnalas"
+          image="https://images.unsplash.com/photo-1557008075-7f2c5efa4cfd?auto=format&fit=crop&q=80&w=600"
+          color="violet"
+        />
       </div>
 
-      {/* ── Model Logo Carousel — subtle footer ────────────────── */}
-      <ModelCarousel />
+      <div className="mt-16">
+        <ModelCarousel />
+      </div>
+    </div>
+  );
+}
+
+function FeatureCard({ title, desc, image, color }: { title: string; desc: string; image: string; color: string }) {
+  const accentColor = color === 'emerald' ? '#10b981' : color === 'brand' ? '#f59e0b' : '#a78bfa';
+
+  return (
+    <div className="group relative flex flex-col h-[340px] rounded-[32px] overflow-hidden bg-surface-900 border-2 border-surface-800/50 hover:border-white/10 transition-all duration-500 hover:-translate-y-3">
+      {/* Background Image - Clean & Vibrant */}
+      <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+
+      {/* Modern Gradient Overlay - Not too dark */}
+      <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/20 to-transparent opacity-80" />
+
+      {/* Content */}
+      <div className="relative z-10 mt-auto p-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-4 shadow-xl">
+          <span className="text-[11px] font-black text-white uppercase tracking-tighter">🦊 {desc}</span>
+        </div>
+        <h3 className="text-2xl font-black text-white leading-tight drop-shadow-lg">{title}</h3>
+      </div>
+
+      {/* Interactive Border Glow */}
+      <div className="absolute inset-0 border-4 border-transparent group-hover:border-white/5 rounded-[32px] transition-all duration-500" />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-2 opacity-0 group-hover:opacity-100 transition-all duration-500 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]"
+        style={{ backgroundColor: accentColor, boxShadow: `0 0 40px ${accentColor}44` }}
+      />
     </div>
   );
 }

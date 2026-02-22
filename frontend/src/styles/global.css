@@ -198,6 +198,33 @@
     display: none;
   }
 
+  /* ── Scroll Fade — top & bottom fade-out overlay ──────── */
+
+  .scroll-fade {
+    position: relative;
+  }
+
+  .scroll-fade::before,
+  .scroll-fade::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 48px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .scroll-fade::before {
+    top: 0;
+    background: linear-gradient(to bottom, #342a24, transparent);
+  }
+
+  .scroll-fade::after {
+    bottom: 0;
+    background: linear-gradient(to top, #342a24, transparent);
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: rgba(62, 51, 45, 0.8) transparent;

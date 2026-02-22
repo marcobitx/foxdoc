@@ -164,6 +164,7 @@ async def export_pdf(
         Spacer,
         Table,
         TableStyle,
+        Flowable,
     )
     from reportlab.lib import colors
     from reportlab.lib.enums import TA_CENTER, TA_LEFT
@@ -227,6 +228,41 @@ async def export_pdf(
             )
         except Exception:
             logger.warning("Failed to register font family for %s", _LT_FONT)
+
+    # Rounded-corner table wrapper
+    class _RoundedTable(Flowable):
+        """Wraps a ReportLab Table with a clipped rounded-corner border."""
+
+        def __init__(self, table, radius=6):
+            Flowable.__init__(self)
+            self._table = table
+            self._radius = radius
+
+        def wrap(self, availWidth, availHeight):
+            w, h = self._table.wrap(availWidth, availHeight)
+            self.width = w
+            self.height = h
+            return w, h
+
+        def draw(self):
+            # Clip content to rounded rect (so header bg respects corners)
+            self.canv.saveState()
+            p = self.canv.beginPath()
+            p.roundRect(0, 0, self.width, self.height, self._radius)
+            self.canv.clipPath(p, stroke=0)
+            self._table.drawOn(self.canv, 0, 0)
+            self.canv.restoreState()
+            # Draw rounded border on top
+            self.canv.saveState()
+            self.canv.setStrokeColor(colors.grey)
+            self.canv.setLineWidth(0.5)
+            self.canv.roundRect(
+                0, 0, self.width, self.height, self._radius, stroke=1, fill=0
+            )
+            self.canv.restoreState()
+
+        def split(self, availWidth, availHeight):
+            return self._table.split(availWidth, availHeight)
 
     # Create temp file
     tmp = tempfile.NamedTemporaryFile(
@@ -311,6 +347,29 @@ async def export_pdf(
             fontSize=8,
             textColor=HexColor("#999999"),
             alignment=TA_CENTER,
+        )
+    )
+    styles.add(
+        ParagraphStyle(
+            "TableCellLT",
+            parent=styles["Normal"],
+            fontName=_LT_FONT,
+            fontSize=8,
+            leading=10,
+            spaceBefore=0,
+            spaceAfter=0,
+        )
+    )
+    styles.add(
+        ParagraphStyle(
+            "TableHeaderLT",
+            parent=styles["Normal"],
+            fontName=_LT_FONT_BOLD,
+            fontSize=9,
+            leading=11,
+            textColor=colors.white,
+            spaceBefore=0,
+            spaceAfter=0,
         )
     )
 
@@ -479,24 +538,29 @@ async def export_pdf(
     # ── 10. Vertinimo kriterijai (TABLE)
     _heading("Vertinimo kriterijai")
     if report.evaluation_criteria:
-        table_data = [["Kriterijus", "Svoris (%)", "Aprašymas"]]
+        table_data = [
+            [
+                Paragraph("Kriterijus", styles["TableHeaderLT"]),
+                Paragraph("Svoris (%)", styles["TableHeaderLT"]),
+                Paragraph("Aprašymas", styles["TableHeaderLT"]),
+            ]
+        ]
         for ec in report.evaluation_criteria:
             weight = f"{ec.weight_percent:.1f}" if ec.weight_percent is not None else "-"
-            table_data.append([ec.criterion, weight, _or_na(ec.description)])
+            table_data.append([
+                Paragraph(ec.criterion, styles["TableCellLT"]),
+                Paragraph(weight, styles["TableCellLT"]),
+                Paragraph(_or_na(ec.description), styles["TableCellLT"]),
+            ])
 
         col_widths = [150, 60, 260]
         table = Table(table_data, colWidths=col_widths)
         table.setStyle(
             TableStyle(
                 [
-                    ("FONTNAME", (0, 0), (-1, -1), _LT_FONT),
-                    ("FONTNAME", (0, 0), (-1, 0), _LT_FONT_BOLD),
                     ("BACKGROUND", (0, 0), (-1, 0), HexColor("#4472C4")),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("FONTSIZE", (0, 0), (-1, 0), 9),
-                    ("FONTSIZE", (0, 1), (-1, -1), 8),
                     ("ALIGN", (1, 0), (1, -1), "CENTER"),
-                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                    ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.grey),
                     ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, HexColor("#F2F2F2")]),
                     ("VALIGN", (0, 0), (-1, -1), "TOP"),
                     ("TOPPADDING", (0, 0), (-1, -1), 4),
@@ -506,7 +570,7 @@ async def export_pdf(
                 ]
             )
         )
-        elements.append(table)
+        elements.append(_RoundedTable(table, radius=6))
     else:
         _text(_NOT_SPECIFIED)
     _spacer()
@@ -534,63 +598,76 @@ async def export_pdf(
     # ── 12. Rizikos tiekėjui (TABLE)
     if report.risk_factors:
         _heading("Rizikos tiekėjui")
-        table_data = [["Rizika", "Lygis", "Rekomendacija"]]
+        table_data = [
+            [
+                Paragraph("Rizika", styles["TableHeaderLT"]),
+                Paragraph("Lygis", styles["TableHeaderLT"]),
+                Paragraph("Rekomendacija", styles["TableHeaderLT"]),
+            ]
+        ]
         for rf in report.risk_factors:
-            table_data.append([rf.risk, rf.severity.upper(), _or_na(rf.recommendation)])
+            table_data.append([
+                Paragraph(rf.risk, styles["TableCellLT"]),
+                Paragraph(rf.severity.upper(), styles["TableCellLT"]),
+                Paragraph(_or_na(rf.recommendation), styles["TableCellLT"]),
+            ])
 
         col_widths = [180, 55, 235]
         table = Table(table_data, colWidths=col_widths)
-
-        # Color-code severity in the table
-        table_style_cmds = [
-            ("FONTNAME", (0, 0), (-1, -1), _LT_FONT),
-            ("FONTNAME", (0, 0), (-1, 0), _LT_FONT_BOLD),
-            ("BACKGROUND", (0, 0), (-1, 0), HexColor("#C62828")),
-            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-            ("FONTSIZE", (0, 0), (-1, 0), 9),
-            ("FONTSIZE", (0, 1), (-1, -1), 8),
-            ("ALIGN", (1, 0), (1, -1), "CENTER"),
-            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, HexColor("#FFF3F3")]),
-            ("VALIGN", (0, 0), (-1, -1), "TOP"),
-            ("TOPPADDING", (0, 0), (-1, -1), 4),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-            ("LEFTPADDING", (0, 0), (-1, -1), 6),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 6),
-        ]
-        table.setStyle(TableStyle(table_style_cmds))
-        elements.append(table)
+        table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), HexColor("#C62828")),
+                    ("ALIGN", (1, 0), (1, -1), "CENTER"),
+                    ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                    ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, HexColor("#FFF3F3")]),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("TOPPADDING", (0, 0), (-1, -1), 4),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                ]
+            )
+        )
+        elements.append(_RoundedTable(table, radius=6))
         _spacer()
 
     # ── 13. Lotai (TABLE)
     if report.lot_structure:
         _heading("Lotai")
-        lot_data = [["Nr.", "Aprašymas", "Vertė (EUR)"]]
+        lot_data = [
+            [
+                Paragraph("Nr.", styles["TableHeaderLT"]),
+                Paragraph("Aprašymas", styles["TableHeaderLT"]),
+                Paragraph("Vertė (EUR)", styles["TableHeaderLT"]),
+            ]
+        ]
         for lot in report.lot_structure:
             val = f"{lot.estimated_value:,.2f}" if lot.estimated_value is not None else "-"
-            lot_data.append([str(lot.lot_number), lot.description, val])
+            lot_data.append([
+                Paragraph(str(lot.lot_number), styles["TableCellLT"]),
+                Paragraph(lot.description, styles["TableCellLT"]),
+                Paragraph(val, styles["TableCellLT"]),
+            ])
 
         lot_table = Table(lot_data, colWidths=[40, 320, 100])
         lot_table.setStyle(
             TableStyle(
                 [
-                    ("FONTNAME", (0, 0), (-1, -1), _LT_FONT),
-                    ("FONTNAME", (0, 0), (-1, 0), _LT_FONT_BOLD),
                     ("BACKGROUND", (0, 0), (-1, 0), HexColor("#4472C4")),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                    ("FONTSIZE", (0, 0), (-1, 0), 9),
-                    ("FONTSIZE", (0, 1), (-1, -1), 8),
                     ("ALIGN", (0, 0), (0, -1), "CENTER"),
                     ("ALIGN", (2, 0), (2, -1), "RIGHT"),
-                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                    ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.grey),
                     ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, HexColor("#F2F2F2")]),
                     ("VALIGN", (0, 0), (-1, -1), "TOP"),
                     ("TOPPADDING", (0, 0), (-1, -1), 4),
                     ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 6),
                 ]
             )
         )
-        elements.append(lot_table)
+        elements.append(_RoundedTable(lot_table, radius=6))
         _spacer()
 
     # ── 14. Specialios sąlygos

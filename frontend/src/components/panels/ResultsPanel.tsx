@@ -73,7 +73,7 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
       <div className="flex-1 overflow-y-auto p-4 space-y-5 animate-fade-in">
         {/* Open sources panel button */}
         {r?.source_documents?.length > 0 && (
-          <Tooltip content="Peržiūrėti šaltinių dokumentus" side="left">
+          <Tooltip content="Peržiūrėti šaltinių dokumentus" side="left" className="w-full">
           <button
             onClick={() => appStore.setState({ sourcesPanelOpen: true })}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-surface-800/20 border border-surface-700/30 hover:border-brand-500/30 hover:bg-brand-500/5 transition-all duration-200 group"
@@ -141,7 +141,7 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
 
       {/* Chat button */}
       <div className="p-4 border-t border-surface-700/20">
-        <Tooltip content="Klausti AI apie analizės rezultatus" side="top">
+        <Tooltip content="Klausti AI apie analizės rezultatus" side="top" className="w-full">
           <button
             onClick={() => setChatOpen(true)}
             className="btn-secondary-professional w-full"
