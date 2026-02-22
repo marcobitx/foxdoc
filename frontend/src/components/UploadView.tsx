@@ -31,7 +31,7 @@ export default function UploadView() {
           </div>
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-4">
+        <h1 className="text-2xl md:text-4xl font-black text-white tracking-tight mb-4">
           Analizė dabar <span className="text-brand-400">dar lengvesnė!</span>
         </h1>
 
