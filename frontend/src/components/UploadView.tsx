@@ -36,29 +36,29 @@ export default function UploadView() {
         </h1>
 
         <p className="text-surface-400 text-base md:text-lg max-w-xl mx-auto font-medium">
-          Mūsų lapė pasiruošusi suuosti visas rizikas jūsų dokumentuose.
+          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>
+            <span style={{ background: 'linear-gradient(135deg, #fcd34d, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>fox</span>
+            <span className="text-surface-100">Doc</span>
+          </span>{' '}pasiruošęs suuosti visas rizikas jūsų dokumentuose.
         </p>
       </div>
 
-      {/* ── High-Energy Fun Cards ────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 animate-fade-in">
+      {/* ── Feature Cards ────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fade-in">
         <FeatureCard
-          title="Vienas, du ir baigta!"
-          desc="AI analizė už jus"
-          image="https://images.unsplash.com/photo-1516934023934-897bd4eb9d14?auto=format&fit=crop&q=80&w=600"
-          color="emerald"
+          step="01"
+          desc="Įkelk dokumentus"
+          image="/story1-upload.png"
         />
         <FeatureCard
-          title="Saugu kaip landoje"
-          desc="Privati sesija"
-          image="https://images.unsplash.com/photo-1474511320721-9a6ee0738356?auto=format&fit=crop&q=80&w=600"
-          color="brand"
+          step="02"
+          desc="Fox analizuoja"
+          image="/story2-analyze.png"
         />
         <FeatureCard
-          title="Laimingas finalas"
-          desc="Visas žurnalas"
-          image="https://images.unsplash.com/photo-1557008075-7f2c5efa4cfd?auto=format&fit=crop&q=80&w=600"
-          color="violet"
+          step="03"
+          desc="Gauk rezultatą"
+          image="/story3-result.png"
         />
       </div>
 
@@ -69,31 +69,33 @@ export default function UploadView() {
   );
 }
 
-function FeatureCard({ title, desc, image, color }: { title: string; desc: string; image: string; color: string }) {
-  const accentColor = color === 'emerald' ? '#10b981' : color === 'brand' ? '#f59e0b' : '#a78bfa';
-
+function FeatureCard({ step, desc, image }: { step: string; desc: string; image: string }) {
   return (
-    <div className="group relative flex flex-col h-[340px] rounded-[32px] overflow-hidden bg-surface-900 border-2 border-surface-800/50 hover:border-white/10 transition-all duration-500 hover:-translate-y-3">
-      {/* Background Image - Clean & Vibrant */}
-      <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+    <div className="group relative flex flex-col h-[180px] rounded-xl overflow-hidden bg-[#0d0d0d] border border-white/[0.06] hover:border-[#f59e0b]/20 transition-all duration-500 cursor-default">
+      {/* Background Image */}
+      <img
+        src={image}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-[1.03]"
+      />
 
-      {/* Modern Gradient Overlay - Not too dark */}
-      <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/20 to-transparent opacity-80" />
+      {/* Bottom gradient for text legibility */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+
+      {/* Orange glow on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(ellipse_at_bottom,rgba(245,158,11,0.07),transparent_70%)]" />
 
       {/* Content */}
-      <div className="relative z-10 mt-auto p-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-4 shadow-xl">
-          <span className="text-[11px] font-black text-white uppercase tracking-tighter">🦊 {desc}</span>
+      <div className="relative z-10 mt-auto p-4">
+        <div className="flex items-center gap-1.5 mb-1">
+          <div className="w-3 h-px bg-[#f59e0b]/50" />
+          <span className="text-[9px] font-semibold text-[#f59e0b]/60 uppercase tracking-[0.25em]">{step}</span>
         </div>
-        <h3 className="text-2xl font-black text-white leading-tight drop-shadow-lg">{title}</h3>
+        <p className="text-[13px] font-semibold text-white/80 tracking-[-0.01em]">{desc}</p>
       </div>
 
-      {/* Interactive Border Glow */}
-      <div className="absolute inset-0 border-4 border-transparent group-hover:border-white/5 rounded-[32px] transition-all duration-500" />
-      <div
-        className="absolute bottom-0 left-0 right-0 h-2 opacity-0 group-hover:opacity-100 transition-all duration-500 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]"
-        style={{ backgroundColor: accentColor, boxShadow: `0 0 40px ${accentColor}44` }}
-      />
+      {/* Bottom accent line */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-[#f59e0b]/0 group-hover:bg-[#f59e0b]/30 transition-all duration-500" />
     </div>
   );
 }

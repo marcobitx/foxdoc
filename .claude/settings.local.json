@@ -25,7 +25,8 @@
       "Bash(done)",
       "Bash(tail:*)",
       "Bash(echo:*)",
-      "Bash(printenv GEMINI_API_KEY:*)"
+      "Bash(printenv GEMINI_API_KEY:*)",
+      "mcp__windows-mcp__Shortcut"
     ]
   },
   "outputStyle": "Metodas → Kodėl → Sprendimas"

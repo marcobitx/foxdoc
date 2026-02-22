@@ -153,7 +153,7 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
       </div>
 
       {/* Chat overlay */}
-      {chatOpen && <ChatPanel analysisId={analysisId} onClose={() => setChatOpen(false)} />}
+      <ChatPanel analysisId={analysisId} open={chatOpen} onClose={() => setChatOpen(false)} />
     </>
   );
 }
