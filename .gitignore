@@ -22,7 +22,6 @@ htmlcov/
 .coverage.*
 
 # uv
-uv.lock
 
 # Node.js
 node_modules/
