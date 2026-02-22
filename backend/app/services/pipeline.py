@@ -90,11 +90,13 @@ class AnalysisPipeline:
         db: ConvexDB,
         llm: LLMClient,
         model: str,
+        api_key: str = "",
     ):
         self.analysis_id = analysis_id
         self.db = db
         self.llm = llm
         self.model = model
+        self._api_key = api_key
         self.metrics = PipelineMetrics(model_used=model)
         self._event_index = 0
         self._stream_queue = create_stream(analysis_id)
@@ -270,10 +272,15 @@ class AnalysisPipeline:
         source_docs: list[SourceDocument],
         evaluation_thinking,
     ) -> None:
-        """Run QA evaluation in background and update DB when done."""
+        """Run QA evaluation in background and update DB when done.
+
+        Creates its own LLMClient to avoid using the main pipeline's client
+        which gets closed after pipeline.run() returns.
+        """
+        bg_llm = LLMClient(api_key=self._api_key, default_model=self.model)
         try:
             qa, eval_usage = await evaluate_report(
-                report, source_docs, self.llm, self.model,
+                report, source_docs, bg_llm, self.model,
                 on_thinking=evaluation_thinking,
             )
             self.metrics.tokens_evaluation_input = eval_usage.get("input_tokens", 0)
@@ -294,6 +301,8 @@ class AnalysisPipeline:
                 "Background evaluation failed for %s: %s",
                 self.analysis_id, e, exc_info=True,
             )
+        finally:
+            await bg_llm.close()
 
     # ── Status and event helpers ───────────────────────────────────────────
 

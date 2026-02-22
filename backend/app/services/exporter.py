@@ -182,7 +182,7 @@ async def export_pdf(
         _LT_FONT_ITALIC: Path("C:/Windows/Fonts/calibrii.ttf"),
         _LT_FONT_BI: Path("C:/Windows/Fonts/calibriz.ttf"),
     }
-    # Fallback to Arial if Calibri not found
+    # Fallback chain: Calibri → Arial (Windows) → DejaVu Sans (Linux/Docker)
     if not _font_paths[_LT_FONT].exists():
         _font_paths = {
             _LT_FONT: Path("C:/Windows/Fonts/arial.ttf"),
@@ -190,26 +190,43 @@ async def export_pdf(
             _LT_FONT_ITALIC: Path("C:/Windows/Fonts/ariali.ttf"),
             _LT_FONT_BI: Path("C:/Windows/Fonts/arialbi.ttf"),
         }
+    if not _font_paths[_LT_FONT].exists():
+        _font_paths = {
+            _LT_FONT: Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+            _LT_FONT_BOLD: Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+            _LT_FONT_ITALIC: Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf"),
+            _LT_FONT_BI: Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf"),
+        }
+    # Final fallback: use ReportLab built-in Helvetica (no Lithuanian chars)
+    _use_builtin_font = not _font_paths[_LT_FONT].exists()
 
-    for font_name, font_path in _font_paths.items():
-        if font_path.exists():
-            try:
-                pdfmetrics.registerFont(TTFont(font_name, str(font_path)))
-            except Exception:
-                logger.warning("Failed to register font: %s from %s", font_name, font_path)
+    if _use_builtin_font:
+        # No TTF fonts available — use ReportLab built-in Helvetica
+        _LT_FONT = "Helvetica"
+        _LT_FONT_BOLD = "Helvetica-Bold"
+        _LT_FONT_ITALIC = "Helvetica-Oblique"
+        _LT_FONT_BI = "Helvetica-BoldOblique"
+        logger.warning("No TTF fonts found, falling back to built-in Helvetica")
+    else:
+        for font_name, font_path in _font_paths.items():
+            if font_path.exists():
+                try:
+                    pdfmetrics.registerFont(TTFont(font_name, str(font_path)))
+                except Exception:
+                    logger.warning("Failed to register font: %s from %s", font_name, font_path)
 
-    # Register font family for automatic bold/italic switching in <b>/<i> tags
-    from reportlab.pdfbase.pdfmetrics import registerFontFamily
-    try:
-        registerFontFamily(
-            _LT_FONT,
-            normal=_LT_FONT,
-            bold=_LT_FONT_BOLD,
-            italic=_LT_FONT_ITALIC,
-            boldItalic=_LT_FONT_BI,
-        )
-    except Exception:
-        logger.warning("Failed to register font family for %s", _LT_FONT)
+        # Register font family for automatic bold/italic switching in <b>/<i> tags
+        from reportlab.pdfbase.pdfmetrics import registerFontFamily
+        try:
+            registerFontFamily(
+                _LT_FONT,
+                normal=_LT_FONT,
+                bold=_LT_FONT_BOLD,
+                italic=_LT_FONT_ITALIC,
+                boldItalic=_LT_FONT_BI,
+            )
+        except Exception:
+            logger.warning("Failed to register font family for %s", _LT_FONT)
 
     # Create temp file
     tmp = tempfile.NamedTemporaryFile(

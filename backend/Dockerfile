@@ -35,6 +35,9 @@ COPY --from=builder /app/pyproject.toml ./
 # Add .venv to PATH
 ENV PATH="/app/.venv/bin:$PATH"
 
+# Install DejaVu fonts for PDF export (Lithuanian character support)
+RUN apt-get update && apt-get install -y --no-install-recommends fonts-dejavu-core && rm -rf /var/lib/apt/lists/*
+
 # Create temp directory for file processing
 RUN mkdir -p /tmp/foxdoc
 

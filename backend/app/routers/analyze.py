@@ -244,6 +244,7 @@ async def create_analysis(
                     db=db,
                     llm=llm,
                     model=model,
+                    api_key=api_key,
                 )
                 await pipeline.run(upload_paths)
             finally:
