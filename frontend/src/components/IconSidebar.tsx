@@ -294,7 +294,7 @@ function ProfileSection({ expanded, onNavigate }: { expanded: boolean; onNavigat
   );
 
   return (
-    <div ref={ref} className="relative flex-shrink-0 border-t border-surface-800/60">
+    <div ref={ref} className="relative flex-shrink-0 px-2.5 pb-4">
       {/* Dropdown — absolute inside sidebar when expanded, fixed when collapsed */}
       {expanded ? (
         <div
@@ -332,14 +332,14 @@ function ProfileSection({ expanded, onNavigate }: { expanded: boolean; onNavigat
           ref={triggerRef}
           onClick={() => setOpen(!open)}
           className={clsx(
-            'flex items-center w-full gap-3 transition-all duration-200',
-            'hover:bg-surface-800/50',
-            expanded ? 'px-4 py-3' : 'px-0 py-3 justify-center',
+            'relative flex items-center w-full py-2.5 px-3 rounded-lg gap-3',
+            'transition-all duration-200',
+            'text-surface-400 hover:text-surface-200 hover:bg-surface-800/40',
           )}
         >
           {/* Avatar */}
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center flex-shrink-0 ring-2 ring-surface-800 shadow-sm">
-            <span className="text-[12px] font-bold text-white leading-none">M</span>
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center flex-shrink-0 ring-2 ring-surface-800 shadow-sm">
+            <span className="text-[10px] font-bold text-white leading-none">M</span>
           </div>
 
           {/* Name + email — only when expanded */}

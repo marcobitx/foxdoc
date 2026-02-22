@@ -353,7 +353,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
   }
 
   return (
-    <div className="animate-fade-in-up pt-6" role="status" aria-label="Analizės progresas">
+    <div className="animate-fade-in-up" role="status" aria-label="Analizės progresas">
       {/* Sticky top fade — content dissolves when scrolled up */}
       <div
         ref={fadeRef}

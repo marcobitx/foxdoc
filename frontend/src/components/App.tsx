@@ -224,7 +224,12 @@ export default function App() {
 
         <div className="flex-1 flex overflow-hidden min-h-0">
           <main className="flex-1 overflow-y-auto pb-24 lg:pb-0 scrollbar-thin">
-            <div className="px-4 py-4 sm:px-6 sm:py-6 md:px-10 md:py-8 lg:px-12 animate-fade-in">
+            <div className={clsx(
+                'animate-fade-in',
+                state.view === 'analyzing'
+                  ? 'px-4 py-3 sm:px-6 md:px-10 lg:px-12'
+                  : 'px-4 py-4 sm:px-6 sm:py-6 md:px-10 md:py-8 lg:px-12',
+              )}>
               <ErrorBoundary>
                 {renderView()}
               </ErrorBoundary>
