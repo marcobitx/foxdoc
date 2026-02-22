@@ -16,6 +16,14 @@ from app.models.schemas import DocumentType
 logger = logging.getLogger(__name__)
 
 
+# Check if docling is available (optional heavy dependency, not in Docker)
+try:
+    import docling  # noqa: F401
+    DOCLING_AVAILABLE = True
+except ImportError:
+    DOCLING_AVAILABLE = False
+
+
 # Suppress known Docling regression: ListGroup warnings from msword_backend
 # See: https://github.com/DS4SD/docling/issues/2967 (caused by PR #2665)
 class _DoclingListWarningFilter(logging.Filter):
@@ -28,7 +36,8 @@ class _DoclingListWarningFilter(logging.Filter):
         return True
 
 
-logging.getLogger("docling.backend.msword_backend").addFilter(_DoclingListWarningFilter())
+if DOCLING_AVAILABLE:
+    logging.getLogger("docling.backend.msword_backend").addFilter(_DoclingListWarningFilter())
 
 
 @dataclass
@@ -157,6 +166,8 @@ def _get_converter():
     Only used as fallback for formats not handled by fast parsers
     (images, PPTX, or when fast parsing fails).
     """
+    if not DOCLING_AVAILABLE:
+        raise RuntimeError("Docling is not installed — cannot parse this format")
     global _converter
     if _converter is None:
         import os
@@ -216,6 +227,8 @@ def _get_ocr_converter():
     Used ONLY as fallback for scanned files > 5MB that can't be sent via
     OpenRouter multimodal API.
     """
+    if not DOCLING_AVAILABLE:
+        raise RuntimeError("Docling is not installed — OCR not available")
     global _ocr_converter
     if _ocr_converter is None:
         import os

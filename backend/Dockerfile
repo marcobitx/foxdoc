@@ -1,6 +1,6 @@
 # backend/Dockerfile
 # Multi-stage Docker build for Railway deployment using uv package manager
-# Uses CPU-only PyTorch to keep image under 4GB Railway limit
+# Excludes docling (heavy ML dep) — uses pypdf + python-docx for parsing
 
 # --- Stage 1: Build ---
 FROM python:3.13-slim AS builder
@@ -13,12 +13,12 @@ WORKDIR /app
 # Copy dependency files first (better caching)
 COPY pyproject.toml uv.lock ./
 
-# Install CPU-only PyTorch first (saves ~1.8GB vs CUDA version)
-RUN uv venv && \
-    uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-
-# Install remaining dependencies (skips torch since already installed)
-RUN uv sync --frozen --no-dev --no-install-project
+# Install dependencies WITHOUT docling and its heavy ML deps
+# Override: install everything from lock, then remove docling tree
+RUN uv sync --frozen --no-dev --no-install-project && \
+    uv pip uninstall docling docling-core docling-ibm-models docling-parse \
+       deepsearch-glm torch torchvision onnxruntime transformers \
+       huggingface-hub safetensors accelerate timm 2>/dev/null || true
 
 # Copy application code
 COPY . .
@@ -26,10 +26,8 @@ COPY . .
 # Install the project itself
 RUN uv sync --frozen --no-dev
 
-# Clean up caches to reduce image size
-RUN rm -rf /root/.cache /app/.venv/lib/python*/site-packages/torch/test \
-    /app/.venv/lib/python*/site-packages/torch/include \
-    /app/.venv/lib/python*/site-packages/torch/share
+# Clean up caches
+RUN rm -rf /root/.cache/uv /root/.cache/pip
 
 # --- Stage 2: Runtime ---
 FROM python:3.13-slim AS runtime
