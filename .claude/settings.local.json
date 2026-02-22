@@ -15,7 +15,12 @@
       "mcp__windows-mcp__Snapshot",
       "mcp__windows-mcp__Click",
       "mcp__windows-mcp__App",
-      "mcp__windows-mcp__Type"
+      "mcp__windows-mcp__Type",
+      "WebFetch(domain:platform.openai.com)",
+      "WebFetch(domain:openrouter.ai)",
+      "mcp__exa__get_code_context_exa",
+      "WebSearch",
+      "Bash(cd:*)"
     ]
   },
   "outputStyle": "Metodas → Kodėl → Sprendimas"

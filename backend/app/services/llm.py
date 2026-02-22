@@ -316,6 +316,33 @@ def _flatten_nullable_anyof(node: dict) -> dict:
     return merged
 
 
+def _flatten_nullable_anyof_openai(node: dict) -> dict:
+    """Convert anyOf nullable pattern to OpenAI strict-mode format.
+
+    Pydantic generates: anyOf: [{type: "number"}, {type: "null"}]
+    OpenAI strict mode requires: {type: ["number", "null"]}
+    All fields stay in required, but nullable fields can return null.
+    See: https://platform.openai.com/docs/guides/structured-outputs
+    """
+    if "anyOf" not in node or not isinstance(node["anyOf"], list):
+        return node
+    variants = node["anyOf"]
+    if len(variants) != 2:
+        return node
+    null_variant = next((v for v in variants if isinstance(v, dict) and v.get("type") == "null"), None)
+    real_variant = next((v for v in variants if isinstance(v, dict) and v.get("type") != "null"), None)
+    if null_variant is None or real_variant is None:
+        return node
+    merged = dict(real_variant)
+    for k, v in node.items():
+        if k != "anyOf":
+            merged.setdefault(k, v)
+    # Convert type to nullable array: "number" -> ["number", "null"]
+    if "type" in merged:
+        merged["type"] = [merged["type"], "null"]
+    return merged
+
+
 def _clean_schema_for_google(schema: dict) -> dict:
     """Clean schema for Google Gemini models.
 
@@ -385,21 +412,22 @@ def _clean_schema_for_google(schema: dict) -> dict:
 
 
 def _clean_schema_for_openai(schema: dict) -> dict:
-    """Clean schema for OpenAI GPT models.
+    """Clean schema for OpenAI GPT models (strict mode).
 
     - Removes title, default
     - KEEPS description
     - Inlines $defs (OpenAI supports them but inline is safer for OpenRouter proxy)
     - Flattens single-item allOf
-    - Converts anyOf nullable patterns to simpler form
+    - Converts anyOf nullable to type: [T, "null"] (OpenAI strict format)
     - Adds additionalProperties: false
-    - Ensures required array on objects
+    - ALL properties must be in required array (OpenAI strict mode rule)
+    See: https://platform.openai.com/docs/guides/structured-outputs
     """
     schema = _resolve_refs(dict(schema))
 
     def _clean(node: dict) -> dict:
-        # Flatten nullable anyOf
-        node = _flatten_nullable_anyof(node)
+        # Flatten nullable anyOf to OpenAI format: type: [T, "null"]
+        node = _flatten_nullable_anyof_openai(node)
 
         cleaned: dict = {}
         for key, value in node.items():
@@ -418,7 +446,8 @@ def _clean_schema_for_openai(schema: dict) -> dict:
         if cleaned.get("type") == "object":
             if "additionalProperties" not in cleaned:
                 cleaned["additionalProperties"] = False
-            if "properties" in cleaned and "required" not in cleaned:
+            # OpenAI strict mode: ALL properties must be in required
+            if "properties" in cleaned:
                 cleaned["required"] = list(cleaned["properties"].keys())
 
         return cleaned
@@ -432,14 +461,14 @@ def _clean_schema_generic(schema: dict) -> dict:
     - Removes title, default
     - KEEPS description
     - Inlines $defs (safer for unknown providers)
-    - Flattens anyOf nullable and single-item allOf
+    - Flattens anyOf nullable to type: [T, "null"] (safest for OpenRouter proxy)
     - Adds additionalProperties: false
-    - Ensures required array on objects
+    - ALL properties in required array (strictest common denominator)
     """
     schema = _resolve_refs(dict(schema))
 
     def _clean(node: dict, field_name: str = "") -> dict:
-        node = _flatten_nullable_anyof(node)
+        node = _flatten_nullable_anyof_openai(node)
 
         cleaned: dict = {}
         for key, value in node.items():
@@ -469,7 +498,8 @@ def _clean_schema_generic(schema: dict) -> dict:
         if cleaned.get("type") == "object":
             if "additionalProperties" not in cleaned:
                 cleaned["additionalProperties"] = False
-            if "properties" in cleaned and "required" not in cleaned:
+            # All properties must be in required (strictest common denominator)
+            if "properties" in cleaned:
                 cleaned["required"] = list(cleaned["properties"].keys())
 
         return cleaned
