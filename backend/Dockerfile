@@ -1,6 +1,6 @@
 # backend/Dockerfile
 # Multi-stage Docker build for Railway deployment using uv package manager
-# Excludes docling (heavy ML dep) — uses pypdf + python-docx for parsing
+# Docling is optional (heavy ML dep) — uses pypdf + python-docx for parsing
 
 # --- Stage 1: Build ---
 FROM python:3.13-slim AS builder
@@ -13,21 +13,14 @@ WORKDIR /app
 # Copy dependency files first (better caching)
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies WITHOUT docling and its heavy ML deps
-# Override: install everything from lock, then remove docling tree
-RUN uv sync --frozen --no-dev --no-install-project && \
-    uv pip uninstall docling docling-core docling-ibm-models docling-parse \
-       deepsearch-glm torch torchvision onnxruntime transformers \
-       huggingface-hub safetensors accelerate timm 2>/dev/null || true
+# Install only core dependencies (no docling/torch/ML)
+RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy application code
 COPY . .
 
 # Install the project itself
 RUN uv sync --frozen --no-dev
-
-# Clean up caches
-RUN rm -rf /root/.cache/uv /root/.cache/pip
 
 # --- Stage 2: Runtime ---
 FROM python:3.13-slim AS runtime

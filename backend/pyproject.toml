@@ -12,7 +12,6 @@ dependencies = [
     "pydantic>=2.0",
     "pydantic-settings>=2.0",
     "convex",
-    "docling==2.73.0",
     "python-docx",
     "reportlab",
     "sse-starlette",
@@ -20,6 +19,9 @@ dependencies = [
     "py7zr",
     "pypdf>=6.0",
 ]
+
+[project.optional-dependencies]
+ml = ["docling==2.73.0"]
 
 [dependency-groups]
 dev = [
