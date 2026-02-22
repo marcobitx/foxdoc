@@ -1,5 +1,5 @@
 [project]
-name = "procurement-analyzer-backend"
+name = "foxdoc-backend"
 version = "0.1.0"
 description = "Lithuanian public procurement document analyzer — FastAPI backend"
 readme = "README.md"

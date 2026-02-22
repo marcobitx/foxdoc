@@ -1,4 +1,4 @@
-# Procurement Analyzer
+# FoxDoc
 
 Lithuanian public procurement document analyzer powered by LLM.
 

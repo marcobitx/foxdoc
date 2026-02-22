@@ -20,7 +20,7 @@ class AppSettings(BaseSettings):
     max_file_size_mb: int = 50
     max_files: int = 20
     max_concurrent_analyses: int = 5
-    temp_dir: str = "/tmp/procurement-analyzer"
+    temp_dir: str = "/tmp/foxdoc"
     parser_force_backend_text: bool = False
     parser_doc_timeout: int = 120
     parser_max_concurrent: int = 2

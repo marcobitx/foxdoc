@@ -525,8 +525,8 @@ class LLMClient:
             base_url=OPENROUTER_BASE,
             headers={
                 "Authorization": f"Bearer {api_key}",
-                "HTTP-Referer": "https://procurement-analyzer.app",
-                "X-Title": "Procurement Analyzer",
+                "HTTP-Referer": "https://foxdoc.app",
+                "X-Title": "FoxDoc",
             },
             timeout=httpx.Timeout(300.0, connect=10.0),
         )

@@ -13,8 +13,8 @@ import ScrollText from './ScrollText';
 import Tooltip from './Tooltip';
 import { clsx } from 'clsx';
 
-const CUSTOM_MODELS_KEY = 'procurement-analyzer:custom-models';
-const HIDDEN_MODELS_KEY = 'procurement-analyzer:hidden-models';
+const CUSTOM_MODELS_KEY = 'foxdoc:custom-models';
+const HIDDEN_MODELS_KEY = 'foxdoc:hidden-models';
 
 function loadCustomModels(): ModelInfo[] {
     try {

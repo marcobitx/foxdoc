@@ -1,5 +1,5 @@
 {
-  "name": "procurement-analyzer",
+  "name": "foxdoc",
   "private": true,
   "scripts": {
     "convex:dev": "convex dev",

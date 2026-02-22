@@ -210,7 +210,7 @@ export async function loadNotesFromServer() {
     if (!_notesMigrated) {
       _notesMigrated = true;
       try {
-        const raw = localStorage.getItem('procurement-analyzer-notes');
+        const raw = localStorage.getItem('foxdoc-notes');
         if (raw) {
           const old = JSON.parse(raw) as Array<{
             id: string; title: string; content: string;
@@ -228,7 +228,7 @@ export async function loadNotesFromServer() {
                 color: 'default',
               });
             }
-            localStorage.removeItem('procurement-analyzer-notes');
+            localStorage.removeItem('foxdoc-notes');
           }
         }
       } catch { /* ignore migration errors */ }

@@ -1,5 +1,5 @@
 # docker-compose.yml
-# Container orchestration for procurement-analyzer
+# Container orchestration for foxdoc
 # TODO: Configure after backend Dockerfile is ready (Task 3.2)
 
 version: "3.8"
