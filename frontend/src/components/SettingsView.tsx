@@ -8,11 +8,11 @@ import {
   Save, Cpu, Loader2, CheckCircle2,
   Zap, HardDrive, FileText, Users, Clock,
   ExternalLink, ChevronRight, ArrowUpRight, ArrowDownRight,
-  DollarSign, Hash, Layers, Star, Trash2,
+  DollarSign, Hash, Layers, Star,
 } from 'lucide-react';
 import { getSettings, updateSettings, getModels, getUsageStats, type Settings, type ModelInfo, type TokenUsageStats } from '../lib/api';
 import { buildVisibleModels } from '../lib/modelStorage';
-import { appStore, useStore, initModelStore, storeSetCustomModels, storeSetHiddenIds } from '../lib/store';
+import { appStore, useStore, initModelStore } from '../lib/store';
 import { ProviderLogo } from './ProviderLogos';
 import CustomSelect from './CustomSelect';
 import Tooltip from './Tooltip';
@@ -32,7 +32,6 @@ export default function SettingsView() {
   // Model list from store — reactive, synced with ModelPanel
   const customModels: ModelInfo[] = storeState.myCustomModels;
   const hiddenIds = new Set<string>(storeState.myHiddenIds);
-  const customIdSet = new Set(customModels.map((m: ModelInfo) => m.id));
   // myModels = same list as ModelPanel (API filtered by hidden + custom)
   const myModels = buildVisibleModels(apiModels, customModels, hiddenIds);
 
@@ -86,22 +85,6 @@ export default function SettingsView() {
     }
   };
 
-  // Remove a model from user's list — updates store so ModelPanel syncs immediately
-  const removeModel = (modelId: string) => {
-    const isCustom = customIdSet.has(modelId) && !apiModels.some(a => a.id === modelId);
-    if (isCustom) {
-      storeSetCustomModels(customModels.filter((m: ModelInfo) => m.id !== modelId));
-    } else {
-      const next = new Set(hiddenIds);
-      next.add(modelId);
-      storeSetHiddenIds(next);
-    }
-    const storeModel = appStore.getState().selectedModel;
-    if (storeModel?.id === modelId) {
-      const remaining = myModels.filter(m => m.id !== modelId);
-      appStore.setState({ selectedModel: remaining[0] || null });
-    }
-  };
 
   const hasChanges = selectedModel && selectedModel !== settings?.default_model;
   const selectedModelInfo = myModels.find((m) => m.id === selectedModel);
@@ -227,86 +210,6 @@ export default function SettingsView() {
             </Tooltip>
           </div>
         </div>
-      </section>
-
-      {/* ── Section: My Models ────────────────────────────────────── */}
-      <section className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-1 h-4 rounded-full bg-brand-400" />
-          <h2 className="text-[13px] font-bold text-surface-400 uppercase tracking-widest">
-            Mano modeliai
-          </h2>
-          <span className="text-[10px] text-surface-600 font-medium ml-1">({myModels.length})</span>
-        </div>
-
-        {myModels.length === 0 ? (
-          <div className="enterprise-card p-6 text-center">
-            <p className="text-[13px] text-surface-500">Nėra modelių sąraše</p>
-            <p className="text-[11px] text-surface-600 mt-1">Pridėkite modelius per Modeliai skydelį</p>
-          </div>
-        ) : (
-          <div className="enterprise-card p-0 overflow-hidden">
-            {myModels.map((model, idx) => {
-              const isDefault = model.id === settings?.default_model;
-              const isSaving = savingDefault === model.id;
-              return (
-                <div
-                  key={model.id}
-                  className={clsx(
-                    "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-800/40",
-                    idx !== 0 && "border-t border-surface-700/30"
-                  )}
-                >
-                  <ProviderLogo modelId={model.id} size={18} />
-
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold text-white truncate">{model.name}</p>
-                    <p className="text-[10px] text-surface-500 font-mono truncate">{model.id}</p>
-                  </div>
-
-                  <div className="flex items-center gap-3 flex-shrink-0 text-[10px] text-surface-500 font-mono">
-                    <span>{Math.round(model.context_length / 1000)}k</span>
-                    <span>${model.pricing_prompt.toFixed(2)}</span>
-                  </div>
-
-                  {/* Set as default button */}
-                  <Tooltip content={isDefault ? 'Numatytasis modelis' : 'Nustatyti kaip numatytąjį'} side="left">
-                    <button
-                      onClick={() => setAsDefault(model.id)}
-                      disabled={isDefault || isSaving}
-                      className={clsx(
-                        "p-1.5 rounded-lg transition-all",
-                        isDefault
-                          ? "text-brand-400 bg-brand-500/10"
-                          : "text-surface-500 hover:text-brand-400 hover:bg-brand-500/10"
-                      )}
-                    >
-                      {isSaving ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Star className={clsx("w-3.5 h-3.5", isDefault && "fill-brand-400")} />
-                      )}
-                    </button>
-                  </Tooltip>
-
-                  {/* Remove button */}
-                  <Tooltip content="Pašalinti iš sąrašo" side="left">
-                    <button
-                      onClick={() => removeModel(model.id)}
-                      className="p-1.5 rounded-lg text-surface-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </Tooltip>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        <p className="text-[10px] text-surface-600 mt-2 italic">
-          ⭐ — nustatyti kaip numatytąjį analizės modelį. Pridėti naujų modelių galima per Modeliai skydelį.
-        </p>
       </section>
 
       {/* ── Section 3: Token Usage ─────────────────────────────────── */}
