@@ -33,11 +33,8 @@ export default function SettingsView() {
   const customModels: ModelInfo[] = storeState.myCustomModels;
   const hiddenIds = new Set<string>(storeState.myHiddenIds);
   const customIdSet = new Set(customModels.map((m: ModelInfo) => m.id));
+  // myModels = same list as ModelPanel (API filtered by hidden + custom)
   const myModels = buildVisibleModels(apiModels, customModels, hiddenIds);
-  const allModelsForSelector = [
-    ...apiModels,
-    ...customModels.filter((c: ModelInfo) => !apiModels.some(a => a.id === c.id)),
-  ];
 
   useEffect(() => {
     initModelStore();
@@ -107,7 +104,7 @@ export default function SettingsView() {
   };
 
   const hasChanges = selectedModel && selectedModel !== settings?.default_model;
-  const selectedModelInfo = allModelsForSelector.find((m) => m.id === selectedModel);
+  const selectedModelInfo = myModels.find((m) => m.id === selectedModel);
 
   if (loading) {
     return (
@@ -151,11 +148,11 @@ export default function SettingsView() {
               </div>
             </div>
 
-            {allModelsForSelector.length > 0 ? (
+            {myModels.length > 0 ? (
               <CustomSelect
                 value={selectedModel}
                 onChange={setSelectedModel}
-                options={allModelsForSelector.map((m) => ({
+                options={myModels.map((m) => ({
                   value: m.id,
                   label: `${m.name} (${(m.context_length / 1000).toFixed(0)}k ctx)`,
                 }))}
