@@ -22,14 +22,43 @@ function normalizeScore(score: number | null | undefined): number {
   return score <= 1 ? Math.round(score * 100) : Math.round(score);
 }
 
+const QA_POLL_INTERVAL = 4000;
+const QA_MAX_RETRIES = 8;
+
 export default function ResultsPanel({ analysisId }: { analysisId: string }) {
   const state = useStore(appStore);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(true);
+  const [qaPolling, setQaPolling] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    let pollTimer: ReturnType<typeof setTimeout> | undefined;
+    let retries = 0;
+
+    async function fetchAnalysis() {
+      try {
+        const data = await getAnalysis(analysisId);
+        if (cancelled) return;
+        setAnalysis(data);
+        appStore.setState({ cachedAnalysis: { id: analysisId, data } });
+
+        // If QA is still null, keep polling
+        if (data?.qa == null && retries < QA_MAX_RETRIES) {
+          retries++;
+          setQaPolling(true);
+          pollTimer = setTimeout(fetchAnalysis, QA_POLL_INTERVAL);
+        } else {
+          setQaPolling(false);
+        }
+      } catch (e) {
+        console.error(e);
+        setQaPolling(false);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
 
     async function load() {
       // Use cache only if it has QA data
@@ -39,27 +68,14 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
         setLoading(false);
         return;
       }
-
-      // Fetch fresh (cache missing or qa was null)
-      try {
-        const data = await getAnalysis(analysisId);
-        if (!cancelled) {
-          setAnalysis(data);
-          appStore.setState({ cachedAnalysis: { id: analysisId, data } });
-        }
-      } catch (e) {
-        // Fallback to stale cache if fetch fails
-        if (!cancelled && cached?.id === analysisId) {
-          setAnalysis(cached.data);
-        }
-        console.error(e);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      await fetchAnalysis();
     }
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      clearTimeout(pollTimer);
+    };
   }, [analysisId]);
 
   if (loading) {
@@ -129,11 +145,14 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
           <div className="w-full p-4 rounded-xl bg-surface-950/40 border border-surface-700/50">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className={`w-3.5 h-3.5 ${qa ? qaColor : 'text-surface-600'}`} />
+                {qaPolling
+                  ? <Loader2 className="w-3.5 h-3.5 text-surface-500 animate-spin" />
+                  : <ShieldCheck className={`w-3.5 h-3.5 ${qa ? qaColor : 'text-surface-600'}`} />
+                }
                 <span className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Kokybės balas</span>
               </div>
               <span className={`text-[15px] font-black font-mono tracking-tighter ${qa ? qaColor : 'text-surface-600'}`}>
-                {qa ? `${qaScore}%` : '—'}
+                {qa ? `${qaScore}%` : qaPolling ? '…' : '—'}
               </span>
             </div>
             <div

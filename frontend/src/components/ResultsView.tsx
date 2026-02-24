@@ -258,27 +258,31 @@ export default function ResultsView({ analysisId, onBack }: Props) {
   if (r.technical_specifications?.length > 0) {
     sections.push({
       title: 'Techninė specifikacija',
-      render: () => (
-        <ul className="space-y-2">
-          {r.technical_specifications.map((ts: any, i: number) => {
-            const tag = ts.mandatory !== false ? 'PRIVALOMA' : 'PAGEIDAUJAMA';
-            const tagColor = ts.mandatory !== false ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10';
-            return (
-              <li key={i} className="text-[13px] text-surface-300 leading-relaxed">
-                <div className="flex gap-2.5">
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${tagColor} flex-shrink-0 mt-0.5`}>
-                    {tag}
-                  </span>
+      render: () => {
+        const mandatory = r.technical_specifications.filter((ts: any) => ts.mandatory !== false);
+        const optional = r.technical_specifications.filter((ts: any) => ts.mandatory === false);
+        const renderGroup = (items: any[], label: string, borderColor: string, labelColor: string) => (
+          <div>
+            <p className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${labelColor}`}>{label}</p>
+            <ul className="space-y-2">
+              {items.map((ts: any, i: number) => (
+                <li key={i} className={`pl-3 border-l-2 ${borderColor} text-[13px] text-surface-300 leading-relaxed`}>
                   <span>{ts.description}</span>
-                </div>
-                {ts.details && (
-                  <p className="ml-[72px] mt-1 text-[12px] text-surface-400 italic">↳ {ts.details}</p>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      ),
+                  {ts.details && (
+                    <p className="mt-0.5 text-[12px] text-surface-400 italic">↳ {ts.details}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+        return (
+          <div className="space-y-5">
+            {mandatory.length > 0 && renderGroup(mandatory, 'Privaloma', 'border-emerald-500/60', 'text-emerald-500')}
+            {optional.length > 0 && renderGroup(optional, 'Pageidaujama', 'border-amber-500/60', 'text-amber-500')}
+          </div>
+        );
+      },
     });
   } else if (r.key_requirements?.length > 0 && !r.technical_specifications?.length) {
     // Fallback: show key_requirements as tech spec if no dedicated tech specs
