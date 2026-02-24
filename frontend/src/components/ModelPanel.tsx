@@ -1,46 +1,22 @@
 // frontend/src/components/ModelPanel.tsx
 // Slide panel for selecting LLM models with search and custom model addition
 // All models (API + custom) can be removed; persisted via localStorage
-// Related: api.ts, store.ts
+// Related: api.ts, store.ts, modelStorage.ts
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { X, Cpu, AlertCircle, Loader2, Search, Plus, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { appStore, useStore } from '../lib/store';
 import { getModels, searchAllModels, type ModelInfo } from '../lib/api';
+import {
+    loadCustomModels, saveCustomModels,
+    loadHiddenIds, saveHiddenIds,
+    buildVisibleModels,
+} from '../lib/modelStorage';
 import { useFocusTrap } from '../lib/useFocusTrap';
 import { ProviderLogo, getProvider, PROVIDER_COLORS } from './ProviderLogos';
 import ScrollText from './ScrollText';
 import Tooltip from './Tooltip';
 import { clsx } from 'clsx';
-
-const CUSTOM_MODELS_KEY = 'foxdoc:custom-models';
-const HIDDEN_MODELS_KEY = 'foxdoc:hidden-models';
-
-function loadCustomModels(): ModelInfo[] {
-    try {
-        const raw = localStorage.getItem(CUSTOM_MODELS_KEY);
-        return raw ? JSON.parse(raw) : [];
-    } catch {
-        return [];
-    }
-}
-
-function saveCustomModels(models: ModelInfo[]) {
-    localStorage.setItem(CUSTOM_MODELS_KEY, JSON.stringify(models));
-}
-
-function loadHiddenIds(): Set<string> {
-    try {
-        const raw = localStorage.getItem(HIDDEN_MODELS_KEY);
-        return raw ? new Set(JSON.parse(raw)) : new Set();
-    } catch {
-        return new Set();
-    }
-}
-
-function saveHiddenIds(ids: Set<string>) {
-    localStorage.setItem(HIDDEN_MODELS_KEY, JSON.stringify([...ids]));
-}
 
 export default function ModelPanel() {
     const state = useStore(appStore);
@@ -62,10 +38,8 @@ export default function ModelPanel() {
     const searchInputRef = useRef<HTMLInputElement>(null);
     const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
-    // Visible models = (API - hidden) + (custom - hidden)
-    const visibleApiModels = apiModels.filter(m => !hiddenIds.has(m.id));
-    const visibleCustomModels = customModels.filter(c => !hiddenIds.has(c.id) && !apiModels.some(a => a.id === c.id));
-    const allVisibleModels = [...visibleApiModels, ...visibleCustomModels];
+    // Unified visible models list
+    const allVisibleModels = buildVisibleModels(apiModels, customModels, hiddenIds);
     const customIdSet = new Set(customModels.map(m => m.id));
 
     // Animate open
@@ -158,8 +132,10 @@ export default function ModelPanel() {
 
     if (!visible) return null;
 
+    // Select model and auto-close panel
     const selectModel = (model: ModelInfo) => {
         appStore.setState({ selectedModel: model });
+        handleClose();
     };
 
     const addAndSelectModel = (model: ModelInfo) => {
@@ -177,6 +153,7 @@ export default function ModelPanel() {
             saveCustomModels(updated);
         }
         appStore.setState({ selectedModel: model });
+        handleClose();
     };
 
     const removeModel = (e: React.MouseEvent, modelId: string) => {
@@ -185,19 +162,16 @@ export default function ModelPanel() {
         const isCustom = customIdSet.has(modelId) && !apiModels.some(a => a.id === modelId);
 
         if (isCustom) {
-            // Custom model: delete from localStorage entirely
             const updated = customModels.filter(m => m.id !== modelId);
             setCustomModels(updated);
             saveCustomModels(updated);
         } else {
-            // API model: hide it
             const next = new Set(hiddenIds);
             next.add(modelId);
             setHiddenIds(next);
             saveHiddenIds(next);
         }
 
-        // If removed model was selected, fallback
         if (state.selectedModel?.id === modelId) {
             const remaining = allVisibleModels.filter(m => m.id !== modelId);
             appStore.setState({ selectedModel: remaining[0] || null });
@@ -267,10 +241,10 @@ export default function ModelPanel() {
                         </div>
                     ) : (
                         <>
-                            {/* All visible models */}
-                            {visibleApiModels.length > 0 && (
+                            {/* Unified model list */}
+                            {allVisibleModels.length > 0 ? (
                                 <div className="grid gap-2">
-                                    {visibleApiModels.map((model) => (
+                                    {allVisibleModels.map((model) => (
                                         <ModelCard
                                             key={model.id}
                                             model={model}
@@ -280,31 +254,7 @@ export default function ModelPanel() {
                                         />
                                     ))}
                                 </div>
-                            )}
-
-                            {/* Custom models section */}
-                            {visibleCustomModels.length > 0 && (
-                                <>
-                                    <div className="flex items-center gap-2 pt-1">
-                                        <div className="h-px flex-1 bg-surface-700/40" />
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-surface-500">Pridėti</span>
-                                        <div className="h-px flex-1 bg-surface-700/40" />
-                                    </div>
-                                    <div className="grid gap-2">
-                                        {visibleCustomModels.map((model) => (
-                                            <ModelCard
-                                                key={model.id}
-                                                model={model}
-                                                isSelected={state.selectedModel?.id === model.id}
-                                                onSelect={selectModel}
-                                                onRemove={removeModel}
-                                            />
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-
-                            {visibleApiModels.length === 0 && visibleCustomModels.length === 0 && (
+                            ) : (
                                 <div className="flex flex-col items-center justify-center py-12 gap-3 text-center">
                                     <p className="text-sm text-surface-500">Nėra modelių sąraše</p>
                                     <p className="text-[11px] text-surface-600">Pridėkite modelį per paiešką žemiau</p>
@@ -315,7 +265,7 @@ export default function ModelPanel() {
                 </div>
 
                 {/* Search / Add Model Section */}
-                <div className="border-t border-surface-700/50 bg-surface-800/55 flex-shrink-0">
+                <div className="border-t border-surface-700/50 bg-surface-800/55 flex-shrink-0 rounded-t-[6px]">
                     <button
                         onClick={() => setSearchOpen(!searchOpen)}
                         className="w-full flex items-center justify-between px-5 py-3 text-[12px] font-semibold text-surface-400 hover:text-surface-200 transition-colors"
