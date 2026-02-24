@@ -23,6 +23,7 @@ import SourcesPanel from './SourcesPanel';
 import HelpPanel from './HelpPanel';
 import ErrorBoundary from './ErrorBoundary';
 import { getModels, getSettings } from '../lib/api';
+import { loadHiddenIds, loadCustomModels, buildVisibleModels } from '../lib/modelStorage';
 
 /** Maps workflow sub-views to their parent nav item */
 function getActiveNav(view: AppView): AppView {
@@ -131,15 +132,21 @@ export default function App() {
         appStore.setState({ cachedModels: models });
       }
       if (models.length > 0 && !state.selectedModel) {
-        // Use default model from settings if configured
-        let defaultModel = models[0];
+        // Build the user's visible model list (respects hidden + custom models)
+        const hiddenIds = loadHiddenIds();
+        const customModels = loadCustomModels();
+        const visible = buildVisibleModels(models, customModels, hiddenIds);
+
+        // Use default model from settings if configured and visible
+        let defaultModel = visible[0] || models[0];
         try {
           const settings = await getSettings();
           if (settings.default_model) {
-            const match = models.find((m: any) => m.id === settings.default_model);
+            const match = visible.find((m: any) => m.id === settings.default_model)
+              ?? models.find((m: any) => m.id === settings.default_model);
             if (match) defaultModel = match;
           }
-        } catch { /* fall back to first model */ }
+        } catch { /* fall back to first visible model */ }
         appStore.setState({ selectedModel: defaultModel });
       }
     } catch (err) {

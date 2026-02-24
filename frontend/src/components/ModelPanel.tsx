@@ -7,7 +7,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { X, Cpu, AlertCircle, Loader2, Search, Plus, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { appStore, useStore, initModelStore, storeSetCustomModels, storeSetHiddenIds } from '../lib/store';
 import { getModels, searchAllModels, type ModelInfo } from '../lib/api';
-import { buildVisibleModels } from '../lib/modelStorage';
+import { buildVisibleModels, loadCustomModels, loadHiddenIds } from '../lib/modelStorage';
 import { useFocusTrap } from '../lib/useFocusTrap';
 import { ProviderLogo, getProvider, PROVIDER_COLORS } from './ProviderLogos';
 import ScrollText from './ScrollText';
@@ -30,7 +30,7 @@ export default function ModelPanel() {
     const [searching, setSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
-    const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
+    const searchTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     // Model list from store (shared with SettingsView)
     const customModels: ModelInfo[] = state.myCustomModels;
@@ -77,8 +77,16 @@ export default function ModelPanel() {
             const data = await getModels();
             setApiModels(data);
             appStore.setState({ cachedModels: data });
-            if (!state.selectedModel && data.length > 0) {
-                appStore.setState({ selectedModel: data[0] });
+
+            // Reconcile selectedModel: read hidden/custom directly from localStorage
+            // (store may not be hydrated yet at this point)
+            const hiddenNow = loadHiddenIds();
+            const customNow = loadCustomModels();
+            const visible = buildVisibleModels(data, customNow, hiddenNow);
+            const current = appStore.getState().selectedModel;
+            const currentInList = current && visible.some(m => m.id === current.id);
+            if (!currentInList) {
+                appStore.setState({ selectedModel: visible[0] || null });
             }
         } catch (err: any) {
             setError(err.message || 'Nepavyko užkrauti modelių');
