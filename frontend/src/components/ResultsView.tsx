@@ -650,32 +650,32 @@ export default function ResultsView({ analysisId, onBack }: Props) {
         </div>
       </div>
 
-      {/* ── QA Score ──────────────────────────────────────────── */}
-      {qa && (
-        <div className={`enterprise-card p-5 mb-5 flex items-center gap-5 ${qaColors.bg} border-brand-500/10`}>
-          <div className="relative w-14 h-14 flex-shrink-0">
-            <svg viewBox="0 0 40 40" className="w-full h-full -rotate-90">
-              <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" strokeWidth="3"
-                className="text-surface-700/30" />
+      {/* ── QA Score — always visible after analysis ─────────────── */}
+      <div className={`enterprise-card p-5 mb-5 flex items-center gap-5 ${qa ? qaColors.bg : 'bg-surface-800/20'} border-brand-500/10`}>
+        <div className="relative w-14 h-14 flex-shrink-0">
+          <svg viewBox="0 0 40 40" className="w-full h-full -rotate-90">
+            <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" strokeWidth="3"
+              className="text-surface-700/30" />
+            {qa && (
               <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" strokeWidth="3"
                 className={qaColors.text}
                 strokeDasharray={`${qaScore} ${100 - qaScore}`}
                 strokeLinecap="round"
                 style={{ transition: 'stroke-dasharray 1s ease-out' }} />
-            </svg>
-            <span className={`absolute inset-0 flex items-center justify-center text-[13px] font-bold ${qaColors.text}`}>
-              {qaScore}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[14px] font-semibold text-surface-100">Kokybės balas</p>
-            <p className="text-[12px] text-surface-400 mt-0.5 truncate">
-              {qa.summary || 'Automatinis QA vertinimas pagal pilnumą ir tikslumą'}
-            </p>
-          </div>
-          <ShieldCheck className={`w-5 h-5 ${qaColors.text} flex-shrink-0`} />
+            )}
+          </svg>
+          <span className={`absolute inset-0 flex items-center justify-center text-[13px] font-bold ${qa ? qaColors.text : 'text-surface-600'}`}>
+            {qa ? qaScore : '—'}
+          </span>
         </div>
-      )}
+        <div className="flex-1 min-w-0">
+          <p className="text-[14px] font-semibold text-surface-100">Kokybės balas</p>
+          <p className="text-[12px] text-surface-400 mt-0.5 truncate">
+            {qa?.summary || 'Automatinis QA vertinimas pagal pilnumą ir tikslumą'}
+          </p>
+        </div>
+        <ShieldCheck className={`w-5 h-5 ${qa ? qaColors.text : 'text-surface-600'} flex-shrink-0`} />
+      </div>
 
       {/* ── Metrics ───────────────────────────────────────────── */}
       {metrics && (

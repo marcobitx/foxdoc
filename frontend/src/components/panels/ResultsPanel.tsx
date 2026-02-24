@@ -7,14 +7,20 @@ import { useState, useEffect } from 'react';
 import {
   AlertTriangle,
   MessageSquare,
-  FileText,
   BookOpen,
   Loader2,
+  ShieldCheck,
 } from 'lucide-react';
 import { appStore, useStore } from '../../lib/store';
 import { getAnalysis, type Analysis } from '../../lib/api';
 import ChatPanel from '../ChatPanel';
 import Tooltip from '../Tooltip';
+
+/** Normalize completeness_score: backend may return 0–1 float or 0–100 int */
+function normalizeScore(score: number | null | undefined): number {
+  if (score == null) return 0;
+  return score <= 1 ? Math.round(score * 100) : Math.round(score);
+}
 
 export default function ResultsPanel({ analysisId }: { analysisId: string }) {
   const state = useStore(appStore);
@@ -23,16 +29,18 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
   const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
-    // Use cached analysis if ID matches
-    const cached = appStore.getState().cachedAnalysis;
-    if (cached && cached.id === analysisId) {
-      setAnalysis(cached.data);
-      setLoading(false);
-      return;
-    }
-
     let cancelled = false;
-    (async () => {
+
+    async function load() {
+      // Use cache only if it has QA data
+      const cached = appStore.getState().cachedAnalysis;
+      if (cached && cached.id === analysisId && cached.data?.qa != null) {
+        setAnalysis(cached.data);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch fresh (cache missing or qa was null)
       try {
         const data = await getAnalysis(analysisId);
         if (!cancelled) {
@@ -40,11 +48,17 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
           appStore.setState({ cachedAnalysis: { id: analysisId, data } });
         }
       } catch (e) {
+        // Fallback to stale cache if fetch fails
+        if (!cancelled && cached?.id === analysisId) {
+          setAnalysis(cached.data);
+        }
         console.error(e);
       } finally {
         if (!cancelled) setLoading(false);
       }
-    })();
+    }
+
+    load();
     return () => { cancelled = true; };
   }, [analysisId]);
 
@@ -63,6 +77,9 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
 
   const r = analysis?.report;
   const qa = analysis?.qa;
+  const qaScore = normalizeScore(qa?.completeness_score);
+  const qaColor = qaScore >= 80 ? 'text-emerald-400' : qaScore >= 50 ? 'text-accent-400' : 'text-red-400';
+  const qaBarColor = qaScore >= 80 ? 'bg-emerald-500' : qaScore >= 50 ? 'bg-accent-500 shadow-glow-accent' : 'bg-red-500';
 
   return (
     <>
@@ -70,23 +87,23 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
         <h3 className="text-[13px] font-bold text-surface-400 tracking-wider uppercase">Įrankiai</h3>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-5 animate-fade-in">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 animate-fade-in">
         {/* Open sources panel button */}
         {r?.source_documents?.length > 0 && (
           <Tooltip content="Peržiūrėti šaltinių dokumentus" side="left" className="w-full">
-          <button
-            onClick={() => appStore.setState({ sourcesPanelOpen: true })}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-surface-800/20 border border-surface-700/30 hover:border-brand-500/30 hover:bg-brand-500/5 transition-all duration-200 group"
-          >
-            <BookOpen className="w-4 h-4 text-surface-500 group-hover:text-brand-400 transition-colors" />
-            <div className="flex-1 text-left min-w-0">
-              <p className="text-[12px] font-semibold text-surface-300 group-hover:text-surface-200 transition-colors">
-                Šaltiniai ({r.source_documents.length})
-              </p>
-              <p className="text-[10px] text-surface-500">Peržiūrėti dokumentus</p>
-            </div>
-            <span className="text-[10px] text-surface-600 group-hover:text-brand-400 transition-colors">&rsaquo;</span>
-          </button>
+            <button
+              onClick={() => appStore.setState({ sourcesPanelOpen: true })}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-surface-800/20 border border-surface-700/30 hover:border-brand-500/30 hover:bg-brand-500/5 transition-all duration-200 group"
+            >
+              <BookOpen className="w-4 h-4 text-surface-500 group-hover:text-brand-400 transition-colors" />
+              <div className="flex-1 text-left min-w-0">
+                <p className="text-[12px] font-semibold text-surface-300 group-hover:text-surface-200 transition-colors">
+                  Šaltiniai ({r.source_documents.length})
+                </p>
+                <p className="text-[10px] text-surface-500">Peržiūrėti dokumentus</p>
+              </div>
+              <span className="text-[10px] text-surface-600 group-hover:text-brand-400 transition-colors">&rsaquo;</span>
+            </button>
           </Tooltip>
         )}
 
@@ -107,36 +124,33 @@ export default function ResultsPanel({ analysisId }: { analysisId: string }) {
           </div>
         )}
 
-        {/* QA Score mini */}
-        {qa && (
-          <Tooltip content="Automatinis ataskaitos pilnumo vertinimas" side="left">
-          <div className="p-4 rounded-2xl bg-surface-950/40 border border-surface-700/50 w-full">
+        {/* QA Score — always visible, same full width as AI Agentas button */}
+        <Tooltip content="Automatinis ataskaitos pilnumo vertinimas" side="left" className="w-full">
+          <div className="w-full p-4 rounded-xl bg-surface-950/40 border border-surface-700/50">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Kokybės balas</span>
-              <span className={`text-[15px] font-black font-mono tracking-tighter ${(qa.completeness_score ?? 0) >= 80 ? 'text-emerald-400' :
-                (qa.completeness_score ?? 0) >= 50 ? 'text-accent-400' : 'text-red-400'
-                }`}>
-                {qa.completeness_score ?? 0}%
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className={`w-3.5 h-3.5 ${qa ? qaColor : 'text-surface-600'}`} />
+                <span className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Kokybės balas</span>
+              </div>
+              <span className={`text-[15px] font-black font-mono tracking-tighter ${qa ? qaColor : 'text-surface-600'}`}>
+                {qa ? `${qaScore}%` : '—'}
               </span>
             </div>
             <div
               className="w-full h-2 rounded-full bg-surface-900 overflow-hidden border border-surface-700/30"
               role="progressbar"
-              aria-valuenow={qa.completeness_score ?? 0}
+              aria-valuenow={qaScore}
               aria-valuemin={0}
               aria-valuemax={100}
               aria-label="Kokybės balas"
             >
               <div
-                className={`h-full rounded-full transition-all duration-1000 shadow-[0_0_12px_rgba(0,0,0,0.5)] ${(qa.completeness_score ?? 0) >= 80 ? 'bg-emerald-500' :
-                  (qa.completeness_score ?? 0) >= 50 ? 'bg-accent-500 shadow-glow-accent' : 'bg-red-500'
-                  }`}
-                style={{ width: `${Math.min(qa.completeness_score ?? 0, 100)}%` }}
+                className={`h-full rounded-full transition-all duration-1000 ${qa ? qaBarColor : 'bg-surface-700'}`}
+                style={{ width: `${Math.min(qaScore, 100)}%` }}
               />
             </div>
           </div>
-          </Tooltip>
-        )}
+        </Tooltip>
       </div>
 
       {/* Chat button */}
