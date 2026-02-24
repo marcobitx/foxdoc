@@ -71,23 +71,22 @@ export default function UploadView() {
 
 function FeatureCard({ step, desc, image }: { step: string; desc: string; image: string }) {
   return (
-    <div className="group relative flex flex-col h-[180px] rounded-xl overflow-hidden bg-[#0d0d0d] border border-white/[0.06] hover:border-[#f59e0b]/20 transition-all duration-500 cursor-default">
-      {/* Background Image */}
-      <img
-        src={image}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-[1.03]"
-      />
+    <div className="group relative flex flex-col h-[210px] rounded-xl bg-surface-800/50 border border-surface-600/30 hover:border-[#f59e0b]/20 transition-all duration-500 cursor-default overflow-hidden">
 
-      {/* Bottom gradient for text legibility */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+      {/* Inner image frame */}
+      <div className="mx-3 mt-3 rounded-lg overflow-hidden flex-1 relative">
+        <img
+          src={image}
+          alt=""
+          className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-[1.03]"
+        />
+        {/* Orange glow on hover */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.08),transparent_70%)]" />
+      </div>
 
-      {/* Orange glow on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(ellipse_at_bottom,rgba(245,158,11,0.07),transparent_70%)]" />
-
-      {/* Content */}
-      <div className="relative z-10 mt-auto p-4">
-        <div className="flex items-center gap-1.5 mb-1">
+      {/* Title below the image frame, inside main card */}
+      <div className="px-4 py-3">
+        <div className="flex items-center gap-1.5 mb-0.5">
           <div className="w-3 h-px bg-[#f59e0b]/50" />
           <span className="text-[9px] font-semibold text-[#f59e0b]/60 uppercase tracking-[0.25em]">{step}</span>
         </div>
