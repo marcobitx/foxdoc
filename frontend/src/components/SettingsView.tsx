@@ -11,22 +11,17 @@ import {
   DollarSign, Hash, Layers, Star, Trash2,
 } from 'lucide-react';
 import { getSettings, updateSettings, getModels, getUsageStats, type Settings, type ModelInfo, type TokenUsageStats } from '../lib/api';
-import {
-  loadCustomModels, saveCustomModels,
-  loadHiddenIds, saveHiddenIds,
-  buildVisibleModels,
-} from '../lib/modelStorage';
-import { appStore } from '../lib/store';
+import { buildVisibleModels } from '../lib/modelStorage';
+import { appStore, useStore, initModelStore, storeSetCustomModels, storeSetHiddenIds } from '../lib/store';
 import { ProviderLogo } from './ProviderLogos';
 import CustomSelect from './CustomSelect';
 import Tooltip from './Tooltip';
 import { clsx } from 'clsx';
 
 export default function SettingsView() {
+  const storeState = useStore(appStore);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [apiModels, setApiModels] = useState<ModelInfo[]>([]);
-  const [customModels, setCustomModels] = useState<ModelInfo[]>(() => loadCustomModels());
-  const [hiddenIds, setHiddenIds] = useState<Set<string>>(() => loadHiddenIds());
   const [usage, setUsage] = useState<TokenUsageStats | null>(null);
   const [selectedModel, setSelectedModel] = useState('');
   const [loading, setLoading] = useState(true);
@@ -34,17 +29,18 @@ export default function SettingsView() {
   const [saved, setSaved] = useState(false);
   const [savingDefault, setSavingDefault] = useState<string | null>(null);
 
-  // All user-visible models (API - hidden + custom)
+  // Model list from store — reactive, synced with ModelPanel
+  const customModels: ModelInfo[] = storeState.myCustomModels;
+  const hiddenIds = new Set<string>(storeState.myHiddenIds);
+  const customIdSet = new Set(customModels.map((m: ModelInfo) => m.id));
   const myModels = buildVisibleModels(apiModels, customModels, hiddenIds);
-  const customIdSet = new Set(customModels.map(m => m.id));
-
-  // All models available for the selector (API + custom)
   const allModelsForSelector = [
     ...apiModels,
-    ...customModels.filter(c => !apiModels.some(a => a.id === c.id)),
+    ...customModels.filter((c: ModelInfo) => !apiModels.some(a => a.id === c.id)),
   ];
 
   useEffect(() => {
+    initModelStore();
     (async () => {
       try {
         const [s, m, u] = await Promise.all([getSettings(), getModels(), getUsageStats()]);
@@ -52,7 +48,6 @@ export default function SettingsView() {
         setApiModels(m);
         setUsage(u);
         setSelectedModel(s.default_model);
-        // Sync cached models to store
         appStore.setState({ cachedModels: m });
       } catch (e) {
         console.error(e);
@@ -94,21 +89,16 @@ export default function SettingsView() {
     }
   };
 
-  // Remove a model from user's list
+  // Remove a model from user's list — updates store so ModelPanel syncs immediately
   const removeModel = (modelId: string) => {
     const isCustom = customIdSet.has(modelId) && !apiModels.some(a => a.id === modelId);
     if (isCustom) {
-      const updated = customModels.filter(m => m.id !== modelId);
-      setCustomModels(updated);
-      saveCustomModels(updated);
+      storeSetCustomModels(customModels.filter((m: ModelInfo) => m.id !== modelId));
     } else {
       const next = new Set(hiddenIds);
       next.add(modelId);
-      setHiddenIds(next);
-      saveHiddenIds(next);
-      // Sync hidden IDs so ModelPanel re-reads on next open
+      storeSetHiddenIds(next);
     }
-    // Update store selected model if removed
     const storeModel = appStore.getState().selectedModel;
     if (storeModel?.id === modelId) {
       const remaining = myModels.filter(m => m.id !== modelId);

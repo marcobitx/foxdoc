@@ -15,6 +15,10 @@ import {
   bulkUpdateNotesStatus as bulkUpdateNotesStatusApi,
   type NoteData,
 } from './api';
+import {
+  loadCustomModels, saveCustomModels,
+  loadHiddenIds, saveHiddenIds,
+} from './modelStorage';
 
 type Listener = () => void;
 
@@ -128,6 +132,9 @@ export interface AppState {
   notesPerPage: number;
   tipsPanelOpen: boolean;
   previousView: AppView | null;
+  // User model list — synced with localStorage, shared between ModelPanel and SettingsView
+  myCustomModels: any[];
+  myHiddenIds: string[];
   // Stream state — managed by the global stream manager, read by AnalyzingView
   streamEvents: Array<{ event: string; data: any; ts: number }>;
   streamStatus: string;
@@ -183,6 +190,8 @@ export const appStore = createStore<AppState>({
   notesPerPage: 10,
   tipsPanelOpen: false,
   previousView: null,
+  myCustomModels: [],
+  myHiddenIds: [],
   analysisStatus: null,
   analysisElapsedSec: 0,
   parsedDocs: [],
@@ -374,6 +383,27 @@ export function toggleNoteSelection(id: string) {
 
 export function clearNoteSelection() {
   appStore.setState({ notesSelectedIds: new Set() });
+}
+
+// ── Model list helpers (shared between ModelPanel and SettingsView) ───────────
+
+/** Call once on client mount to hydrate from localStorage */
+export function initModelStore() {
+  if (typeof window === 'undefined') return;
+  appStore.setState({
+    myCustomModels: loadCustomModels(),
+    myHiddenIds: [...loadHiddenIds()],
+  });
+}
+
+export function storeSetCustomModels(models: any[]) {
+  saveCustomModels(models);
+  appStore.setState({ myCustomModels: models });
+}
+
+export function storeSetHiddenIds(ids: Set<string>) {
+  saveHiddenIds(ids);
+  appStore.setState({ myHiddenIds: [...ids] });
 }
 
 // ── Step helpers (shared with AnalyzingView) ──────────────────────────────────
