@@ -1,10 +1,23 @@
 ---
+// src/pages/index.astro
+// Landing page — assembles all sections in order
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/sections/Hero.astro';
+import Partners from '../components/sections/Partners.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import UseCases from '../components/sections/UseCases.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import PricingPreview from '../components/sections/PricingPreview';
+import FAQ from '../components/sections/FAQ.astro';
+import FinalCTA from '../components/sections/FinalCTA.astro';
 ---
 <Layout title="AI Viešųjų Pirkimų Analitikas">
-  <div style="padding: 4rem 1.5rem; text-align: center;">
-    <h1>Viešųjų pirkimų dokumentai</h1>
-    <p style="color: #a0aec0; margin-top: 1rem;">Layout test</p>
-    <a href="https://app.foxdoc.io" class="btn-primary" style="margin-top: 2rem; display: inline-flex;">Išbandyti nemokamai</a>
-  </div>
+  <Hero />
+  <Partners />
+  <HowItWorks />
+  <UseCases />
+  <Testimonials />
+  <PricingPreview client:load />
+  <FAQ />
+  <FinalCTA />
 </Layout>

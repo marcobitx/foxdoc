@@ -1,0 +1,50 @@
+---
+// src/components/sections/HowItWorks.astro
+// 3-step process with scroll-triggered reveal animations
+const steps = [
+  {
+    num: '01',
+    title: 'Įkelkite dokumentus',
+    desc: 'Įkelkite PDF, DOCX, XLSX failus arba ZIP archyvą su visu pirkimo paketu. Palaikome iki 50+ dokumentų vienu metu.',
+  },
+  {
+    num: '02',
+    title: 'AI analizuoja',
+    desc: 'Dirbtinis intelektas automatiškai ištraukia CPV kodus, vertes, terminus, techninius reikalavimus ir kitus esminius duomenis.',
+  },
+  {
+    num: '03',
+    title: 'Gaukite ataskaitą',
+    desc: 'Per 3 minutes gaunate struktūrizuotą ataskaitą su QA balu. Eksportuokite į PDF/DOCX arba klauskite papildomų klausimų.',
+  },
+];
+---
+<section id="how-it-works" class="py-16 sm:py-24 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12 sm:mb-16">
+      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #00ca88;">// kaip veikia</p>
+      <h2 class="font-heading font-bold text-white">3 žingsniai iki išsamios ataskaitos</h2>
+    </div>
+
+    <div class="flex flex-col md:grid md:grid-cols-3 gap-6">
+      {steps.map((step, i) => (
+        <div class="scroll-reveal group relative p-6 rounded-2xl border transition-all duration-300 cursor-default"
+             style={`border-color: rgba(255,255,255,0.08); background: #141720; transition-delay: ${i * 80}ms;`}
+             onmouseover="this.style.borderColor='rgba(0,202,136,0.3)'; this.style.background='#1a1f2e';"
+             onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.background='#141720';">
+          <div class="font-mono text-5xl font-bold mb-4 select-none" style="color: rgba(0,202,136,0.12);">{step.num}</div>
+          <h3 class="font-heading font-semibold text-white mb-2 text-lg">{step.title}</h3>
+          <p class="text-sm leading-relaxed" style="color: #a0aec0;">{step.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+</script>

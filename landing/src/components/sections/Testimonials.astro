@@ -1,0 +1,67 @@
+---
+// src/components/sections/Testimonials.astro
+// Customer testimonials — 3 cards with star ratings and avatars
+const testimonials = [
+  {
+    name: 'Rūta Kazlauskienė',
+    role: 'Viešųjų pirkimų specialistė',
+    org: 'Vilniaus miesto savivaldybė',
+    initials: 'RK',
+    text: 'foxDoc sutaupė mums daugiau nei 3 valandas per kiekvieną didesnį pirkimą. Ataskaita tiksli ir visada randa tai, ką praleistume rankinės peržiūros metu.',
+    stars: 5,
+  },
+  {
+    name: 'Tomas Petraitis',
+    role: 'Direktorius',
+    org: 'UAB Baltic Procurement Solutions',
+    initials: 'TP',
+    text: 'Kaip konsultantas dirbu su dešimtimis pirkimų paketų per mėnesį. foxDoc tapo neatsiejama darbo dalimi — QA kokybės balas ypač vertingas.',
+    stars: 5,
+  },
+  {
+    name: 'Ieva Stankevičiūtė',
+    role: 'Tiekimo vadybininkė',
+    org: 'UAB TechnoGroup',
+    initials: 'IS',
+    text: 'Prieš foxDoc praleidavome dieną analizuodami pirkimo dokumentus. Dabar tai atlieka AI per 3 minutes. Rekomenduoju visiems tiekėjams.',
+    stars: 5,
+  },
+];
+---
+<section class="py-16 sm:py-24 px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12 sm:mb-16">
+      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #00ca88;">// atsiliepimai</p>
+      <h2 class="font-heading font-bold text-white">Ką sako mūsų vartotojai</h2>
+    </div>
+
+    <div class="flex flex-col md:grid md:grid-cols-3 gap-5 sm:gap-6">
+      {testimonials.map((t) => (
+        <div class="scroll-reveal p-5 sm:p-6 rounded-2xl border flex flex-col transition-all duration-300"
+             style="border-color: rgba(255,255,255,0.08); background: #141720;"
+             onmouseover="this.style.borderColor='rgba(0,202,136,0.15)'"
+             onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
+          <!-- Stars -->
+          <div class="flex gap-0.5 mb-4">
+            {Array.from({length: t.stars}).map(() => (
+              <span class="text-base sm:text-lg" style="color: #00ca88;">★</span>
+            ))}
+          </div>
+          <!-- Quote -->
+          <p class="text-sm sm:text-base leading-relaxed italic flex-1 mb-5" style="color: #a0aec0;">"{t.text}"</p>
+          <!-- Author -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
+                 style="background: rgba(0,202,136,0.15); color: #00ca88;">
+              {t.initials}
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-white">{t.name}</p>
+              <p class="text-xs" style="color: #4a5568;">{t.role}, {t.org}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
