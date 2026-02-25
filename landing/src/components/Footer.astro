@@ -1,0 +1,51 @@
+---
+// src/components/Footer.astro
+// Site footer with links grid and copyright
+---
+<footer style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 6rem;">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
+    <!-- Links grid -->
+    <div class="grid grid-cols-2 gap-8 sm:grid-cols-2 lg:grid-cols-4 mb-10">
+      <!-- Brand -->
+      <div class="col-span-2 sm:col-span-2 lg:col-span-1">
+        <a href="/" class="flex items-center gap-2 mb-3">
+          <img src="/favicon.svg" alt="foxDoc logo" width="24" height="24" />
+          <span class="font-heading font-bold text-white">fox<span style="color: #00ca88;">Doc</span></span>
+        </a>
+        <p class="text-sm leading-relaxed" style="color: #a0aec0;">Lietuvos viešųjų pirkimų AI analitikas.</p>
+      </div>
+      <!-- Product -->
+      <div>
+        <p class="text-sm font-semibold text-white mb-4">Produktas</p>
+        <ul class="flex flex-col gap-2.5">
+          <li><a href="/features"   class="text-sm transition-colors duration-200" style="color: #a0aec0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#a0aec0'">Funkcijos</a></li>
+          <li><a href="/pricing"    class="text-sm transition-colors duration-200" style="color: #a0aec0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#a0aec0'">Kainodara</a></li>
+          <li><a href="/use-cases"  class="text-sm transition-colors duration-200" style="color: #a0aec0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#a0aec0'">Naudojimo atvejai</a></li>
+        </ul>
+      </div>
+      <!-- Help -->
+      <div>
+        <p class="text-sm font-semibold text-white mb-4">Pagalba</p>
+        <ul class="flex flex-col gap-2.5">
+          <li><a href="/docs"   class="text-sm transition-colors duration-200" style="color: #a0aec0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#a0aec0'">Dokumentacija</a></li>
+          <li><a href="/forum"  class="text-sm transition-colors duration-200" style="color: #a0aec0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#a0aec0'">Forumas</a></li>
+          <li><a href="/about"  class="text-sm transition-colors duration-200" style="color: #a0aec0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#a0aec0'">Apie mus</a></li>
+        </ul>
+      </div>
+      <!-- Legal -->
+      <div>
+        <p class="text-sm font-semibold text-white mb-4">Teisinis</p>
+        <ul class="flex flex-col gap-2.5">
+          <li><a href="/privacy" class="text-sm transition-colors duration-200" style="color: #a0aec0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#a0aec0'">Privatumo politika</a></li>
+          <li><a href="/terms"   class="text-sm transition-colors duration-200" style="color: #a0aec0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#a0aec0'">Naudojimo sąlygos</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-8" style="border-top: 1px solid rgba(255,255,255,0.06);">
+      <p class="text-sm" style="color: #4a5568;">© 2026 foxDoc. Visos teisės saugomos.</p>
+      <p class="text-sm" style="color: #4a5568;">Sukurta Lietuvoje 🇱🇹</p>
+    </div>
+  </div>
+</footer>
