@@ -65,3 +65,6 @@ logs/
 
 # AI Agent docs (keep private)
 CLAUDE.md
+
+# Git worktrees
+.worktrees/
