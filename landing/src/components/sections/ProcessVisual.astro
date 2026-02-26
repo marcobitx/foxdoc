@@ -21,7 +21,8 @@
           <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #6d5f55; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 1.25rem;">Jūsų dokumentai</p>
 
           <!-- Stacked document cards -->
-          <div class="doc-stack" style="position: relative; height: 110px; margin-bottom: 1.25rem;">
+          <div style="flex: 1; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+          <div class="doc-stack" style="position: relative; height: 110px; width: 100%;">
             <!-- Card 3 (bottom) -->
             <div class="doc-chip doc-chip-3" style="position: absolute; left: 50%; transform: translateX(-50%) rotate(-6deg); bottom: 0;">
               <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: 0.5rem; background: #231c18; border: 1px solid rgba(168,162,158,0.12);">
@@ -43,6 +44,7 @@
                 <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #f59e0b;">dokumentai.zip</span>
               </div>
             </div>
+          </div>
           </div>
 
           <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -66,7 +68,7 @@
           <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #6d5f55; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 1.25rem;">foxDoc AI</p>
 
           <!-- AI brain visual -->
-          <div style="text-align: center; margin-bottom: 1.25rem;">
+          <div style="text-align: center; margin-bottom: 1.25rem; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <div class="ai-pulse" style="width: 60px; height: 60px; border-radius: 14px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.875rem;">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 2a8 8 0 0 0-8 8v1a3 3 0 0 0 3 3h1v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-4h1a3 3 0 0 0 3-3v-1a8 8 0 0 0-8-8z"/>
@@ -104,7 +106,7 @@
           <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #6d5f55; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 1.25rem;">Jūsų ataskaita</p>
 
           <!-- Report mini preview -->
-          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; flex: 1; justify-content: center;">
             <!-- QA badge -->
             <div style="padding: 0.4rem 0.75rem; border-radius: 0.5rem; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); display: flex; align-items: center; justify-content: space-between;">
               <span style="font-size: 0.7rem; color: #6d5f55; font-family: 'JetBrains Mono', monospace;">QA balas</span>
@@ -165,7 +167,17 @@
     display: grid;
     grid-template-columns: 1fr 48px 1fr 48px 1fr;
     gap: 0;
-    align-items: center;
+    align-items: stretch;
+  }
+  .flow-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .flow-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   @media (max-width: 640px) {
     .flow-grid {
@@ -173,11 +185,13 @@
       gap: 1rem;
     }
     .flow-arrow { display: none; }
+    .flow-card { flex: none; }
   }
 
   /* Arrow connector */
   .flow-arrow {
     display: flex;
+    align-self: center;
     align-items: center;
     justify-content: center;
     gap: 2px;
