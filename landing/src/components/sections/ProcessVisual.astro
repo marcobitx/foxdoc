@@ -1,0 +1,224 @@
+---
+// landing/src/components/sections/ProcessVisual.astro
+// Animated workflow visualization — documents → AI → report
+// Related: index.astro, HowItWorks.astro
+---
+<section style="background: #0d0a08; padding: 3rem 1.5rem 4rem;">
+  <div style="max-width: 56rem; margin: 0 auto;">
+
+    <!-- Title -->
+    <div style="text-align: center; margin-bottom: 3rem;">
+      <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 0.6rem;">// veiksmas</p>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.375rem, 3vw, 1.875rem); color: #fdf9f7; margin: 0;">Nuo chaoso iki tvarkos — per 3 minutes</h2>
+    </div>
+
+    <!-- Flow -->
+    <div class="flow-grid">
+
+      <!-- ── Column 1: Documents ── -->
+      <div class="flow-col">
+        <div class="flow-card" style="background: #1a1512; border: 1px solid rgba(168,162,158,0.14); border-radius: 1rem; padding: 1.5rem;">
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #6d5f55; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 1.25rem;">Jūsų dokumentai</p>
+
+          <!-- Stacked document cards -->
+          <div class="doc-stack" style="position: relative; height: 110px; margin-bottom: 1.25rem;">
+            <!-- Card 3 (bottom) -->
+            <div class="doc-chip doc-chip-3" style="position: absolute; left: 50%; transform: translateX(-50%) rotate(-6deg); bottom: 0;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: 0.5rem; background: #231c18; border: 1px solid rgba(168,162,158,0.12);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b5a99f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #6d5f55;">pirkimas-2024.pdf</span>
+              </div>
+            </div>
+            <!-- Card 2 (middle) -->
+            <div class="doc-chip doc-chip-2" style="position: absolute; left: 50%; transform: translateX(-50%) rotate(3deg); bottom: 14px;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: 0.5rem; background: #231c18; border: 1px solid rgba(168,162,158,0.15);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #b5a99f;">techniniai.docx</span>
+              </div>
+            </div>
+            <!-- Card 1 (top) -->
+            <div class="doc-chip doc-chip-1" style="position: absolute; left: 50%; transform: translateX(-50%); bottom: 28px;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: 0.5rem; background: #2e2520; border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 0 12px rgba(245,158,11,0.08);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #f59e0b;">dokumentai.zip</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e; animation: blink 2s ease-in-out infinite;"></div>
+            <span style="font-size: 0.75rem; color: #6d5f55; font-family: 'JetBrains Mono', monospace;">12 failų · 47.2 MB</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Arrow 1 ── -->
+      <div class="flow-arrow">
+        <div class="arrow-line"></div>
+        <svg class="arrow-head" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+
+      <!-- ── Column 2: AI Processing ── -->
+      <div class="flow-col">
+        <div class="flow-card ai-card" style="background: #1a1512; border: 1px solid rgba(245,158,11,0.22); border-radius: 1rem; padding: 1.5rem; box-shadow: 0 0 32px rgba(245,158,11,0.06);">
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #6d5f55; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 1.25rem;">foxDoc AI</p>
+
+          <!-- AI brain visual -->
+          <div style="text-align: center; margin-bottom: 1.25rem;">
+            <div class="ai-pulse" style="width: 60px; height: 60px; border-radius: 14px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.875rem;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a8 8 0 0 0-8 8v1a3 3 0 0 0 3 3h1v4a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-4h1a3 3 0 0 0 3-3v-1a8 8 0 0 0-8-8z"/>
+                <line x1="9" y1="12" x2="15" y2="12"/>
+                <line x1="12" y1="9" x2="12" y2="15"/>
+              </svg>
+            </div>
+
+            <!-- Animated scan lines -->
+            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+              <div class="scan-line" style="height: 3px; border-radius: 2px; background: linear-gradient(to right, transparent, rgba(245,158,11,0.6), transparent); animation: scan 2s ease-in-out infinite 0s;"></div>
+              <div class="scan-line" style="height: 3px; border-radius: 2px; background: linear-gradient(to right, transparent, rgba(245,158,11,0.4), transparent); animation: scan 2s ease-in-out infinite 0.4s;"></div>
+              <div class="scan-line" style="height: 3px; border-radius: 2px; background: linear-gradient(to right, transparent, rgba(245,158,11,0.6), transparent); animation: scan 2s ease-in-out infinite 0.8s;"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; animation: blink 1.2s ease-in-out infinite;"></div>
+            <span style="font-size: 0.7rem; color: #f59e0b; font-family: 'JetBrains Mono', monospace;">Claude Sonnet 4 · analizuoja</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Arrow 2 ── -->
+      <div class="flow-arrow">
+        <div class="arrow-line"></div>
+        <svg class="arrow-head" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+
+      <!-- ── Column 3: Report ── -->
+      <div class="flow-col">
+        <div class="flow-card" style="background: #1a1512; border: 1px solid rgba(168,162,158,0.14); border-radius: 1rem; padding: 1.5rem;">
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #6d5f55; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 1.25rem;">Jūsų ataskaita</p>
+
+          <!-- Report mini preview -->
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem;">
+            <!-- QA badge -->
+            <div style="padding: 0.4rem 0.75rem; border-radius: 0.5rem; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.7rem; color: #6d5f55; font-family: 'JetBrains Mono', monospace;">QA balas</span>
+              <span style="font-size: 0.8rem; font-weight: 700; color: #22c55e; font-family: 'Space Grotesk', sans-serif;">94 / 100</span>
+            </div>
+            <!-- Data row -->
+            <div style="padding: 0.4rem 0.75rem; border-radius: 0.5rem; background: #231c18; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.65rem; color: #6d5f55; font-family: 'JetBrains Mono', monospace;">CPV kodas</span>
+              <span style="font-size: 0.7rem; color: #fdf9f7; font-family: 'JetBrains Mono', monospace;">72200000-7</span>
+            </div>
+            <!-- Data row -->
+            <div style="padding: 0.4rem 0.75rem; border-radius: 0.5rem; background: #231c18; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.65rem; color: #6d5f55; font-family: 'JetBrains Mono', monospace;">Vertė</span>
+              <span style="font-size: 0.7rem; color: #fdf9f7; font-family: 'JetBrains Mono', monospace;">€ 124 500</span>
+            </div>
+            <!-- Data row -->
+            <div style="padding: 0.4rem 0.75rem; border-radius: 0.5rem; background: #231c18; display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 0.65rem; color: #6d5f55; font-family: 'JetBrains Mono', monospace;">Terminas</span>
+              <span style="font-size: 0.7rem; color: #fdf9f7; font-family: 'JetBrains Mono', monospace;">2026-03-15</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="width: 6px; height: 6px; border-radius: 50%; background: #22c55e;"></div>
+            <span style="font-size: 0.75rem; color: #6d5f55; font-family: 'JetBrains Mono', monospace;">Ataskaita parengta</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Stat strip -->
+    <div class="stat-strip" style="display: flex; justify-content: center; gap: 3rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(168,162,158,0.08); flex-wrap: wrap;">
+      <div style="text-align: center;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; color: #f59e0b; margin: 0;">~3</p>
+        <p style="font-size: 0.75rem; color: #6d5f55; margin: 0.2rem 0 0; font-family: 'JetBrains Mono', monospace;">minutės</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; color: #f59e0b; margin: 0;">50+</p>
+        <p style="font-size: 0.75rem; color: #6d5f55; margin: 0.2rem 0 0; font-family: 'JetBrains Mono', monospace;">dokumentų</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; color: #f59e0b; margin: 0;">4–6h</p>
+        <p style="font-size: 0.75rem; color: #6d5f55; margin: 0.2rem 0 0; font-family: 'JetBrains Mono', monospace;">sutaupyta</p>
+      </div>
+      <div style="text-align: center;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; color: #f59e0b; margin: 0;">94</p>
+        <p style="font-size: 0.75rem; color: #6d5f55; margin: 0.2rem 0 0; font-family: 'JetBrains Mono', monospace;">vid. QA balas</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* Flow grid: 3 cols + 2 arrows on desktop, stack on mobile */
+  .flow-grid {
+    display: grid;
+    grid-template-columns: 1fr 48px 1fr 48px 1fr;
+    gap: 0;
+    align-items: center;
+  }
+  @media (max-width: 640px) {
+    .flow-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .flow-arrow { display: none; }
+  }
+
+  /* Arrow connector */
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .arrow-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(245,158,11,0.15), rgba(245,158,11,0.4));
+  }
+  .arrow-head { flex-shrink: 0; }
+
+  /* Document stack animation */
+  .doc-chip { animation: floatUp 0.6s ease both; }
+  .doc-chip-1 { animation-delay: 0.1s; }
+  .doc-chip-2 { animation-delay: 0.25s; }
+  .doc-chip-3 { animation-delay: 0.4s; }
+
+  @keyframes floatUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* AI pulsing border */
+  .ai-pulse {
+    animation: pulseBorder 2.5s ease-in-out infinite;
+  }
+  @keyframes pulseBorder {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+    50%       { box-shadow: 0 0 0 6px rgba(245,158,11,0.08); }
+  }
+
+  /* Scan line animation */
+  @keyframes scan {
+    0%   { transform: scaleX(0.2); opacity: 0.3; }
+    50%  { transform: scaleX(1);   opacity: 1; }
+    100% { transform: scaleX(0.2); opacity: 0.3; }
+  }
+
+  /* Blink dot */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+  }
+</style>
