@@ -1,15 +1,16 @@
 ---
-// src/components/sections/Testimonials.astro
-// Customer testimonials — 3 cards with star ratings and avatars
-const testimonials = [
-  {
-    name: 'Rūta Kazlauskienė',
-    role: 'Viešųjų pirkimų specialistė',
-    org: 'Vilniaus miesto savivaldybė',
-    initials: 'RK',
-    text: 'foxDoc sutaupė mums daugiau nei 3 valandas per kiekvieną didesnį pirkimą. Ataskaita tiksli ir visada randa tai, ką praleistume rankinės peržiūros metu.',
-    stars: 5,
-  },
+// landing/src/components/sections/Testimonials.astro
+// Featured testimonial (full-width) + 2 supporting cards below
+// Related: index.astro
+const featured = {
+  name: 'Rūta Kazlauskienė',
+  role: 'Viešųjų pirkimų specialistė',
+  org: 'Vilniaus miesto savivaldybė',
+  initials: 'RK',
+  text: 'foxDoc sutaupė mums daugiau nei 3 valandas per kiekvieną didesnį pirkimą. Ataskaita tiksli ir visada randa tai, ką praleistume rankinės peržiūros metu.',
+  stars: 5,
+};
+const supporting = [
   {
     name: 'Tomas Petraitis',
     role: 'Direktorius',
@@ -30,38 +31,64 @@ const testimonials = [
 ---
 <section class="py-16 sm:py-24 px-4 sm:px-6" style="background: #1a1512;">
   <div class="max-w-6xl mx-auto">
+
     <div class="text-center mb-12 sm:mb-16">
       <p class="text-xs sm:text-sm font-mono mb-3" style="color: #f59e0b;">// atsiliepimai</p>
-      <h2 class="font-heading font-bold text-white">Ką sako mūsų vartotojai</h2>
+      <h2 class="font-heading font-bold" style="color: #fdf9f7;">Ką sako mūsų vartotojai</h2>
     </div>
 
-    <div class="flex flex-col md:grid md:grid-cols-3 gap-5 sm:gap-6">
-      {testimonials.map((t) => (
-        <div class="scroll-reveal p-5 sm:p-6 rounded-2xl border flex flex-col transition-all duration-300"
-             style="border-color: rgba(168,162,158,0.15); background: #231c18;"
-             onmouseover="this.style.borderColor='rgba(245, 158, 11,0.15)'"
-             onmouseout="this.style.borderColor='rgba(168,162,158,0.15)'">
-          <!-- Stars -->
-          <div class="flex gap-0.5 mb-4">
-            {Array.from({length: t.stars}).map(() => (
-              <span class="text-base sm:text-lg" style="color: #f59e0b;">★</span>
+    <!-- Featured testimonial -->
+    <div class="scroll-reveal mb-4 p-8 sm:p-10 rounded-2xl border" style="border-color: rgba(168,162,158,0.15); background: #231c18;">
+      <!-- Stars -->
+      <div class="flex gap-0.5 mb-5" aria-label="5 žvaigždutės">
+        {"★★★★★".split("").map(() => (
+          <span style="color: #f59e0b; font-size: 1rem;" aria-hidden="true">★</span>
+        ))}
+      </div>
+      <p class="font-heading font-semibold mb-6 leading-snug"
+         style="font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: #fdf9f7; max-width: 52rem;">
+        &ldquo;{featured.text}&rdquo;
+      </p>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
+             style="background: rgba(245,158,11,0.15); color: #f59e0b; font-family: var(--font-heading);">{featured.initials}</div>
+        <div>
+          <p class="text-sm font-semibold" style="color: #fdf9f7;">{featured.name}</p>
+          <p class="text-xs" style="color: #6d5f55;">{featured.role}, {featured.org}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two supporting testimonials -->
+    <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
+      {supporting.map((t, i) => (
+        <div class="scroll-reveal p-5 sm:p-6 rounded-2xl border"
+             style={`border-color: rgba(168,162,158,0.12); background: #1e1a16; transition-delay: ${(i+1)*80}ms;`}>
+          <div class="flex gap-0.5 mb-3" aria-label="5 žvaigždutės">
+            {"★★★★★".split("").map(() => (
+              <span style="color: rgba(245,158,11,0.5); font-size: 0.75rem;" aria-hidden="true">★</span>
             ))}
           </div>
-          <!-- Quote -->
-          <p class="text-sm sm:text-base leading-relaxed italic flex-1 mb-5" style="color: #b5a99f;">"{t.text}"</p>
-          <!-- Author -->
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-                 style="background: rgba(245, 158, 11,0.15); color: #f59e0b;">
-              {t.initials}
-            </div>
+          <p class="text-sm leading-relaxed italic mb-4" style="color: #b5a99f;">&ldquo;{t.text}&rdquo;</p>
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                 style="background: rgba(245,158,11,0.1); color: #f59e0b; font-family: var(--font-heading);">{t.initials}</div>
             <div>
-              <p class="text-sm font-semibold text-white">{t.name}</p>
-              <p class="text-xs" style="color: #6d5f55;">{t.role}, {t.org}</p>
+              <p class="text-xs font-semibold" style="color: #ede5df;">{t.name}</p>
+              <p style="font-size: 0.7rem; color: #6d5f55;">{t.role}, {t.org}</p>
             </div>
           </div>
         </div>
       ))}
     </div>
+
   </div>
 </section>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+  );
+  document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+</script>
