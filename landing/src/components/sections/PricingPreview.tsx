@@ -13,7 +13,7 @@ export default function PricingPreview() {
   const [annual, setAnnual] = useState(false);
 
   return (
-    <section style={{ padding: '4rem 1rem', background: 'transparent' }}>
+    <section style={{ padding: '4rem 1rem', background: '#0d0a08' }}>
       <div style={{ maxWidth: '72rem', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
