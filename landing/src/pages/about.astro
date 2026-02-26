@@ -1,71 +1,62 @@
 ---
 // landing/src/pages/about.astro
-// About page — mission, team, story
+// About page — mission, values, story
 // Related: Layout.astro
 import Layout from '../layouts/Layout.astro';
 
 const values = [
-  { icon: '🎯', title: 'Domeno tikslumas', desc: 'Optimizuota Lietuvos viešųjų pirkimų teisinei aplinkai — CPV kodai, CVPIS terminija, LT procedūros.' },
-  { icon: '⚡', title: 'Greitis virš visko', desc: '3 minutės vietoje 3 valandų. Kiekviena produkto sprendimo investicija vertinama per šį prizmę.' },
-  { icon: '🔍', title: 'Skaidrumas', desc: 'QA balas aiškiai parodo analizės kokybę. Neapgaudinėjame — jei dokumentai neaiškūs, tai matoma.' },
-  { icon: '🔒', title: 'Privatumas', desc: 'Jūsų dokumentai nėra naudojami modelio mokymui. Enterprise planuose — VPC/on-premise diegimas.' },
+  { svgKey: 'target', title: 'Domeno tikslumas', desc: 'Optimizuota Lietuvos viešųjų pirkimų teisinei aplinkai — CPV kodai, CVPIS terminija, LT procedūros.' },
+  { svgKey: 'speed',  title: 'Greitis virš visko', desc: '3 minutės vietoje 3 valandų. Kiekviena produkto sprendimo investicija vertinama per šį prizmę.' },
+  { svgKey: 'search', title: 'Skaidrumas', desc: 'QA balas aiškiai parodo analizės kokybę. Neapgaudinėjame — jei dokumentai neaiškūs, tai matoma.' },
+  { svgKey: 'lock',   title: 'Privatumas', desc: 'Jūsų dokumentai nėra naudojami modelio mokymui. Enterprise planuose — VPC/on-premise diegimas.' },
 ];
 ---
 <Layout title="Apie mus — foxDoc">
-  <div style="max-width: 64rem; margin: 0 auto; padding: 5rem 1.5rem 4rem;">
 
-    <!-- Header -->
-    <div style="margin-bottom: 4rem;">
-      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
-        // apie mus
-      </p>
-      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3.75rem); color: #fdf9f7; line-height: 1.15; margin: 0 0 1.5rem;">
-        Kuriame aiškesnę viešųjų pirkimų ateitį
-      </h1>
-      <p style="color: #b5a99f; font-size: 1.125rem; line-height: 1.7; max-width: 48rem; margin: 0;">
-        foxDoc gimė iš konkretaus poreikio — Lietuvos viešųjų pirkimų specialistai kasdienis leidžia valandas peržiūrėdami dešimtis puslapių techninių dokumentų.
-        Mes tikime, kad ši darbas turėtų trukti minutes, o ne dienas.
-      </p>
+  <div style="background: #0d0a08; padding: 5rem 1.5rem 3rem;">
+    <div style="max-width: 64rem; margin: 0 auto;">
+      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">// apie mus</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3.75rem); color: #fdf9f7; line-height: 1.15; margin: 0 0 1.5rem;">Kuriame aiškesnę viešųjų pirkimų ateitį</h1>
+      <p style="color: #b5a99f; font-size: 1.125rem; line-height: 1.7; max-width: 48rem; margin: 0;">foxDoc gimė iš konkretaus poreikio — Lietuvos viešųjų pirkimų specialistai kasdien leidžia valandas peržiūrėdami dešimtis puslapių techninių dokumentų. Mes tikime, kad šis darbas turėtų trukti minutes, o ne dienas.</p>
     </div>
+  </div>
 
-    <!-- Story -->
-    <div style="padding: 2rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18; margin-bottom: 4rem;">
-      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.5rem; color: #fdf9f7; margin: 0 0 1rem;">Kodėl foxDoc?</h2>
-      <div style="color: #b5a99f; line-height: 1.8; display: flex; flex-direction: column; gap: 1rem;">
-        <p style="margin: 0;">
-          Lietuvos viešųjų pirkimų rinka — apie 1,700 potencialių klientų: savivaldybės, audito įmonės, tiekėjai.
-          Nė vienas iš jų neturėjo prieinamo įrankio dokumentų paketų automatinei analizei lietuvių kalba.
-          Tarptautiniai sprendimai prasideda nuo $15,000/metai ir nesupranta lietuviškų pirkimų specifikos.
-        </p>
-        <p style="margin: 0;">
-          foxDoc užpildo šią spragą — AI analizė, pritaikyta Lietuvos pirkimų terminologijai, CPV sistemai ir procedūroms,
-          už kainą, kuri prieinama net individualiam specialistui.
-        </p>
+  <div style="background: #1e1a16; padding: 3rem 1.5rem 4rem;">
+    <div style="max-width: 64rem; margin: 0 auto;">
+
+      <div style="padding: 2rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18; margin-bottom: 3rem;">
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.5rem; color: #fdf9f7; margin: 0 0 1rem;">Kodėl foxDoc?</h2>
+        <div style="color: #b5a99f; line-height: 1.8; display: flex; flex-direction: column; gap: 1rem;">
+          <p style="margin: 0;">Lietuvos viešųjų pirkimų rinka — apie 1,700 potencialių klientų: savivaldybės, audito įmonės, tiekėjai. Nė vienas iš jų neturėjo prieinamo įrankio dokumentų paketų automatinei analizei lietuvių kalba. Tarptautiniai sprendimai prasideda nuo $15,000/metai ir nesupranta lietuviškų pirkimų specifikos.</p>
+          <p style="margin: 0;">foxDoc užpildo šią spragą — AI analizė, pritaikyta Lietuvos pirkimų terminologijai, CPV sistemai ir procedūroms, už kainą, kuri prieinama net individualiam specialistui.</p>
+        </div>
       </div>
-    </div>
 
-    <!-- Values -->
-    <div style="margin-bottom: 4rem;">
-      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #fdf9f7; margin: 0 0 2rem;">Mūsų vertybės</h2>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #fdf9f7; margin: 0 0 1.5rem;">Mūsų vertybės</h2>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
         {values.map(v => (
           <div style="padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18;">
-            <span style="font-size: 2rem; display: block; margin-bottom: 0.75rem;">{v.icon}</span>
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(245,158,11,0.08); display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem;">
+              {v.svgKey === 'target' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>}
+              {v.svgKey === 'speed'  && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>}
+              {v.svgKey === 'search' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>}
+              {v.svgKey === 'lock'   && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>}
+            </div>
             <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; color: #fdf9f7; margin: 0 0 0.5rem;">{v.title}</h3>
             <p style="color: #b5a99f; font-size: 0.875rem; line-height: 1.6; margin: 0;">{v.desc}</p>
           </div>
         ))}
       </div>
-    </div>
 
-    <!-- Contact -->
-    <div style="padding: 2.5rem; border-radius: 1rem; background: linear-gradient(135deg, rgba(234, 88, 12,0.1) 0%, rgba(245, 158, 11,0.05) 100%); border: 1px solid rgba(168,162,158,0.15); text-align: center;">
-      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.5rem; color: #fdf9f7; margin: 0 0 0.75rem;">Susisiekite su mumis</h2>
-      <p style="color: #b5a99f; margin: 0 0 1.5rem;">Klausimai, partnerystė ar Enterprise sprendimas</p>
-      <a href="mailto:hello@foxdoc.io"
-         style="display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.75rem; border-radius: 0.5rem; background: #f59e0b; color: #1a1512; font-weight: 600; text-decoration: none; min-height: 44px;">
-        hello@foxdoc.io
-      </a>
     </div>
   </div>
+
+  <div style="background: #0d0a08; padding: 4rem 1.5rem;">
+    <div style="max-width: 64rem; margin: 0 auto; padding: 2.5rem; border-radius: 1rem; background: linear-gradient(135deg, rgba(234,88,12,0.1) 0%, rgba(245,158,11,0.05) 100%); border: 1px solid rgba(168,162,158,0.15); text-align: center;">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.5rem; color: #fdf9f7; margin: 0 0 0.75rem;">Susisiekite su mumis</h2>
+      <p style="color: #b5a99f; margin: 0 0 1.5rem;">Klausimai, partnerystė ar Enterprise sprendimas</p>
+      <a href="mailto:hello@foxdoc.io" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.25rem; border-radius: 0.5rem; background: #f59e0b; color: #1a1512; font-weight: 600; text-decoration: none; font-size: 0.875rem;">hello@foxdoc.io</a>
+    </div>
+  </div>
+
 </Layout>

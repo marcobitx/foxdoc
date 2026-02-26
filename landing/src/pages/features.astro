@@ -5,128 +5,69 @@
 import Layout from '../layouts/Layout.astro';
 
 const features = [
-  {
-    icon: '📄',
-    title: 'Daugiaformatė analizė',
-    description: 'Palaikome PDF, DOCX, XLSX failus ir ZIP archyvus su iki 50+ dokumentų vienu paketu. Nereikia konvertuoti — tiesiog įkelkite.',
-    tag: 'Dokumentai',
-  },
-  {
-    icon: '🤖',
-    title: 'LLM-powered duomenų ištraukimas',
-    description: 'Didelio kalbos modelio analizė ištraukia CPV kodus, sutarties vertes, terminus, techninius reikalavimus, kvalifikacinius kriterijus ir daugiau.',
-    tag: 'AI',
-  },
-  {
-    icon: '📊',
-    title: 'Struktūrizuota ataskaita',
-    description: 'Visi surinkti duomenys pateikiami aiškioje struktūrizuotoje ataskaitoje su sekcijomis, lentelėmis ir kokybės balu (QA Score).',
-    tag: 'Ataskaita',
-  },
-  {
-    icon: '✅',
-    title: 'QA kokybės balas',
-    description: 'Automatinis ataskatos išsamumo tikrinimas. Balas nuo 0–100 rodo, kiek pilnai ištraukta informacija — žemesnis balas signalizuoja neaiškią dokumentaciją.',
-    tag: 'Kokybė',
-  },
-  {
-    icon: '💬',
-    title: 'Pokalbių analizė (Chat)',
-    description: 'Po analizės galite užduoti papildomus klausimus apie dokumentus. AI atsako remdamasis išanalizuota medžiaga.',
-    tag: 'Chat',
-  },
-  {
-    icon: '📤',
-    title: 'PDF ir DOCX eksportas',
-    description: 'Ataskaitas eksportuokite į PDF (Starter+) arba DOCX formatą (Pro+) — tinkama struktūra kolegoms ir audito tikslams.',
-    tag: 'Eksportas',
-  },
-  {
-    icon: '⚡',
-    title: 'Lygiagreti dokumentų apdorojimas',
-    description: 'Iki 5 dokumentų analizuojami vienu metu. Didelius ZIP paketus apdorojame greitai — tipinė 50-dokumentų analizė trunka ~3 min.',
-    tag: 'Greitis',
-  },
-  {
-    icon: '🗜️',
-    title: 'ZIP archyvų palaikymas',
-    description: 'Įkelkite visą pirkimo dokumentų paketą kaip ZIP — sistema automatiškai išpakuoja ir analizuoja kiekvieną dokumentą atskirai.',
-    tag: 'ZIP',
-  },
-  {
-    icon: '🔒',
-    title: 'Saugumas ir GDPR',
-    description: 'Dokumentai apdorojami saugiai. Enterprise planuose prieinamas GDPR DPA susitarimas, VPC/on-premise diegimas ir audito žurnalai.',
-    tag: 'Saugumas',
-  },
-  {
-    icon: '🔧',
-    title: 'Modelio pasirinkimas',
-    description: 'Pro ir aukštesniuose planuose galite pasirinkti LLM modelį — balansas tarp greičio, kainos ir tikslumo pagal jūsų poreikius.',
-    tag: 'Pro+',
-  },
-  {
-    icon: '🔌',
-    title: 'API prieiga',
-    description: 'Team plane galite integruoti FoxDoc analizę į savo sistemas per REST API. Automatizuokite pirkimų stebėseną.',
-    tag: 'Team+',
-  },
-  {
-    icon: '📋',
-    title: 'Pasirinktiniai promptai',
-    description: 'Team plane galite pritaikyti analizės šabloną — nurodykite papildomus laukus ar specifines sritis, kurias turi aprašyti AI.',
-    tag: 'Team+',
-  },
+  { svgKey: 'doc',      title: 'Daugiaformatė analizė',            description: 'Palaikome PDF, DOCX, XLSX failus ir ZIP archyvus su iki 50+ dokumentų vienu paketu. Nereikia konvertuoti — tiesiog įkelkite.',                                                                       tag: 'Dokumentai' },
+  { svgKey: 'ai',       title: 'LLM-powered duomenų ištraukimas',  description: 'Didelio kalbos modelio analizė ištraukia CPV kodus, sutarties vertes, terminus, techninius reikalavimus, kvalifikacinius kriterijus ir daugiau.',                                                    tag: 'AI' },
+  { svgKey: 'chart',    title: 'Struktūrizuota ataskaita',          description: 'Visi surinkti duomenys pateikiami aiškioje struktūrizuotoje ataskaitoje su sekcijomis, lentelėmis ir kokybės balu (QA Score).',                                                                     tag: 'Ataskaita' },
+  { svgKey: 'check',    title: 'QA kokybės balas',                  description: 'Automatinis ataskatos išsamumo tikrinimas. Balas nuo 0–100 rodo, kiek pilnai ištraukta informacija — žemesnis balas signalizuoja neaiškią dokumentaciją.',                                         tag: 'Kokybė' },
+  { svgKey: 'chat',     title: 'Pokalbių analizė (Chat)',           description: 'Po analizės galite užduoti papildomus klausimus apie dokumentus. AI atsako remdamasis išanalizuota medžiaga.',                                                                                       tag: 'Chat' },
+  { svgKey: 'export',   title: 'PDF ir DOCX eksportas',             description: 'Ataskaitas eksportuokite į PDF (Pro+) arba DOCX formatą — tinkama struktūra kolegoms ir audito tikslams.',                                                                                          tag: 'Eksportas' },
+  { svgKey: 'speed',    title: 'Lygiagreti dokumentų apdorojimas', description: 'Iki 5 dokumentų analizuojami vienu metu. Didelius ZIP paketus apdorojame greitai — tipinė 50-dokumentų analizė trunka ~3 min.',                                                                     tag: 'Greitis' },
+  { svgKey: 'zip',      title: 'ZIP archyvų palaikymas',            description: 'Įkelkite visą pirkimo dokumentų paketą kaip ZIP — sistema automatiškai išpakuoja ir analizuoja kiekvieną dokumentą atskirai.',                                                                      tag: 'ZIP' },
+  { svgKey: 'lock',     title: 'Saugumas ir GDPR',                  description: 'Dokumentai apdorojami saugiai. Enterprise planuose prieinamas GDPR DPA susitarimas, VPC/on-premise diegimas ir audito žurnalai.',                                                                   tag: 'Saugumas' },
+  { svgKey: 'settings', title: 'Modelio pasirinkimas',              description: 'Pro ir aukštesniuose planuose galite pasirinkti LLM modelį — balansas tarp greičio, kainos ir tikslumo pagal jūsų poreikius.',                                                                     tag: 'Pro+' },
+  { svgKey: 'api',      title: 'API prieiga',                       description: 'Team plane galite integruoti foxDoc analizę į savo sistemas per REST API. Automatizuokite pirkimų stebėseną.',                                                                                       tag: 'Team+' },
+  { svgKey: 'template', title: 'Pasirinktiniai promptai',           description: 'Team plane galite pritaikyti analizės šabloną — nurodykite papildomus laukus ar specifines sritis, kurias turi aprašyti AI.',                                                                       tag: 'Team+' },
 ];
 ---
 <Layout title="Funkcijos — foxDoc">
-  <div style="max-width: 72rem; margin: 0 auto; padding: 5rem 1.5rem 4rem;">
 
-    <!-- Header -->
-    <div style="text-align: center; margin-bottom: 4rem;">
-      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
-        // funkcijos
-      </p>
-      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3.75rem); color: #fdf9f7; line-height: 1.15; margin: 0 0 1rem;">
-        Viskas, ko reikia pirkimų analizei
-      </h1>
-      <p style="color: #b5a99f; font-size: 1.125rem; max-width: 40rem; margin: 0 auto;">
-        foxDoc automatizuoja rankinę dokumentų peržiūrą — nuo failo įkėlimo iki struktūrizuotos ataskaitos per 3 minutes.
-      </p>
+  <div style="background: #0d0a08; padding: 5rem 1.5rem 3rem;">
+    <div style="max-width: 72rem; margin: 0 auto; text-align: center;">
+      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">// funkcijos</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3.75rem); color: #fdf9f7; line-height: 1.15; margin: 0 0 1rem;">Viskas, ko reikia pirkimų analizei</h1>
+      <p style="color: #b5a99f; font-size: 1.125rem; max-width: 40rem; margin: 0 auto;">foxDoc automatizuoja rankinę dokumentų peržiūrą — nuo failo įkėlimo iki struktūrizuotos ataskaitos per 3 minutes.</p>
     </div>
+  </div>
 
-    <!-- Features grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 5rem;">
-      {features.map(f => (
-        <div style="padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18; transition: border-color 0.2s, background 0.2s;"
-             class="feature-card">
-          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
-            <span style="font-size: 2rem;">{f.icon}</span>
-            <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234, 88, 12,0.1); padding: 0.2rem 0.6rem; border-radius: 9999px; white-space: nowrap;">{f.tag}</span>
+  <div style="background: #1e1a16; padding: 3rem 1.5rem 5rem;">
+    <div style="max-width: 72rem; margin: 0 auto;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+        {features.map(f => (
+          <div style="padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18;" class="feature-card">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+              <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(245,158,11,0.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                {f.svgKey === 'doc'      && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>}
+                {f.svgKey === 'ai'       && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 15h.01M16 15h.01"/></svg>}
+                {f.svgKey === 'chart'    && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>}
+                {f.svgKey === 'check'    && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>}
+                {f.svgKey === 'chat'     && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>}
+                {f.svgKey === 'export'   && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>}
+                {f.svgKey === 'speed'    && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>}
+                {f.svgKey === 'zip'      && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>}
+                {f.svgKey === 'lock'     && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>}
+                {f.svgKey === 'settings' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>}
+                {f.svgKey === 'api'      && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>}
+                {f.svgKey === 'template' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>}
+              </div>
+              <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.1); padding: 0.2rem 0.6rem; border-radius: 9999px; white-space: nowrap;">{f.tag}</span>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem; color: #fdf9f7; margin: 0 0 0.5rem;">{f.title}</h3>
+            <p style="color: #b5a99f; font-size: 0.875rem; line-height: 1.6; margin: 0;">{f.description}</p>
           </div>
-          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem; color: #fdf9f7; margin: 0 0 0.5rem;">{f.title}</h3>
-          <p style="color: #b5a99f; font-size: 0.875rem; line-height: 1.6; margin: 0;">{f.description}</p>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
+  </div>
 
-    <!-- CTA -->
-    <div style="text-align: center; padding: 3rem 1.5rem; border-radius: 1rem; background: linear-gradient(135deg, rgba(234, 88, 12,0.12) 0%, rgba(245, 158, 11,0.06) 100%); border: 1px solid rgba(168,162,158,0.15);">
-      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #fdf9f7; margin: 0 0 0.75rem;">
-        Išbandykite nemokamai
-      </h2>
+  <div style="background: #0d0a08; padding: 4rem 1.5rem;">
+    <div style="max-width: 72rem; margin: 0 auto; text-align: center; padding: 3rem 1.5rem; border-radius: 1rem; background: linear-gradient(135deg, rgba(234,88,12,0.12) 0%, rgba(245,158,11,0.06) 100%); border: 1px solid rgba(168,162,158,0.15);">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #fdf9f7; margin: 0 0 0.75rem;">Išbandykite nemokamai</h2>
       <p style="color: #b5a99f; margin: 0 0 1.5rem;">3 kreditai, nereikalinga kortelė — pradėkite dabar</p>
-      <a href="https://app.foxdoc.io"
-         style="display: inline-flex; align-items: center; justify-content: center; padding: 0.875rem 2rem; border-radius: 0.5rem; background: #f59e0b; color: #1a1512; font-weight: 600; text-decoration: none; min-height: 44px; font-size: 1rem;">
-        Pradėti nemokamai
-      </a>
+      <a href="https://app.foxdoc.io" style="display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.25rem; border-radius: 0.5rem; background: #f59e0b; color: #1a1512; font-weight: 600; text-decoration: none; font-size: 0.875rem;">Pradėti nemokamai</a>
     </div>
   </div>
 
   <style>
-    .feature-card:hover {
-      border-color: rgba(245, 158, 11, 0.2);
-      background: #2e2520;
-    }
+    .feature-card:hover { border-color: rgba(245,158,11,0.2) !important; background: #2e2520 !important; }
   </style>
 </Layout>
