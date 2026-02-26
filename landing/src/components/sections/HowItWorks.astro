@@ -1,6 +1,7 @@
 ---
-// src/components/sections/HowItWorks.astro
-// 3-step process with scroll-triggered reveal animations
+// landing/src/components/sections/HowItWorks.astro
+// 3-step process — numbered list with amber accent, no card boxes
+// Related: index.astro
 const steps = [
   {
     num: '01',
@@ -23,23 +24,38 @@ const steps = [
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-12 sm:mb-16">
       <p class="text-xs sm:text-sm font-mono mb-3" style="color: #f59e0b;">// kaip veikia</p>
-      <h2 class="font-heading font-bold text-white">3 žingsniai iki išsamios ataskaitos</h2>
+      <h2 class="font-heading font-bold" style="color: #fdf9f7;">3 žingsniai iki išsamios ataskaitos</h2>
     </div>
 
-    <div class="flex flex-col md:grid md:grid-cols-3 gap-6">
+    <div class="how-steps flex flex-col md:flex-row">
       {steps.map((step, i) => (
-        <div class="scroll-reveal group relative p-6 rounded-2xl border transition-all duration-300 cursor-default"
-             style={`border-color: rgba(168,162,158,0.15); background: #231c18; transition-delay: ${i * 80}ms;`}
-             onmouseover="this.style.borderColor='rgba(245, 158, 11,0.3)'; this.style.background='#2e2520';"
-             onmouseout="this.style.borderColor='rgba(168,162,158,0.15)'; this.style.background='#231c18';">
-          <div class="font-mono text-5xl font-bold mb-4 select-none" style="color: rgba(245, 158, 11,0.12);">{step.num}</div>
-          <h3 class="font-heading font-semibold text-white mb-2 text-lg">{step.title}</h3>
+        <div class="scroll-reveal step-item flex-1 flex flex-col py-8 md:py-0 md:px-10"
+             style={`transition-delay: ${i * 100}ms;`}>
+          <div class="font-mono font-bold mb-5" style="font-size: 3rem; line-height: 1; color: rgba(245, 158, 11, 0.2);">{step.num}</div>
+          <div class="w-8 mb-5" style="height: 2px; background: #f59e0b;"></div>
+          <h3 class="font-heading font-semibold mb-3" style="font-size: 1.125rem; color: #fdf9f7;">{step.title}</h3>
           <p class="text-sm leading-relaxed" style="color: #b5a99f;">{step.desc}</p>
         </div>
       ))}
     </div>
   </div>
 </section>
+
+<style>
+  /* Mobile: top border between steps */
+  .how-steps .step-item + .step-item {
+    border-top: 1px solid rgba(168,162,158,0.12);
+  }
+  /* Desktop: left border dividers, no top border */
+  @media (min-width: 768px) {
+    .how-steps .step-item + .step-item {
+      border-top: none;
+      border-left: 1px solid rgba(168,162,158,0.12);
+    }
+    .how-steps .step-item:first-child { padding-left: 0 !important; }
+    .how-steps .step-item:last-child  { padding-right: 0 !important; }
+  }
+</style>
 
 <script>
   const observer = new IntersectionObserver(
