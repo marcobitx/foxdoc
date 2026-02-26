@@ -7,35 +7,35 @@ import Layout from '../../layouts/Layout.astro';
 const categories = [
   {
     slug: 'bendri-klausimai',
-    icon: '💬',
+    svgKey: 'chat',
     title: 'Bendri klausimai',
     description: 'Klausimai apie foxDoc naudojimą, funkcionalumą ir geriausias praktikas.',
     color: '#f59e0b',
   },
   {
     slug: 'technine-pagalba',
-    icon: '🔧',
+    svgKey: 'wrench',
     title: 'Techninė pagalba',
     description: 'Pranešimai apie klaidas, nesklandumus ir technines problemas.',
     color: '#ea580c',
   },
   {
     slug: 'pirkimu-diskusijos',
-    icon: '🏛️',
+    svgKey: 'building',
     title: 'Viešųjų pirkimų diskusijos',
     description: 'Diskusijos apie LT pirkimų teisę, praktikas, precedentus ir aktualijas.',
     color: '#3b82f6',
   },
   {
     slug: 'idejus-pasiulymai',
-    icon: '💡',
+    svgKey: 'lightbulb',
     title: 'Idėjos ir pasiūlymai',
     description: 'Siūlykite naujas funkcijas, dalinkitės idėjomis kaip pagerinti foxDoc.',
     color: '#f59e0b',
   },
   {
     slug: 'sekmingos-analizės',
-    icon: '⭐',
+    svgKey: 'star',
     title: 'Sėkmingos analizės',
     description: 'Dalinkitės sėkmingomis analizių istorijomis ir naudingais atradimais.',
     color: '#22c55e',
@@ -43,58 +43,69 @@ const categories = [
 ];
 ---
 <Layout title="Forumas — foxDoc">
-  <div style="max-width: 56rem; margin: 0 auto; padding: 5rem 1.5rem 4rem;">
 
-    <!-- Header -->
-    <div style="margin-bottom: 3rem;">
+  <!-- Header: dark bg -->
+  <div style="background: #0d0a08; padding: 5rem 1.5rem 3rem;">
+    <div style="max-width: 56rem; margin: 0 auto;">
       <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
         // forumas
       </p>
       <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3rem); color: #fdf9f7; margin: 0 0 0.75rem;">
         foxDoc bendruomenė
       </h1>
-      <p style="color: #b5a99f; font-size: 1.0625rem; max-width: 36rem;">
+      <p style="color: #b5a99f; font-size: 1.0625rem; max-width: 36rem; margin: 0;">
         Diskutuokite apie viešuosius pirkimus, dalinkitės patirtimi ir gaukite pagalbą iš bendruomenės narių.
       </p>
     </div>
+  </div>
 
-    <!-- Coming soon notice -->
-    <div style="padding: 1rem 1.25rem; border-radius: 0.75rem; border: 1px solid rgba(234, 88, 12,0.3); background: rgba(234, 88, 12,0.06); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
-      <span style="font-size: 1.25rem;">🚧</span>
-      <p style="margin: 0; color: #b5a99f; font-size: 0.875rem;">
-        Forumas šiuo metu kuriamas — netrukus galėsite registruotis ir rašyti žinutes.
-        <a href="https://app.foxdoc.io" style="color: #ea580c;">Prenumeruokite</a> naujienas, kad gautumėte pranešimą.
-      </p>
-    </div>
+  <!-- Categories: warm bg -->
+  <div style="background: #1e1a16; padding: 3rem 1.5rem 5rem;">
+    <div style="max-width: 56rem; margin: 0 auto;">
 
-    <!-- Categories -->
-    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-      {categories.map(cat => (
-        <a href={`/forum/${cat.slug}`}
-           style="display: flex; align-items: flex-start; gap: 1.25rem; padding: 1.25rem; border-radius: 0.875rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18; text-decoration: none; transition: border-color 0.2s, background 0.2s;"
-           class="forum-cat">
-          <span style={`font-size: 1.75rem; flex-shrink: 0; width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; background: ${cat.color}18;`}>
-            {cat.icon}
-          </span>
-          <div style="flex: 1; min-width: 0;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-              <h2 style={`font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; margin: 0; color: ${cat.color};`}>{cat.title}</h2>
-              <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #6d5f55;">Netrukus →</span>
+      <!-- Coming soon notice -->
+      <div style="padding: 1rem 1.25rem; border-radius: 0.75rem; border: 1px solid rgba(234,88,12,0.25); background: rgba(234,88,12,0.05); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p style="margin: 0; color: #b5a99f; font-size: 0.875rem;">
+          Forumas šiuo metu kuriamas — netrukus galėsite registruotis ir rašyti žinutes.
+          <a href="https://app.foxdoc.io" style="color: #ea580c; text-decoration: none;">Prenumeruokite</a> naujienas.
+        </p>
+      </div>
+
+      <!-- Categories list -->
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {categories.map(cat => (
+          <a href={`/forum/${cat.slug}`}
+             class="forum-cat"
+             style="display: flex; align-items: flex-start; gap: 1.25rem; padding: 1.25rem; border-radius: 0.875rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18; text-decoration: none; transition: border-color 0.2s, background 0.2s;">
+            <div style={`width: 2.5rem; height: 2.5rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; background: ${cat.color}18;`}>
+              {cat.svgKey === 'chat'     && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={cat.color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>}
+              {cat.svgKey === 'wrench'   && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={cat.color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>}
+              {cat.svgKey === 'building' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={cat.color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>}
+              {cat.svgKey === 'lightbulb'&& <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={cat.color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>}
+              {cat.svgKey === 'star'     && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={cat.color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>}
             </div>
-            <p style="margin: 0.25rem 0 0; color: #b5a99f; font-size: 0.875rem; line-height: 1.5;">{cat.description}</p>
-          </div>
-        </a>
-      ))}
-    </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                <h2 style={`font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; margin: 0; color: ${cat.color};`}>{cat.title}</h2>
+                <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #6d5f55;">Netrukus →</span>
+              </div>
+              <p style="margin: 0.25rem 0 0; color: #b5a99f; font-size: 0.875rem; line-height: 1.5;">{cat.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
 
-    <!-- Newsletter CTA -->
-    <div style="margin-top: 3rem; padding: 2rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18; text-align: center;">
-      <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #fdf9f7; margin: 0 0 0.5rem;">Gaukite pranešimą kai forumas atidarys</p>
-      <p style="color: #b5a99f; font-size: 0.875rem; margin: 0 0 1.25rem;">Užsiregistruokite foxDoc paskyrai — pranešime el. paštu</p>
-      <a href="https://app.foxdoc.io"
-         style="display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border-radius: 0.5rem; background: #f59e0b; color: #1a1512; font-weight: 600; text-decoration: none; min-height: 44px;">
-        Registruotis nemokamai
-      </a>
+      <!-- Newsletter CTA -->
+      <div style="margin-top: 3rem; padding: 2rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.15); background: #1a1512; text-align: center;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #fdf9f7; margin: 0 0 0.5rem;">Gaukite pranešimą kai forumas atidarys</p>
+        <p style="color: #b5a99f; font-size: 0.875rem; margin: 0 0 1.25rem;">Užsiregistruokite foxDoc paskyrai — pranešime el. paštu</p>
+        <a href="https://app.foxdoc.io"
+           style="display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.25rem; border-radius: 0.5rem; background: #f59e0b; color: #1a1512; font-weight: 600; text-decoration: none; font-size: 0.875rem;">
+          Registruotis nemokamai
+        </a>
+      </div>
+
     </div>
   </div>
 

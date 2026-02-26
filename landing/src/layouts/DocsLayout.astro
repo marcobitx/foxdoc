@@ -44,10 +44,11 @@ const nav = [
 ];
 ---
 <Layout title={`${title} — foxDoc dokumentacija`}>
+  <div style="background: #1a1512; min-height: 100vh;">
   <div style="max-width: 72rem; margin: 0 auto; padding: 2rem 1.5rem 4rem; display: flex; gap: 3rem; align-items: flex-start;">
 
     <!-- Sidebar -->
-    <aside style="width: 220px; flex-shrink: 0; position: sticky; top: 5rem; display: none;"
+    <aside style="width: 220px; flex-shrink: 0; position: sticky; top: 5rem; display: none; background: #130f0c; border-radius: 0.75rem; padding: 1.25rem;"
            class="docs-sidebar">
       {nav.map(section => (
         <div style="margin-bottom: 1.75rem;">
@@ -68,7 +69,7 @@ const nav = [
     </aside>
 
     <!-- Main content -->
-    <main style="flex: 1; min-width: 0;" class="docs-content">
+    <main style="flex: 1; min-width: 0; background: #1e1a16; border-radius: 0.75rem; padding: 2rem;" class="docs-content">
       <!-- Mobile nav toggle -->
       <details style="margin-bottom: 2rem; display: block;" class="docs-mobile-nav">
         <summary style="cursor: pointer; padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18; color: #b5a99f; font-size: 0.875rem; list-style: none; display: flex; align-items: center; justify-content: space-between;">
@@ -89,6 +90,7 @@ const nav = [
 
       <slot />
     </main>
+  </div>
   </div>
 
   <style>
