@@ -1,16 +1,17 @@
 ---
 // landing/src/components/sections/Testimonials.astro
-// Featured testimonial (full-width) + 2 supporting cards — light warm section
-// Related: index.astro
-const featured = {
-  name: 'Rūta Kazlauskienė',
-  role: 'Viešųjų pirkimų specialistė',
-  org: 'Vilniaus miesto savivaldybė',
-  initials: 'RK',
-  text: 'foxDoc sutaupė mums daugiau nei 3 valandas per kiekvieną didesnį pirkimą. Ataskaita tiksli ir visada randa tai, ką praleistume rankinės peržiūros metu.',
-  stars: 5,
-};
-const supporting = [
+// Two vertical auto-scrolling marquee strips — one down, one up — with more testimonial cards
+// Light warm beige section. Related: index.astro
+
+const all = [
+  {
+    name: 'Rūta Kazlauskienė',
+    role: 'Viešųjų pirkimų specialistė',
+    org: 'Vilniaus miesto savivaldybė',
+    initials: 'RK',
+    text: 'foxDoc sutaupė mums daugiau nei 3 valandas per kiekvieną didesnį pirkimą. Ataskaita tiksli ir visada randa tai, ką praleistume rankinės peržiūros metu.',
+    stars: 5,
+  },
   {
     name: 'Tomas Petraitis',
     role: 'Direktorius',
@@ -27,74 +28,122 @@ const supporting = [
     text: 'Prieš foxDoc praleidavome dieną analizuodami pirkimo dokumentus. Dabar tai atlieka AI per 3 minutes. Rekomenduoju visiems tiekėjams.',
     stars: 5,
   },
+  {
+    name: 'Mindaugas Žukauskas',
+    role: 'Pirkimų skyriaus vadovas',
+    org: 'Kauno miesto savivaldybė',
+    initials: 'MŽ',
+    text: 'ZIP archyvų palaikymas — tikras proveržis. Įkeliame visą pirkimo paketą ir per kelias minutes turime pilną analizę. Sutaupome iki 80% laiko.',
+    stars: 5,
+  },
+  {
+    name: 'Eglė Navickienė',
+    role: 'Vyriausioji teisininkė',
+    org: 'UAB Statybos Lyderiai',
+    initials: 'EN',
+    text: 'QA balas perspėja apie neišsamią dokumentaciją dar prieš teikiant pasiūlymą. Tai apsaugojo mus nuo kelių brangiai kainojusių klaidų.',
+    stars: 5,
+  },
+  {
+    name: 'Darius Pocius',
+    role: 'Finansų kontrolierius',
+    org: 'VĮ Lietuvos paštas',
+    initials: 'DP',
+    text: 'Naudojame foxDoc kiekvieno pirkimo vertinimui. Tai leido padidinti analizuojamų pirkimų skaičių 3 kartus be papildomų darbuotojų.',
+    stars: 5,
+  },
+  {
+    name: 'Kristina Balčiūnienė',
+    role: 'Audito vadybininkė',
+    org: 'UAB Audit Partners LT',
+    initials: 'KB',
+    text: 'Eksportas į DOCX leidžia greitai pritaikyti ataskaitą klientui. Profesionali išvaizda ir tikslūs duomenys — idealus įrankis konsultantams.',
+    stars: 5,
+  },
+  {
+    name: 'Algirdas Matulis',
+    role: 'IT projektų vadovas',
+    org: 'VšĮ Centrinė perkančioji organizacija',
+    initials: 'AM',
+    text: 'API integracija leido automatizuoti pirkimų stebėjimą. Dabar sistema pati praneša apie naujus pirkimus ir jų analizę gauname automatiškai.',
+    stars: 5,
+  },
 ];
+
+// Split into two strips
+const strip1 = all.slice(0, 4);
+const strip2 = all.slice(4, 8);
 ---
+
 <section class="py-16 sm:py-24 px-4 sm:px-6" style="background: #f5ede2;">
   <div class="max-w-6xl mx-auto">
 
-    <div class="text-center mb-12 sm:mb-16">
+    <div class="text-center mb-12">
       <p class="text-xs sm:text-sm font-mono mb-3" style="color: #d97706;">// atsiliepimai</p>
       <h2 class="font-heading font-bold" style="color: #1a1512;">Ką sako mūsų vartotojai</h2>
+      <p class="text-sm mt-2" style="color: #7a6b61;">Pirkimų specialistai, tiekėjai ir auditoriai apie foxDoc</p>
     </div>
 
-    <!-- Featured testimonial -->
-    <div class="scroll-reveal mb-4 p-8 sm:p-10 rounded-2xl border"
-         style="border-color: rgba(0,0,0,0.08); background: #fffaf5; box-shadow: 0 2px 16px rgba(0,0,0,0.06);">
-      <!-- Stars -->
-      <div class="flex gap-0.5 mb-5" aria-label="5 žvaigždutės">
-        {"★★★★★".split("").map(() => (
-          <span style="color: #f59e0b; font-size: 1rem;" aria-hidden="true">★</span>
-        ))}
-      </div>
-      <p class="font-heading font-semibold mb-6 leading-snug"
-         style="font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: #1a1512; max-width: 52rem;">
-        &ldquo;{featured.text}&rdquo;
-      </p>
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-             style="background: rgba(245,158,11,0.15); color: #d97706; font-family: var(--font-heading);">{featured.initials}</div>
-        <div>
-          <p class="text-sm font-semibold" style="color: #1a1512;">{featured.name}</p>
-          <p class="text-xs" style="color: #7a6b61;">{featured.role}, {featured.org}</p>
-        </div>
-      </div>
-    </div>
+    <!-- Two-column vertical marquee -->
+    <div class="marquee-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; overflow: hidden; height: 520px; mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);">
 
-    <!-- Two supporting testimonials -->
-    <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
-      {supporting.map((t, i) => (
-        <div class="scroll-reveal p-5 sm:p-6 rounded-2xl border"
-             style={`border-color: rgba(0,0,0,0.07); background: rgba(255,255,255,0.72); backdrop-filter: blur(4px); box-shadow: 0 1px 8px rgba(0,0,0,0.04); transition-delay: ${(i+1)*80}ms;`}>
-          <div class="flex gap-0.5 mb-3" aria-label="5 žvaigždutės">
-            {"★★★★★".split("").map(() => (
-              <span style="color: #f59e0b; font-size: 0.75rem;" aria-hidden="true">★</span>
-            ))}
-          </div>
-          <p class="text-sm leading-relaxed italic mb-4" style="color: #4a3f38;">&ldquo;{t.text}&rdquo;</p>
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                 style="background: rgba(245,158,11,0.12); color: #d97706; font-family: var(--font-heading);">{t.initials}</div>
-            <div>
-              <p class="text-xs font-semibold" style="color: #1a1512;">{t.name}</p>
-              <p style="font-size: 0.7rem; color: #7a6b61;">{t.role}, {t.org}</p>
+      <!-- Strip 1: scrolls DOWN -->
+      <div class="marquee-track down" style="display: flex; flex-direction: column; gap: 1rem; animation: scrollDown 24s linear infinite;">
+        {[...strip1, ...strip1].map(t => (
+          <div style="padding: 1.25rem 1.5rem; border-radius: 1.125rem; border: 1px solid rgba(0,0,0,0.07); background: #fffaf5; box-shadow: 0 1px 8px rgba(0,0,0,0.04); flex-shrink: 0;">
+            <div style="display: flex; gap: 0.25rem; margin-bottom: 0.625rem;">
+              {[1,2,3,4,5].map(() => <span style="color: #f59e0b; font-size: 0.75rem;">★</span>)}
+            </div>
+            <p style="font-size: 0.875rem; line-height: 1.65; color: #3a3330; margin: 0 0 0.875rem; font-style: italic;">&ldquo;{t.text}&rdquo;</p>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(245,158,11,0.12); color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; font-family: var(--font-heading, 'Space Grotesk', sans-serif);">{t.initials}</div>
+              <div>
+                <p style="font-size: 0.8125rem; font-weight: 600; color: #1a1512; margin: 0;">{t.name}</p>
+                <p style="font-size: 0.7rem; color: #7a6b61; margin: 0;">{t.role}, {t.org}</p>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+
+      <!-- Strip 2: scrolls UP -->
+      <div class="marquee-track up" style="display: flex; flex-direction: column; gap: 1rem; animation: scrollUp 28s linear infinite;">
+        {[...strip2, ...strip2].map(t => (
+          <div style="padding: 1.25rem 1.5rem; border-radius: 1.125rem; border: 1px solid rgba(0,0,0,0.07); background: rgba(255,255,255,0.68); backdrop-filter: blur(4px); box-shadow: 0 1px 8px rgba(0,0,0,0.03); flex-shrink: 0;">
+            <div style="display: flex; gap: 0.25rem; margin-bottom: 0.625rem;">
+              {[1,2,3,4,5].map(() => <span style="color: #f59e0b; font-size: 0.75rem;">★</span>)}
+            </div>
+            <p style="font-size: 0.875rem; line-height: 1.65; color: #3a3330; margin: 0 0 0.875rem; font-style: italic;">&ldquo;{t.text}&rdquo;</p>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 34px; height: 34px; border-radius: 50%; background: rgba(245,158,11,0.12); color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; font-family: var(--font-heading, 'Space Grotesk', sans-serif);">{t.initials}</div>
+              <div>
+                <p style="font-size: 0.8125rem; font-weight: 600; color: #1a1512; margin: 0;">{t.name}</p>
+                <p style="font-size: 0.7rem; color: #7a6b61; margin: 0;">{t.role}, {t.org}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
     </div>
 
   </div>
 </section>
 
 <style>
-  .scroll-reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
-  .scroll-reveal.visible { opacity: 1; transform: none; }
-</style>
+  @keyframes scrollDown {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+  @keyframes scrollUp {
+    0%   { transform: translateY(-50%); }
+    100% { transform: translateY(0); }
+  }
+  .marquee-track:hover { animation-play-state: paused; }
 
-<script>
-  const observer = new IntersectionObserver(
-    (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-  );
-  document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
-</script>
+  @media (max-width: 640px) {
+    .marquee-wrapper { grid-template-columns: 1fr !important; }
+    .marquee-track.up { display: none !important; }
+    .marquee-wrapper { height: 480px !important; }
+  }
+</style>
