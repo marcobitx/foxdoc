@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 const plans = [
   { name: 'Free',    monthly: 0,   annual: 0,   credits: '3 (vienkartiniai)', users: 1,  highlight: false, cta: 'Pradėti nemokamai' },
-  { name: 'Starter', monthly: 19,  annual: 16,  credits: '20/mėn.',          users: 1,  highlight: false, cta: 'Rinktis Starter' },
   { name: 'Pro',     monthly: 59,  annual: 49,  credits: '75/mėn.',          users: 3,  highlight: true,  cta: 'Rinktis Pro' },
   { name: 'Team',    monthly: 149, annual: 124, credits: '200/mėn.',         users: 10, highlight: false, cta: 'Rinktis Team' },
 ] as const;
@@ -79,7 +78,7 @@ export default function PricingPreview() {
                 <p>✓ {plan.users} {plan.users === 1 ? 'vartotojas' : 'vartotojai'}</p>
               </div>
               <a href={`https://app.foxdoc.io?plan=${plan.name.toLowerCase()}`} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.625rem 1rem', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', minHeight: '44px', transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.625rem 1rem', borderRadius: '0.5rem', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s',
                 background: plan.highlight ? '#f59e0b' : 'transparent',
                 color: plan.highlight ? '#1a1512' : '#fdf9f7',
                 border: plan.highlight ? 'none' : '1px solid rgba(168,162,158,0.22)',

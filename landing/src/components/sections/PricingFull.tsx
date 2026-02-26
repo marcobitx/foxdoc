@@ -24,11 +24,6 @@ const plans = [
     features: ['Analizė ekrane', 'PDF/DOCX/XLSX/ZIP', '1 vartotojas'],
   },
   {
-    name: 'Starter', monthly: 19, annual: 16, annualTotal: 190, credits: '20/mėn.', users: '1', highlight: false,
-    cta: 'Rinktis Starter', ctaHref: 'https://app.foxdoc.io?plan=starter',
-    features: ['PDF eksportas', 'Chat istorija', '1 vartotojas'],
-  },
-  {
     name: 'Pro', monthly: 59, annual: 49, annualTotal: 590, credits: '75/mėn.', users: '3', highlight: true,
     cta: 'Rinktis Pro', ctaHref: 'https://app.foxdoc.io?plan=pro',
     features: ['DOCX eksportas', 'Modelio pasirinkimas', 'Prioritetinė eilė', '3 vartotojai'],
@@ -51,43 +46,43 @@ const featureGroups: FeatureGroup[] = [
   {
     group: 'Bazinės funkcijos',
     rows: [
-      { label: 'Kreditai', values: ['3 (vienkartiniai)', '20/mėn.', '75/mėn.', '200/mėn.', 'Neriboti'] },
-      { label: 'Vartotojai', values: ['1', '1', '3', '10', 'Neribota'] },
-      { label: 'PDF/DOCX/XLSX/ZIP analizė', values: [true, true, true, true, true] },
-      { label: 'Ataskaita ekrane', values: [true, true, true, true, true] },
+      { label: 'Kreditai', values: ['3 (vienkartiniai)', '75/mėn.', '200/mėn.', 'Neriboti'] },
+      { label: 'Vartotojai', values: ['1', '3', '10', 'Neribota'] },
+      { label: 'PDF/DOCX/XLSX/ZIP analizė', values: [true, true, true, true] },
+      { label: 'Ataskaita ekrane', values: [true, true, true, true] },
     ],
   },
   {
     group: 'Eksportas',
     rows: [
-      { label: 'PDF eksportas', values: [false, true, true, true, true] },
-      { label: 'DOCX eksportas', values: [false, false, true, true, true] },
-      { label: 'Chat istorija', values: [false, true, true, true, true] },
+      { label: 'PDF eksportas', values: [false, true, true, true] },
+      { label: 'DOCX eksportas', values: [false, true, true, true] },
+      { label: 'Chat istorija', values: [false, true, true, true] },
     ],
   },
   {
     group: 'Pažangios funkcijos',
     rows: [
-      { label: 'Modelio pasirinkimas', values: [false, false, true, true, true] },
-      { label: 'Prioritetinė eilė', values: [false, false, true, true, true] },
+      { label: 'Modelio pasirinkimas', values: [false, true, true, true] },
+      { label: 'Prioritetinė eilė', values: [false, true, true, true] },
     ],
   },
   {
     group: 'API ir integracija',
     rows: [
-      { label: 'API prieiga', values: [false, false, false, true, true] },
-      { label: 'Pasirinktiniai promptai', values: [false, false, false, true, true] },
-      { label: 'Masinis įkėlimas', values: [false, false, false, true, true] },
+      { label: 'API prieiga', values: [false, false, true, true] },
+      { label: 'Pasirinktiniai promptai', values: [false, false, true, true] },
+      { label: 'Masinis įkėlimas', values: [false, false, true, true] },
     ],
   },
   {
     group: 'Įmonėms',
     rows: [
-      { label: 'SSO/SAML', values: [false, false, false, false, true] },
-      { label: 'VPC/on-premise', values: [false, false, false, false, true] },
-      { label: 'SLA garantija', values: [false, false, false, false, true] },
-      { label: 'GDPR DPA', values: [false, false, false, false, true] },
-      { label: 'Audito žurnalai', values: [false, false, false, false, true] },
+      { label: 'SSO/SAML', values: [false, false, false, true] },
+      { label: 'VPC/on-premise', values: [false, false, false, true] },
+      { label: 'SLA garantija', values: [false, false, false, true] },
+      { label: 'GDPR DPA', values: [false, false, false, true] },
+      { label: 'Audito žurnalai', values: [false, false, false, true] },
     ],
   },
 ];
@@ -130,7 +125,7 @@ export default function PricingFull() {
   const ctaStyle = (highlight: boolean, enterprise: boolean): React.CSSProperties => ({
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     padding: '0.625rem 1rem', borderRadius: '0.5rem', fontSize: '0.875rem',
-    fontWeight: 600, textDecoration: 'none', minHeight: '44px', transition: 'all 0.2s',
+    fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s',
     marginTop: 'auto',
     background: highlight ? '#f59e0b' : enterprise ? 'transparent' : 'transparent',
     color: highlight ? '#1a1512' : '#fdf9f7',
@@ -138,7 +133,8 @@ export default function PricingFull() {
   });
 
   return (
-    <div style={s.page}>
+    <div style={{ background: '#0d0a08' }}>
+      <div style={s.page}>
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
         <p style={s.sectionLabel}>// kainodara</p>
@@ -234,7 +230,7 @@ export default function PricingFull() {
               {featureGroups.map(group => (
                 <>
                   <tr key={group.group}>
-                    <td colSpan={6} style={{ padding: '1rem 1rem 0.5rem', fontSize: '0.7rem', fontFamily: 'JetBrains Mono, monospace', color: '#ea580c', textTransform: 'uppercase', letterSpacing: '0.08em', borderTop: '1px solid rgba(168,162,158,0.10)' }}>
+                    <td colSpan={5} style={{ padding: '1rem 1rem 0.5rem', fontSize: '0.7rem', fontFamily: 'JetBrains Mono, monospace', color: '#ea580c', textTransform: 'uppercase', letterSpacing: '0.08em', borderTop: '1px solid rgba(168,162,158,0.10)' }}>
                       {group.group}
                     </td>
                   </tr>
@@ -269,7 +265,7 @@ export default function PricingFull() {
               <p style={{ color: '#b5a99f', fontSize: '0.875rem', margin: '0 0 1rem' }}>kreditų</p>
               <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fdf9f7', margin: '0 0 0.25rem' }}>€{a.price}</p>
               <p style={{ fontSize: '0.75rem', color: '#ea580c', margin: '0 0 1.25rem' }}>{a.perCredit}/kreditas</p>
-              <a href="https://app.foxdoc.io/billing" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(168,162,158,0.22)', color: '#fdf9f7', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600, minHeight: '44px', transition: 'background 0.2s' }}>
+              <a href="https://app.foxdoc.io/billing" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(168,162,158,0.22)', color: '#fdf9f7', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600, transition: 'background 0.2s' }}>
                 Pirkti
               </a>
             </div>
@@ -297,7 +293,7 @@ export default function PricingFull() {
 
       {/* FAQ strip */}
       <div style={{ maxWidth: '48rem', margin: '0 auto 4rem' }}>
-        <h2 style={{ ...s.h2, fontSize: '1.5rem', textAlign: 'center', marginBottom: '1.5rem' }}>D.U.K. apie kainodoarą</h2>
+        <h2 style={{ ...s.h2, fontSize: '1.5rem', textAlign: 'center', marginBottom: '1.5rem' }}>D.U.K. apie kainodara</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {faqs.map(f => (
             <div key={f.q} style={{ padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid rgba(168,162,158,0.15)', background: '#231c18' }}>
@@ -312,10 +308,11 @@ export default function PricingFull() {
       <div style={{ textAlign: 'center', padding: '3rem 1.5rem', borderRadius: '1rem', background: 'linear-gradient(135deg, rgba(234, 88, 12,0.15) 0%, rgba(245, 158, 11,0.08) 100%)', border: '1px solid rgba(168,162,158,0.15)' }}>
         <h2 style={{ ...s.h2, fontSize: '1.75rem', marginBottom: '0.75rem' }}>Reikia individualaus sprendimo?</h2>
         <p style={{ ...s.subtle, marginBottom: '1.5rem' }}>Didelės organizacijos, savivaldybės ir centriniai perkantys subjektai — susisiekite dėl Enterprise kainos</p>
-        <a href="mailto:hello@foxdoc.io" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.875rem 2rem', borderRadius: '0.5rem', background: '#f59e0b', color: '#1a1512', fontWeight: 600, textDecoration: 'none', minHeight: '44px', fontSize: '1rem' }}>
+        <a href="mailto:hello@foxdoc.io" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.875rem 2rem', borderRadius: '0.5rem', background: '#f59e0b', color: '#1a1512', fontWeight: 600, textDecoration: 'none', fontSize: '1rem' }}>
           Susisiekti su komanda
         </a>
       </div>
+    </div>
     </div>
   );
 }
