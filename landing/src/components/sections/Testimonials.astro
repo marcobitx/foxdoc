@@ -1,6 +1,6 @@
 ---
 // landing/src/components/sections/Testimonials.astro
-// Featured testimonial (full-width) + 2 supporting cards below
+// Featured testimonial (full-width) + 2 supporting cards — light warm section
 // Related: index.astro
 const featured = {
   name: 'Rūta Kazlauskienė',
@@ -29,16 +29,18 @@ const supporting = [
   },
 ];
 ---
-<section class="py-16 sm:py-24 px-4 sm:px-6" style="background: #1a1512;">
+<section class="py-16 sm:py-24 px-4 sm:px-6"
+         style="background: linear-gradient(to bottom, #0d0a08 0px, #f5ede2 72px, #f5ede2 calc(100% - 72px), #0d0a08 100%);">
   <div class="max-w-6xl mx-auto">
 
     <div class="text-center mb-12 sm:mb-16">
-      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #f59e0b;">// atsiliepimai</p>
-      <h2 class="font-heading font-bold" style="color: #fdf9f7;">Ką sako mūsų vartotojai</h2>
+      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #d97706;">// atsiliepimai</p>
+      <h2 class="font-heading font-bold" style="color: #1a1512;">Ką sako mūsų vartotojai</h2>
     </div>
 
     <!-- Featured testimonial -->
-    <div class="scroll-reveal mb-4 p-8 sm:p-10 rounded-2xl border" style="border-color: rgba(168,162,158,0.15); background: #231c18;">
+    <div class="scroll-reveal mb-4 p-8 sm:p-10 rounded-2xl border"
+         style="border-color: rgba(0,0,0,0.08); background: #fffaf5; box-shadow: 0 2px 16px rgba(0,0,0,0.06);">
       <!-- Stars -->
       <div class="flex gap-0.5 mb-5" aria-label="5 žvaigždutės">
         {"★★★★★".split("").map(() => (
@@ -46,15 +48,15 @@ const supporting = [
         ))}
       </div>
       <p class="font-heading font-semibold mb-6 leading-snug"
-         style="font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: #fdf9f7; max-width: 52rem;">
+         style="font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: #1a1512; max-width: 52rem;">
         &ldquo;{featured.text}&rdquo;
       </p>
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-             style="background: rgba(245,158,11,0.15); color: #f59e0b; font-family: var(--font-heading);">{featured.initials}</div>
+             style="background: rgba(245,158,11,0.15); color: #d97706; font-family: var(--font-heading);">{featured.initials}</div>
         <div>
-          <p class="text-sm font-semibold" style="color: #fdf9f7;">{featured.name}</p>
-          <p class="text-xs" style="color: #6d5f55;">{featured.role}, {featured.org}</p>
+          <p class="text-sm font-semibold" style="color: #1a1512;">{featured.name}</p>
+          <p class="text-xs" style="color: #7a6b61;">{featured.role}, {featured.org}</p>
         </div>
       </div>
     </div>
@@ -63,19 +65,19 @@ const supporting = [
     <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
       {supporting.map((t, i) => (
         <div class="scroll-reveal p-5 sm:p-6 rounded-2xl border"
-             style={`border-color: rgba(168,162,158,0.12); background: #1e1a16; transition-delay: ${(i+1)*80}ms;`}>
+             style={`border-color: rgba(0,0,0,0.07); background: rgba(255,255,255,0.72); backdrop-filter: blur(4px); box-shadow: 0 1px 8px rgba(0,0,0,0.04); transition-delay: ${(i+1)*80}ms;`}>
           <div class="flex gap-0.5 mb-3" aria-label="5 žvaigždutės">
             {"★★★★★".split("").map(() => (
-              <span style="color: rgba(245,158,11,0.5); font-size: 0.75rem;" aria-hidden="true">★</span>
+              <span style="color: #f59e0b; font-size: 0.75rem;" aria-hidden="true">★</span>
             ))}
           </div>
-          <p class="text-sm leading-relaxed italic mb-4" style="color: #b5a99f;">&ldquo;{t.text}&rdquo;</p>
+          <p class="text-sm leading-relaxed italic mb-4" style="color: #4a3f38;">&ldquo;{t.text}&rdquo;</p>
           <div class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                 style="background: rgba(245,158,11,0.1); color: #f59e0b; font-family: var(--font-heading);">{t.initials}</div>
+                 style="background: rgba(245,158,11,0.12); color: #d97706; font-family: var(--font-heading);">{t.initials}</div>
             <div>
-              <p class="text-xs font-semibold" style="color: #ede5df;">{t.name}</p>
-              <p style="font-size: 0.7rem; color: #6d5f55;">{t.role}, {t.org}</p>
+              <p class="text-xs font-semibold" style="color: #1a1512;">{t.name}</p>
+              <p style="font-size: 0.7rem; color: #7a6b61;">{t.role}, {t.org}</p>
             </div>
           </div>
         </div>
@@ -84,6 +86,11 @@ const supporting = [
 
   </div>
 </section>
+
+<style>
+  .scroll-reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .scroll-reveal.visible { opacity: 1; transform: none; }
+</style>
 
 <script>
   const observer = new IntersectionObserver(

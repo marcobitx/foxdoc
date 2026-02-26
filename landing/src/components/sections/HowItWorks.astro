@@ -1,6 +1,6 @@
 ---
 // landing/src/components/sections/HowItWorks.astro
-// 3-step process — numbered list with amber accent, no card boxes
+// 3-step process — numbered list, light warm cream section
 // Related: index.astro
 const steps = [
   {
@@ -20,21 +20,22 @@ const steps = [
   },
 ];
 ---
-<section id="how-it-works" class="py-16 sm:py-24 px-4 sm:px-6" style="background: #1e1a16;">
+<section id="how-it-works" class="py-16 sm:py-24 px-4 sm:px-6"
+         style="background: linear-gradient(to bottom, #0d0a08 0px, #fdf7f2 72px, #fdf7f2 calc(100% - 72px), #0d0a08 100%);">
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-12 sm:mb-16">
-      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #f59e0b;">// kaip veikia</p>
-      <h2 class="font-heading font-bold" style="color: #fdf9f7;">3 žingsniai iki išsamios ataskaitos</h2>
+      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #d97706;">// kaip veikia</p>
+      <h2 class="font-heading font-bold" style="color: #1a1512;">3 žingsniai iki išsamios ataskaitos</h2>
     </div>
 
     <div class="how-steps flex flex-col md:flex-row">
       {steps.map((step, i) => (
         <div class="scroll-reveal step-item flex-1 flex flex-col py-8 md:py-0 md:px-10"
              style={`transition-delay: ${i * 100}ms;`}>
-          <div class="font-mono font-bold mb-5" style="font-size: 3rem; line-height: 1; color: rgba(245, 158, 11, 0.2);">{step.num}</div>
-          <div class="w-8 mb-5" style="height: 2px; background: #f59e0b;"></div>
-          <h3 class="font-heading font-semibold mb-3" style="font-size: 1.125rem; color: #fdf9f7;">{step.title}</h3>
-          <p class="text-sm leading-relaxed" style="color: #b5a99f;">{step.desc}</p>
+          <div class="font-mono font-bold mb-5" style="font-size: 3rem; line-height: 1; color: rgba(234, 88, 12, 0.18);">{step.num}</div>
+          <div class="w-8 mb-5" style="height: 2px; background: #ea580c;"></div>
+          <h3 class="font-heading font-semibold mb-3" style="font-size: 1.125rem; color: #1a1512;">{step.title}</h3>
+          <p class="text-sm leading-relaxed" style="color: #4a3f38;">{step.desc}</p>
         </div>
       ))}
     </div>
@@ -44,17 +45,19 @@ const steps = [
 <style>
   /* Mobile: top border between steps */
   .how-steps .step-item + .step-item {
-    border-top: 1px solid rgba(168,162,158,0.12);
+    border-top: 1px solid rgba(0,0,0,0.1);
   }
   /* Desktop: left border dividers, no top border */
   @media (min-width: 768px) {
     .how-steps .step-item + .step-item {
       border-top: none;
-      border-left: 1px solid rgba(168,162,158,0.12);
+      border-left: 1px solid rgba(0,0,0,0.1);
     }
     .how-steps .step-item:first-child { padding-left: 0 !important; }
     .how-steps .step-item:last-child  { padding-right: 0 !important; }
   }
+  .scroll-reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .scroll-reveal.visible { opacity: 1; transform: none; }
 </style>
 
 <script>
