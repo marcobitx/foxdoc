@@ -17,6 +17,12 @@
   --color-accent: #ea580c;
   --color-accent-subtle: rgba(234, 88, 12, 0.10);
 
+  /* ── SECTION BACKGROUNDS ── */
+  --bg-deep:    #0d0a08;
+  --bg-base:    #1a1512;
+  --bg-warm:    #1e1a16;
+  --bg-surface: #231c18;
+
   /* ── SEMANTIC ── */
   --color-success: #22c55e;
   --color-error: #ef4444;
@@ -84,36 +90,37 @@ h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
   background: #f59e0b;
   color: #1a1512;
   font-weight: 600;
-  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  transition: box-shadow 0.3s ease, background 0.2s ease;
+  transition: box-shadow 0.2s ease, background 0.2s ease;
   text-decoration: none;
-  min-height: 44px;
 }
 .btn-primary:hover {
   background: #d97706;
-  box-shadow: 0 0 24px rgba(245, 158, 11, 0.25);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
 }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #fdf9f7;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
+  border: 1px solid rgba(168, 162, 158, 0.25);
+  color: #ede5df;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   background: transparent;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
   text-decoration: none;
-  min-height: 44px;
 }
 .btn-secondary:hover {
-  background: #2e2520;
+  background: rgba(168,162,158,0.08);
+  border-color: rgba(168,162,158,0.4);
 }
 
 /* ── Scroll reveal animation ── */
