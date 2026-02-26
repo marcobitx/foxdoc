@@ -3,6 +3,35 @@
 // React island (client:load) for monthly/annual toggle interactivity
 
 import { useState, Fragment } from 'react';
+import { motion } from 'framer-motion';
+
+const REEL_LH = 1.1; // line-height in em
+
+const SlotReel = ({ digit, delay = 0, color, fontSize }: {
+  digit: string; delay?: number; color: string; fontSize: string;
+}) => {
+  const num = parseInt(digit);
+  // Build reel: 3 full spins through 0-9, land on target
+  const reel: number[] = [];
+  for (let i = 0; i < 3; i++) for (let d = 0; d < 10; d++) reel.push(d);
+  reel.push(num);
+  const finalY = -(reel.length - 1) * REEL_LH;
+
+  return (
+    <span style={{ display: 'inline-block', overflow: 'hidden', height: `${REEL_LH}em`, verticalAlign: 'bottom', fontSize }}>
+      <motion.span
+        initial={{ y: 0 }}
+        animate={{ y: `${finalY}em` }}
+        transition={{ duration: 1.4, delay, ease: [0.06, 0.87, 0.18, 1] }}
+        style={{ display: 'flex', flexDirection: 'column', color, fontWeight: 300, letterSpacing: '-0.04em', fontFamily: 'Space Grotesk, sans-serif', lineHeight: REEL_LH }}
+      >
+        {reel.map((d, i) => (
+          <span key={i} style={{ display: 'block', height: `${REEL_LH}em`, lineHeight: `${REEL_LH}em` }}>{d}</span>
+        ))}
+      </motion.span>
+    </span>
+  );
+};
 
 const s = {
   page: { maxWidth: '76rem', margin: '0 auto', padding: '5rem 1.5rem 4rem' } as React.CSSProperties,
@@ -157,21 +186,23 @@ function TableCheck({ yes }: { yes: boolean | string }) {
 }
 
 const FeatureCheck = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
-    <circle cx="7" cy="7" r="7" fill="rgba(245,158,11,0.15)" />
-    <path d="M4 7l2 2 4-4" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style={{ flexShrink: 0, marginTop: '1px' }}>
+    <circle cx="7.5" cy="7.5" r="6.5" stroke="rgba(245,158,11,0.28)" strokeWidth="1"/>
+    <path d="M4.5 7.5l2 2 4-4" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const FeatureCross = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
-    <circle cx="7" cy="7" r="7" fill="rgba(168,162,158,0.06)" />
-    <path d="M5 9l4-4M9 9L5 5" stroke="rgba(168,162,158,0.25)" strokeWidth="1.5" strokeLinecap="round" />
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style={{ flexShrink: 0, marginTop: '1px' }}>
+    <circle cx="7.5" cy="7.5" r="6.5" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+    <path d="M5.5 9.5l4-4M9.5 9.5l-4-4" stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
 export default function PricingFull() {
   const [annual, setAnnual] = useState(true); // Default annual to encourage subscription
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [hoveredCta, setHoveredCta] = useState<string | null>(null);
 
   const toggleStyle = (active: boolean): React.CSSProperties => ({
     padding: '0.5rem 1rem', borderRadius: '0.375rem', border: 'none', cursor: 'pointer',
@@ -190,15 +221,15 @@ export default function PricingFull() {
   });
 
   return (
-    <div style={{ background: '#0d0a08' }}>
+    <div style={{ background: 'linear-gradient(180deg, #fdf6ec 0%, #f5e4ca 12%, #2a180e 24%, #0d0a08 34%)' }}>
       <div style={s.page}>
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
         <p style={s.sectionLabel}>// kainodara</p>
-        <h1 style={{ ...s.h2, fontSize: 'clamp(2rem, 5vw, 3.75rem)' }}>
+        <h1 style={{ ...s.h2, fontSize: 'clamp(2rem, 5vw, 3.75rem)', color: '#1a1512' }}>
           Skaidri kainodara, nėra staigmenų
         </h1>
-        <p style={s.subtle}>Kreditais pagrįsta sistema — mokate tik už tai, ką naudojate</p>
+        <p style={{ ...s.subtle, color: '#4a3f38' }}>Kreditais pagrįsta sistema — mokate tik už tai, ką naudojate</p>
 
         {/* Toggle */}
         <div style={{ display: 'inline-flex', gap: '0.25rem', padding: '0.25rem', borderRadius: '0.5rem', background: '#231c18', border: '1px solid rgba(168,162,158,0.15)' }}>
@@ -213,73 +244,231 @@ export default function PricingFull() {
       </div>
 
       {/* Plans grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '4rem', alignItems: 'stretch' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(235px, 1fr))', gap: '1.25rem', marginBottom: '5rem', alignItems: 'stretch', paddingTop: '1.5rem' }}>
         {plans.map(plan => (
-          <div key={plan.name} style={s.card(plan.highlight)}>
-            {/* Popular badge */}
+          <div key={plan.name} style={{ position: 'relative', zIndex: plan.highlight ? 2 : 1, display: 'flex', flexDirection: 'column' }}>
+
+            {/* Accent bottom card — only for highlighted plan */}
             {plan.highlight && (
               <div style={{
-                position: 'absolute', top: '-1px', left: '50%', transform: 'translateX(-50%)',
-                background: '#f59e0b', color: '#0d0a08', fontSize: '0.65rem',
-                fontFamily: 'JetBrains Mono, monospace', fontWeight: 700,
-                padding: '0.2rem 0.9rem', borderRadius: '0 0 0.5rem 0.5rem',
-                letterSpacing: '0.06em', whiteSpace: 'nowrap',
+                position: 'absolute',
+                top: '-25px',
+                left: '-3px',
+                right: '-3px',
+                bottom: '-3px',
+                borderRadius: '1.5rem',
+                background: '#f59e0b',
+              }} />
+            )}
+
+            <div style={{
+              position: 'relative',
+              zIndex: 1,
+              borderRadius: '1.5rem',
+              padding: '3rem 2.25rem 2.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              background: plan.highlight
+                ? 'radial-gradient(ellipse 110% 55% at 50% -5%, rgba(245,158,11,0.28) 0%, #2c1e0a 45%, #251709 100%)'
+                : '#251709',
+              border: plan.highlight
+                ? '1px solid rgba(245,158,11,0.3)'
+                : '1px solid rgba(255,255,255,0.06)',
+              boxShadow: plan.highlight
+                ? '0 40px 100px rgba(0,0,0,0.65), inset 0 1px 0 rgba(245,158,11,0.2)'
+                : '0 8px 24px rgba(0,0,0,0.35)',
+            }}>
+
+            {/* Badge — tab hanging from top center */}
+            {plan.highlight && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                transform: 'translateY(-70%)',
+                background: 'transparent',
+                color: '#1a0f00',
+                fontSize: '0.75rem',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontWeight: 900,
+                textShadow: '0 1px 0 rgba(255,200,80,0.25)',
+                WebkitTextStroke: '0.3px rgba(0,0,0,0.15)',
+                padding: '0.275rem 1.125rem 0.375rem',
+                letterSpacing: '0.14em',
+                whiteSpace: 'nowrap',
               }}>
-                ★ POPULIARIAUSIAS
+                POPULIARU
               </div>
             )}
 
-            {/* Plan header */}
-            <div style={{ marginBottom: '1.25rem', paddingTop: plan.highlight ? '0.5rem' : 0 }}>
-              <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, fontSize: '1rem', color: '#fdf9f7', margin: '0 0 0.25rem', letterSpacing: '0.01em' }}>
+            {/* Plan label + desc */}
+            <div style={{ marginBottom: '2rem' }}>
+              <p style={{
+                fontSize: '0.8125rem',
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontWeight: 700,
+                color: plan.highlight ? '#f59e0b' : '#c4b8b0',
+                textTransform: 'uppercase',
+                letterSpacing: '0.10em',
+                margin: '0 0 0.5rem',
+              }}>
                 {plan.name}
-              </h3>
-              <p style={{ fontSize: '0.75rem', color: '#5a4f47', margin: 0 }}>{plan.desc}</p>
-            </div>
-
-            {/* Price */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              {plan.monthly === null ? (
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
-                  <span style={{ fontSize: '1.75rem', fontWeight: 800, color: '#fdf9f7', fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1 }}>Individualiai</span>
-                </div>
-              ) : (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
-                    <span style={{ fontSize: '2.25rem', fontWeight: 800, color: '#fdf9f7', fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1 }}>
-                      €{annual ? plan.annual : plan.monthly}
-                    </span>
-                    {plan.monthly > 0 && <span style={{ fontSize: '0.8125rem', color: '#5a4f47' }}>/mėn.</span>}
-                  </div>
-                  {plan.monthly > 0 && annual && plan.annualTotal && (
-                    <p style={{ fontSize: '0.7rem', color: '#f59e0b', marginTop: '0.25rem', fontFamily: 'JetBrains Mono, monospace' }}>
-                      Sutaupote €{(plan.monthly - plan.annual) * 12}/metus
-                    </p>
-                  )}
-                </>
-              )}
-              <p style={{ fontSize: '0.75rem', color: '#7a6b61', marginTop: '0.375rem' }}>
-                {plan.credits} kreditų
+              </p>
+              <p style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontWeight: 500,
+                fontSize: '0.9375rem',
+                color: plan.highlight ? '#c8b8ae' : '#b5a99f',
+                margin: 0,
+                lineHeight: 1.35,
+              }}>
+                {plan.desc}
               </p>
             </div>
 
-            {/* Divider */}
-            <div style={{ height: '1px', background: 'rgba(168,162,158,0.08)', marginBottom: '1.25rem' }} />
+            {/* Price */}
+            <div style={{ marginBottom: '2rem' }}>
+              {plan.monthly === null ? (
+                <>
+                  <p style={{
+                    fontSize: 'clamp(2rem, 3vw, 2.5rem)',
+                    fontWeight: 300,
+                    letterSpacing: '-0.03em',
+                    color: '#fdf9f7',
+                    fontFamily: 'Space Grotesk, sans-serif',
+                    lineHeight: 1,
+                    margin: '0 0 0.5rem',
+                  }}>
+                    Individualiai
+                  </p>
+                  <p style={{ fontSize: '0.6875rem', color: '#8a7e78', margin: 0, fontFamily: 'JetBrains Mono, monospace' }}>Pagal poreikius</p>
+                </>
+              ) : plan.monthly === 0 ? (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.125rem', marginBottom: '0.375rem' }}>
+                    <span style={{ fontSize: '1rem', fontWeight: 400, color: '#8a7e78', marginTop: '0.6rem', fontFamily: 'Space Grotesk, sans-serif' }}>€</span>
+                    <span style={{
+                      fontSize: 'clamp(3rem, 4.5vw, 3.75rem)',
+                      fontWeight: 300,
+                      letterSpacing: '-0.04em',
+                      color: '#fdf9f7',
+                      fontFamily: 'Space Grotesk, sans-serif',
+                      lineHeight: 1,
+                    }}>0</span>
+                  </div>
+                  <p style={{ fontSize: '0.6875rem', color: '#8a7e78', margin: 0, fontFamily: 'JetBrains Mono, monospace' }}>visada nemokama · {plan.credits} kreditų</p>
+                </>
+              ) : (
+                <>
+                  <p style={{
+                    fontSize: '0.8125rem',
+                    color: '#6d6058',
+                    marginBottom: '0.375rem',
+                    textDecoration: 'line-through',
+                    fontFamily: 'Space Grotesk, sans-serif',
+                    letterSpacing: '-0.01em',
+                    visibility: annual ? 'visible' : 'hidden',
+                  }}>
+                    €{plan.monthly}/mėn.
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.125rem', marginBottom: '0.25rem' }}>
+                    <span style={{
+                      fontSize: '1rem',
+                      fontWeight: 400,
+                      color: plan.highlight ? '#d97706' : '#8a7e78',
+                      marginTop: '0.6rem',
+                      fontFamily: 'Space Grotesk, sans-serif',
+                    }}>€</span>
+                    {String(annual ? plan.annual : plan.monthly).split('').map((digit, i) => (
+                      <SlotReel
+                        key={`${annual ? 'a' : 'm'}-${i}`}
+                        digit={digit}
+                        delay={i * 0.07}
+                        color={plan.highlight ? '#f59e0b' : '#fdf9f7'}
+                        fontSize="clamp(3rem, 4.5vw, 3.75rem)"
+                      />
+                    ))}
+                    <span style={{ fontSize: '0.75rem', color: '#8a7e78', alignSelf: 'flex-end', marginBottom: '0.4rem', marginLeft: '0.125rem', fontFamily: 'JetBrains Mono, monospace' }}>/mėn.</span>
+                  </div>
+                  <p style={{
+                    fontSize: '0.6875rem',
+                    color: '#22c55e',
+                    margin: '0 0 0.375rem',
+                    fontFamily: 'JetBrains Mono, monospace',
+                    visibility: annual && plan.annualTotal ? 'visible' : 'hidden',
+                  }}>
+                    ↓ €{plan.annualTotal ? (plan.monthly - plan.annual) * 12 : 0} sutaupote per metus
+                  </p>
+                  <p style={{ fontSize: '0.6875rem', color: '#8a7e78', margin: 0, fontFamily: 'JetBrains Mono, monospace' }}>{plan.credits} kreditų / mėn.</p>
+                </>
+              )}
+            </div>
+
+            {/* Thin separator */}
+            <div style={{
+              height: '1px',
+              background: plan.highlight ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.05)',
+              marginBottom: '1.625rem',
+            }} />
 
             {/* Features */}
-            <ul style={{ listStyle: 'none', margin: 0, padding: 0, flex: 1, display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '1.5rem' }}>
+            <ul style={{
+              listStyle: 'none', margin: 0, padding: 0,
+              flex: 1, display: 'flex', flexDirection: 'column',
+              gap: '0.8125rem', marginBottom: '2rem',
+            }}>
               {plan.features.map((f, i) => (
-                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem' }}>
                   {f.ok ? <FeatureCheck /> : <FeatureCross />}
-                  <span style={{ fontSize: '0.8125rem', lineHeight: 1.4, color: f.ok ? '#b5a99f' : '#3a3330' }}>{f.text}</span>
+                  <span style={{
+                    fontSize: '0.8125rem',
+                    lineHeight: 1.45,
+                    color: f.ok
+                      ? (plan.highlight ? '#c4b4a8' : '#b5a99f')
+                      : '#5a5050',
+                  }}>
+                    {f.text}
+                  </span>
                 </li>
               ))}
             </ul>
 
             {/* CTA */}
-            <a href={plan.ctaHref} style={ctaStyle(plan.highlight, plan.name === 'Enterprise')}>
+            <a
+              href={plan.ctaHref}
+              onMouseEnter={() => setHoveredCta(plan.name)}
+              onMouseLeave={() => setHoveredCta(null)}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0.9375rem 1rem',
+                borderRadius: '0.875rem',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                textDecoration: 'none',
+                letterSpacing: '0.02em',
+                transition: 'background 0.25s, border-color 0.25s, box-shadow 0.25s, color 0.25s',
+                ...(plan.highlight ? {
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #e88c0a 100%)',
+                  color: '#0d0a08',
+                  border: 'none',
+                  boxShadow: hoveredCta === plan.name
+                    ? '0 4px 16px rgba(245,158,11,0.28)'
+                    : '0 2px 8px rgba(245,158,11,0.12)',
+                  opacity: hoveredCta === plan.name ? 0.92 : 1,
+                } : {
+                  background: 'rgba(255,255,255,0.04)',
+                  color: '#ede5df',
+                  border: hoveredCta === plan.name
+                    ? '1px solid rgba(255,255,255,0.22)'
+                    : '1px solid rgba(255,255,255,0.10)',
+                  boxShadow: 'none',
+                }),
+              }}
+            >
               {plan.cta}
             </a>
+            </div>
           </div>
         ))}
       </div>
@@ -368,24 +557,41 @@ export default function PricingFull() {
 
       {/* FAQ strip */}
       <div style={{ maxWidth: '48rem', margin: '0 auto 4rem' }}>
-        <h2 style={{ ...s.h2, fontSize: '1.5rem', textAlign: 'center', marginBottom: '1.5rem' }}>D.U.K. apie kainodara</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {faqs.map(f => (
-            <div key={f.q} style={{ padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid rgba(168,162,158,0.15)', background: '#231c18' }}>
-              <p style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, color: '#fdf9f7', margin: '0 0 0.5rem', fontSize: '0.95rem' }}>{f.q}</p>
-              <p style={{ color: '#b5a99f', margin: 0, fontSize: '0.875rem', lineHeight: 1.6 }}>{f.a}</p>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <p style={{ fontSize: '0.75rem', fontFamily: 'JetBrains Mono, monospace', color: '#d97706', marginBottom: '0.5rem' }}>// dažni klausimai</p>
+          <h2 style={{ ...s.h2, fontSize: '1.5rem' }}>D.U.K. apie kainodara</h2>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {faqs.map((f, i) => (
+            <div key={f.q} style={{ borderRadius: '0.75rem', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.08)', background: '#ffffff' }}>
+              <button
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', padding: '1rem 1.25rem', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', minHeight: '56px' }}
+                aria-expanded={openFaq === i}
+              >
+                <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 500, fontSize: '0.9375rem', color: '#1a1512' }}>{f.q}</span>
+                <span style={{ flexShrink: 0, fontSize: '1.25rem', color: '#ea580c', transition: 'transform 0.3s', transform: openFaq === i ? 'rotate(45deg)' : 'none', lineHeight: 1 }}>+</span>
+              </button>
+              {openFaq === i && (
+                <p style={{ margin: 0, padding: '0 1.25rem 1rem', fontSize: '0.875rem', lineHeight: 1.7, color: '#4a3f38' }}>{f.a}</p>
+              )}
             </div>
           ))}
         </div>
       </div>
 
       {/* Enterprise CTA */}
-      <div style={{ textAlign: 'center', padding: '3rem 1.5rem', borderRadius: '1rem', background: 'linear-gradient(135deg, rgba(234, 88, 12,0.15) 0%, rgba(245, 158, 11,0.08) 100%)', border: '1px solid rgba(168,162,158,0.15)' }}>
-        <h2 style={{ ...s.h2, fontSize: '1.75rem', marginBottom: '0.75rem' }}>Reikia individualaus sprendimo?</h2>
-        <p style={{ ...s.subtle, marginBottom: '1.5rem' }}>Didelės organizacijos, savivaldybės ir centriniai perkantys subjektai — susisiekite dėl Enterprise kainos</p>
-        <a href="mailto:hello@foxdoc.io" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0.875rem 2rem', borderRadius: '0.5rem', background: '#f59e0b', color: '#1a1512', fontWeight: 600, textDecoration: 'none', fontSize: '1rem' }}>
-          Susisiekti su komanda
-        </a>
+      <div style={{ padding: '3rem', borderRadius: '1rem', border: '1px solid rgba(180,130,60,0.3)', position: 'relative', overflow: 'hidden' }}>
+        {/* Background photo */}
+        <div style={{ position: 'absolute', inset: 0, borderRadius: '1rem', backgroundImage: "url('/images/cta-bg-m.png')", backgroundSize: 'cover', backgroundPosition: 'right center', backgroundRepeat: 'no-repeat' }} />
+        {/* Left-aligned content */}
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: '32rem' }}>
+          <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, fontSize: '1.75rem', color: '#fdf9f7', margin: '0 0 0.75rem', letterSpacing: '-0.01em' }}>Reikia individualaus sprendimo?</h2>
+          <p style={{ color: '#e5d9ce', marginBottom: '1.5rem', fontSize: '0.9375rem', lineHeight: 1.6 }}>Didelės organizacijos, savivaldybės ir centriniai perkantys subjektai — susisiekite dėl Enterprise kainos</p>
+          <a href="mailto:hello@foxdoc.io" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 2rem', borderRadius: '0.5rem', background: '#f59e0b', color: '#1a1512', fontWeight: 600, textDecoration: 'none', fontSize: '1rem' }}>
+            Susisiekti su komanda
+          </a>
+        </div>
       </div>
     </div>
     </div>

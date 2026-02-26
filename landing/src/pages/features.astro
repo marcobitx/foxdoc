@@ -345,17 +345,22 @@ import WaveDivider from '../components/WaveDivider.astro';
 
   <!-- ── CTA ── -->
   <div style="background: #0d0a08; padding: 0 1.5rem 5rem;">
-    <div style="max-width: 72rem; margin: 0 auto; text-align: center; padding: 3.5rem 2rem; border-radius: 1.25rem; background: linear-gradient(135deg, rgba(234,88,12,0.1) 0%, rgba(245,158,11,0.05) 100%); border: 1px solid rgba(168,162,158,0.12);">
-      <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; letter-spacing: 0.08em; margin: 0 0 0.75rem;">// pradėkite šiandien</p>
-      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.25rem); color: #fdf9f7; margin: 0 0 0.75rem; letter-spacing: -0.01em;">Išbandykite nemokamai</h2>
-      <p style="color: #7a6b61; margin: 0 0 2rem; font-size: 0.9375rem;">3 kreditai, nereikalinga kortelė — pradėkite dabar ir gaukite pirmą ataskaitą per 3 minutes.</p>
-      <a href="https://app.foxdoc.io"
-         style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.75rem; border-radius: 0.625rem; background: #f59e0b; color: #0d0a08; font-weight: 700; text-decoration: none; font-size: 0.9375rem; transition: background 0.2s;"
-         onmouseover="this.style.background='#fbbf24'"
-         onmouseout="this.style.background='#f59e0b'">
-        Pradėti nemokamai
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
+    <div style="max-width: 72rem; margin: 0 auto; padding: 3.5rem 3rem; border-radius: 1.25rem; border: 1px solid rgba(180,130,60,0.3); position: relative; overflow: hidden;">
+      <!-- Background photo -->
+      <div style="position: absolute; inset: 0; border-radius: 1.25rem; background-image: url('/images/cta-bg-r.png'); background-size: cover; background-position: right center; background-repeat: no-repeat;"></div>
+      <!-- Content left-aligned, max half width -->
+      <div style="position: relative; z-index: 10; max-width: 32rem;">
+        <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #b45309; letter-spacing: 0.08em; margin: 0 0 0.75rem;">// pradėkite šiandien</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.25rem); color: #1a1512; margin: 0 0 0.75rem; letter-spacing: -0.01em;">Išbandykite nemokamai</h2>
+        <p style="color: #4a3f38; margin: 0 0 2rem; font-size: 0.9375rem;">3 kreditai, nereikalinga kortelė — pradėkite dabar ir gaukite pirmą ataskaitą per 3 minutes.</p>
+        <a href="https://app.foxdoc.io"
+           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.75rem; border-radius: 0.625rem; background: #f59e0b; color: #0d0a08; font-weight: 700; text-decoration: none; font-size: 0.9375rem; transition: background 0.2s;"
+           onmouseover="this.style.background='#fbbf24'"
+           onmouseout="this.style.background='#f59e0b'">
+          Pradėti nemokamai
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
     </div>
   </div>
 
