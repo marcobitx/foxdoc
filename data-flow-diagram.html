@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<title>Procurement Analyzer — Duomenų Srautas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #060914; overflow: hidden; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .stage { width: 1360px; height: 760px; }
+  @keyframes flowDash { to { stroke-dashoffset: -20; } }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes opusPulse {
+    0%, 100% { opacity: 0.9; }
+    50% { opacity: 1; }
+  }
+  .float-anim   { animation: floatY 5.0s ease-in-out infinite; }
+  .float-anim-2 { animation: floatY 5.0s ease-in-out infinite; animation-delay: -2.5s; }
+  .float-anim-3 { animation: floatY 5.0s ease-in-out infinite; animation-delay: -1.0s; }
+  .float-anim-4 { animation: floatY 5.0s ease-in-out infinite; animation-delay: -3.5s; }
+  .float-anim-5 { animation: floatY 5.0s ease-in-out infinite; animation-delay: -4.0s; }
+  .opus-pulse   { animation: opusPulse 2.5s ease-in-out infinite; }
+  .flow-line { fill: none; stroke-width: 1.5; stroke-dasharray: 6 10; animation: flowDash 1.8s linear infinite; }
+  .flow-bg   { fill: none; stroke-width: 2; stroke-opacity: 0.06; }
+  .badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.3px; }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 760" width="100%" height="100%">
+  <defs>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="0.65" fill="#fff" opacity="0.05"/>
+    </pattern>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0L0 0 0 48" fill="none" stroke="#fff" stroke-width="0.5" stroke-opacity="0.025"/>
+    </pattern>
+
+    <!-- Ambient bloom filter -->
+    <filter id="amb-blur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="65"/>
+    </filter>
+
+    <!-- Card gradient fills (top-to-bottom accent tint) -->
+    <linearGradient id="g-amber"  x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F59E0B" stop-opacity="0.16"/><stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-blue"   x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3B82F6" stop-opacity="0.14"/><stop offset="100%" stop-color="#3B82F6" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-red"    x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#EF4444" stop-opacity="0.14"/><stop offset="100%" stop-color="#EF4444" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-green"  x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10B981" stop-opacity="0.14"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-purple" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.14"/><stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-orange" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E17B5B" stop-opacity="0.14"/><stop offset="100%" stop-color="#E17B5B" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-indigo" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366F1" stop-opacity="0.14"/><stop offset="100%" stop-color="#6366F1" stop-opacity="0"/></linearGradient>
+    <linearGradient id="g-opus"   x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#E17B5B" stop-opacity="0.24"/>
+      <stop offset="55%"  stop-color="#E17B5B" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#E17B5B" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Node glow filters -->
+    <filter id="f-glow-amber"  x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#F59E0B" flood-opacity="0.28"/><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#F59E0B" flood-opacity="0.15"/></filter>
+    <filter id="f-glow-blue"   x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#3B82F6" flood-opacity="0.22"/></filter>
+    <filter id="f-glow-pdf"    x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#EF4444" flood-opacity="0.22"/></filter>
+    <filter id="f-glow-docx"   x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#3B82F6" flood-opacity="0.22"/></filter>
+    <filter id="f-glow-xlsx"   x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#10B981" flood-opacity="0.22"/></filter>
+    <filter id="f-glow-img"    x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#8B5CF6" flood-opacity="0.22"/></filter>
+    <filter id="f-glow-ai"     x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#E17B5B" flood-opacity="0.22"/></filter>
+    <filter id="f-glow-opus"   x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="0" stdDeviation="20" flood-color="#E17B5B" flood-opacity="0.48"/><feDropShadow dx="0" dy="8" stdDeviation="32" flood-color="#E17B5B" flood-opacity="0.18"/></filter>
+    <filter id="f-glow-qa"     x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#10B981" flood-opacity="0.22"/></filter>
+    <filter id="f-glow-report" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#6366F1" flood-opacity="0.22"/></filter>
+    <filter id="f-particle"    x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="1.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+
+    <!-- Flow paths -->
+    <path id="l0"  d="M 152 385 L 238 385"/>
+    <path id="l1a" d="M 330 385 C 390 385 390 178 450 178"/>
+    <path id="l1b" d="M 330 385 C 390 385 390 290 450 290"/>
+    <path id="l1c" d="M 330 385 C 390 385 390 402 450 402"/>
+    <path id="l1d" d="M 330 385 C 390 385 390 514 450 514"/>
+    <path id="l2a" d="M 574 178 L 638 178"/>
+    <path id="l2b" d="M 574 290 L 638 290"/>
+    <path id="l2c" d="M 574 402 L 638 402"/>
+    <path id="l2d" d="M 574 514 L 638 514"/>
+    <path id="l3a" d="M 762 178 C 820 178 820 385 876 385"/>
+    <path id="l3b" d="M 762 290 C 820 290 820 385 876 385"/>
+    <path id="l3c" d="M 762 402 C 820 402 820 385 876 385"/>
+    <path id="l3d" d="M 762 514 C 820 514 820 385 876 385"/>
+    <path id="l4"  d="M 1000 385 C 1060 385 1060 266 1118 266"/>
+    <path id="l5"  d="M 1000 385 C 1060 385 1060 504 1118 504"/>
+  </defs>
+
+  <!-- BACKGROUND -->
+  <rect width="1360" height="760" fill="#060914"/>
+  <rect width="1360" height="760" fill="url(#dots)"/>
+  <rect width="1360" height="760" fill="url(#grid)"/>
+
+  <!-- Ambient blooms -->
+  <ellipse cx="100"  cy="385" rx="160" ry="160" fill="#F59E0B" opacity="0.055" filter="url(#amb-blur)"/>
+  <ellipse cx="938"  cy="385" rx="210" ry="200" fill="#E17B5B" opacity="0.045" filter="url(#amb-blur)"/>
+  <ellipse cx="1200" cy="385" rx="160" ry="160" fill="#6366F1" opacity="0.045" filter="url(#amb-blur)"/>
+
+  <!-- TITLE -->
+  <text x="680" y="42" font-family="Inter,sans-serif" font-weight="800" font-size="16.5" fill="#FFFFFF" text-anchor="middle" letter-spacing="3.5" opacity="0.95">LIETUVIŠKŲ PIRKIMŲ DOKUMENTŲ ANALIZATORIUS</text>
+  <text x="680" y="63" font-family="Inter,sans-serif" font-weight="400" font-size="11.5" fill="#64748B" text-anchor="middle" letter-spacing="0.5">Automatinis duomenų išgavimas · Struktūrizavimas · Kokybės vertinimas</text>
+  <line x1="300" y1="78" x2="1060" y2="78" stroke="#fff" stroke-opacity="0.04" stroke-width="1"/>
+
+  <!-- Step numbers -->
+  <text x="95"   y="96" font-family="Inter" font-size="9" font-weight="600" fill="#F59E0B"  text-anchor="middle" opacity="0.55" letter-spacing="1">01</text>
+  <text x="284"  y="96" font-family="Inter" font-size="9" font-weight="600" fill="#60A5FA"  text-anchor="middle" opacity="0.55" letter-spacing="1">02</text>
+  <text x="512"  y="96" font-family="Inter" font-size="9" font-weight="600" fill="#94A3B8"  text-anchor="middle" opacity="0.55" letter-spacing="1">03</text>
+  <text x="700"  y="96" font-family="Inter" font-size="9" font-weight="600" fill="#E17B5B"  text-anchor="middle" opacity="0.55" letter-spacing="1">04</text>
+  <text x="938"  y="96" font-family="Inter" font-size="9" font-weight="600" fill="#E17B5B"  text-anchor="middle" opacity="0.55" letter-spacing="1">05</text>
+  <text x="1182" y="96" font-family="Inter" font-size="9" font-weight="600" fill="#10B981"  text-anchor="middle" opacity="0.55" letter-spacing="1">06 · 07</text>
+
+  <!-- Section labels -->
+  <text x="512"  y="112" font-family="Inter" font-size="8.5" font-weight="600" fill="#475569" text-anchor="middle" letter-spacing="1.5">DOKUMENTŲ ANALIZATORIUS · DOCLING</text>
+  <text x="700"  y="112" font-family="Inter" font-size="8.5" font-weight="600" fill="#b45309" text-anchor="middle" letter-spacing="1.5" opacity="0.75">LLM IŠGAVIMAS · PARALLEL</text>
+  <text x="1182" y="112" font-family="Inter" font-size="8.5" font-weight="600" fill="#10B981" text-anchor="middle" letter-spacing="1.5" opacity="0.75">REZULTATAI</text>
+
+  <!-- FLOW LINES bg -->
+  <use href="#l0"  class="flow-bg" stroke="#F59E0B"/>
+  <use href="#l1a" class="flow-bg" stroke="#EF4444"/>
+  <use href="#l1b" class="flow-bg" stroke="#3B82F6"/>
+  <use href="#l1c" class="flow-bg" stroke="#10B981"/>
+  <use href="#l1d" class="flow-bg" stroke="#8B5CF6"/>
+  <use href="#l2a" class="flow-bg" stroke="#EF4444"/>
+  <use href="#l2b" class="flow-bg" stroke="#3B82F6"/>
+  <use href="#l2c" class="flow-bg" stroke="#10B981"/>
+  <use href="#l2d" class="flow-bg" stroke="#8B5CF6"/>
+  <use href="#l3a" class="flow-bg" stroke="#E17B5B"/>
+  <use href="#l3b" class="flow-bg" stroke="#E17B5B"/>
+  <use href="#l3c" class="flow-bg" stroke="#E17B5B"/>
+  <use href="#l3d" class="flow-bg" stroke="#E17B5B"/>
+  <use href="#l4"  class="flow-bg" stroke="#10B981"/>
+  <use href="#l5"  class="flow-bg" stroke="#6366F1"/>
+  <!-- FLOW LINES animated -->
+  <use href="#l0"  class="flow-line" stroke="#F59E0B" stroke-opacity="0.8"/>
+  <use href="#l1a" class="flow-line" stroke="#EF4444" stroke-opacity="0.7" style="animation-delay:-0.4s"/>
+  <use href="#l1b" class="flow-line" stroke="#3B82F6" stroke-opacity="0.7" style="animation-delay:-0.9s"/>
+  <use href="#l1c" class="flow-line" stroke="#10B981" stroke-opacity="0.7" style="animation-delay:-1.4s"/>
+  <use href="#l1d" class="flow-line" stroke="#8B5CF6" stroke-opacity="0.7" style="animation-delay:-1.9s"/>
+  <use href="#l2a" class="flow-line" stroke="#EF4444" stroke-opacity="0.7" style="animation-delay:-0.2s"/>
+  <use href="#l2b" class="flow-line" stroke="#3B82F6" stroke-opacity="0.7" style="animation-delay:-0.7s"/>
+  <use href="#l2c" class="flow-line" stroke="#10B981" stroke-opacity="0.7" style="animation-delay:-1.2s"/>
+  <use href="#l2d" class="flow-line" stroke="#8B5CF6" stroke-opacity="0.7" style="animation-delay:-1.7s"/>
+  <use href="#l3a" class="flow-line" stroke="#E17B5B" stroke-opacity="0.8" style="animation-delay:-0.3s"/>
+  <use href="#l3b" class="flow-line" stroke="#E17B5B" stroke-opacity="0.8" style="animation-delay:-0.8s"/>
+  <use href="#l3c" class="flow-line" stroke="#E17B5B" stroke-opacity="0.8" style="animation-delay:-1.3s"/>
+  <use href="#l3d" class="flow-line" stroke="#E17B5B" stroke-opacity="0.8" style="animation-delay:-1.8s"/>
+  <use href="#l4"  class="flow-line" stroke="#10B981" stroke-opacity="0.8" style="animation-delay:-0.5s"/>
+  <use href="#l5"  class="flow-line" stroke="#6366F1" stroke-opacity="0.8" style="animation-delay:-1.0s"/>
+
+  <!-- PARTICLES -->
+  <g filter="url(#f-particle)">
+    <circle r="3.5" fill="#F59E0B" opacity="0.95"><animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#l0"/></animateMotion></circle>
+    <circle r="3"   fill="#EF4444" opacity="0.95"><animateMotion dur="2.8s" repeatCount="indefinite"><mpath href="#l1a"/></animateMotion></circle>
+    <circle r="3"   fill="#3B82F6" opacity="0.95"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.7s"><mpath href="#l1b"/></animateMotion></circle>
+    <circle r="3"   fill="#10B981" opacity="0.95"><animateMotion dur="2.8s" repeatCount="indefinite" begin="1.4s"><mpath href="#l1c"/></animateMotion></circle>
+    <circle r="3"   fill="#8B5CF6" opacity="0.95"><animateMotion dur="2.8s" repeatCount="indefinite" begin="2.1s"><mpath href="#l1d"/></animateMotion></circle>
+    <circle r="2.8" fill="#EF4444" opacity="0.95"><animateMotion dur="1.9s" repeatCount="indefinite"><mpath href="#l2a"/></animateMotion></circle>
+    <circle r="2.8" fill="#3B82F6" opacity="0.95"><animateMotion dur="1.9s" repeatCount="indefinite" begin="0.5s"><mpath href="#l2b"/></animateMotion></circle>
+    <circle r="2.8" fill="#10B981" opacity="0.95"><animateMotion dur="1.9s" repeatCount="indefinite" begin="1.0s"><mpath href="#l2c"/></animateMotion></circle>
+    <circle r="2.8" fill="#8B5CF6" opacity="0.95"><animateMotion dur="1.9s" repeatCount="indefinite" begin="1.5s"><mpath href="#l2d"/></animateMotion></circle>
+    <circle r="3.5" fill="#E17B5B" opacity="0.95"><animateMotion dur="3.1s" repeatCount="indefinite"><mpath href="#l3a"/></animateMotion></circle>
+    <circle r="3.5" fill="#E17B5B" opacity="0.95"><animateMotion dur="3.1s" repeatCount="indefinite" begin="0.78s"><mpath href="#l3b"/></animateMotion></circle>
+    <circle r="3.5" fill="#E17B5B" opacity="0.95"><animateMotion dur="3.1s" repeatCount="indefinite" begin="1.55s"><mpath href="#l3c"/></animateMotion></circle>
+    <circle r="3.5" fill="#E17B5B" opacity="0.95"><animateMotion dur="3.1s" repeatCount="indefinite" begin="2.33s"><mpath href="#l3d"/></animateMotion></circle>
+    <circle r="3"   fill="#10B981" opacity="0.95"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath href="#l4"/></animateMotion></circle>
+    <circle r="3"   fill="#818CF8" opacity="0.95"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath href="#l5"/></animateMotion></circle>
+  </g>
+
+  <!-- Junction dots -->
+  <circle cx="152" cy="385" r="3.5" fill="#F59E0B" opacity="0.8"/>
+  <circle cx="238" cy="385" r="3.5" fill="#F59E0B" opacity="0.8"/>
+  <circle cx="330" cy="385" r="5"   fill="#1e293b" stroke="#475569" stroke-width="1.2" opacity="0.9"/>
+  <circle cx="876" cy="385" r="5"   fill="#2d1a10" stroke="#E17B5B" stroke-width="1.2" opacity="0.9"/>
+
+  <!-- ═══════════════════════════════════════
+       NODES — outer g=position, inner g=anim
+  ═══════════════════════════════════════ -->
+
+  <!-- 01: ZIP UPLOAD -->
+  <g transform="translate(12, 345)">
+    <g class="float-anim" filter="url(#f-glow-amber)">
+      <rect width="140" height="84" rx="12" fill="#0d0b04"/>
+      <rect width="140" height="84" rx="12" fill="url(#g-amber)"/>
+      <rect width="140" height="84" rx="12" fill="none" stroke="#F59E0B" stroke-width="1" stroke-opacity="0.5"/>
+      <rect x="0" y="0" width="140" height="3" rx="1.5" fill="#F59E0B" opacity="0.85"/>
+      <rect x="12" y="1.5" width="116" height="1" rx="0.5" fill="white" opacity="0.08"/>
+      <!-- Icon bg -->
+      <rect x="10" y="10" width="28" height="28" rx="7" fill="#F59E0B" fill-opacity="0.13"/>
+      <!-- ZIP icon -->
+      <g transform="translate(14, 14)" fill="none" stroke="#F59E0B" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="0" width="14" height="17" rx="2" stroke-width="1.6" stroke-opacity="0.9"/>
+        <line x1="6" y1="0" x2="6" y2="17" stroke-dasharray="2 1.5" stroke-width="1.2" stroke-opacity="0.45"/>
+        <line x1="7" y1="4"  x2="9" y2="4"  stroke-width="2" stroke-opacity="0.9"/>
+        <line x1="7" y1="8"  x2="9" y2="8"  stroke-width="2" stroke-opacity="0.9"/>
+        <line x1="7" y1="12" x2="9" y2="12" stroke-width="2" stroke-opacity="0.9"/>
+      </g>
+      <text x="78" y="26" font-family="Inter,sans-serif" font-weight="700" font-size="12.5" fill="#FAFAFA" text-anchor="middle">ZIP Įkėlimas</text>
+      <text x="78" y="42" font-family="Inter,sans-serif" font-weight="400" font-size="9.5" fill="#94A3B8" text-anchor="middle">Vartotojas įkelia archyvą</text>
+      <rect x="8" y="62" width="124" height="15" rx="5" fill="#F59E0B" fill-opacity="0.1" stroke="#F59E0B" stroke-opacity="0.22" stroke-width="0.7"/>
+      <text x="70" y="73" class="badge" fill="#F59E0B" text-anchor="middle">.zip · .rar · .7z</text>
+    </g>
+  </g>
+
+  <!-- 02: EXTRACTION -->
+  <g transform="translate(238, 345)">
+    <g class="float-anim-2" filter="url(#f-glow-blue)">
+      <rect width="92" height="84" rx="12" fill="#040918"/>
+      <rect width="92" height="84" rx="12" fill="url(#g-blue)"/>
+      <rect width="92" height="84" rx="12" fill="none" stroke="#3B82F6" stroke-width="1" stroke-opacity="0.45"/>
+      <rect x="0" y="0" width="92" height="3" rx="1.5" fill="#3B82F6" opacity="0.8"/>
+      <rect x="8" y="1.5" width="76" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <!-- Icon bg centered -->
+      <rect x="32" y="10" width="28" height="28" rx="7" fill="#3B82F6" fill-opacity="0.13"/>
+      <!-- Unzip arrow icon -->
+      <g transform="translate(37, 14)" fill="none" stroke="#60A5FA" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+        <path d="M9 2L13 6L9 10" opacity="0.9"/>
+        <line x1="0" y1="6" x2="13" y2="6" opacity="0.9"/>
+        <line x1="3" y1="14" x2="3" y2="19" stroke-dasharray="2 1.5" stroke-width="1.3" opacity="0.4"/>
+        <line x1="10" y1="14" x2="10" y2="19" stroke-dasharray="2 1.5" stroke-width="1.3" opacity="0.4"/>
+      </g>
+      <text x="46" y="50" font-family="Inter,sans-serif" font-weight="700" font-size="11.5" fill="#FAFAFA" text-anchor="middle">Išskleidimas</text>
+      <text x="46" y="65" font-family="Inter,sans-serif" font-weight="400" font-size="9" fill="#64748B" text-anchor="middle">Failų paruošimas</text>
+    </g>
+  </g>
+
+  <!-- 03a: PDF -->
+  <g transform="translate(450, 138)">
+    <g class="float-anim" filter="url(#f-glow-pdf)">
+      <rect width="124" height="84" rx="12" fill="#0d0505"/>
+      <rect width="124" height="84" rx="12" fill="url(#g-red)"/>
+      <rect width="124" height="84" rx="12" fill="none" stroke="#EF4444" stroke-width="1" stroke-opacity="0.45"/>
+      <rect x="0" y="0" width="124" height="3" rx="1.5" fill="#EF4444" opacity="0.8"/>
+      <rect x="10" y="1.5" width="104" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#EF4444" fill-opacity="0.13"/>
+      <g transform="translate(13, 12)" fill="none" stroke="#EF4444" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6">
+        <path d="M12 1H4a1.5 1.5 0 0 0-1.5 1.5v17A1.5 1.5 0 0 0 4 21h14a1.5 1.5 0 0 0 1.5-1.5V7z" stroke-opacity="0.9"/>
+        <path d="M12 1v6h6" stroke-opacity="0.9"/>
+        <line x1="5" y1="13" x2="14" y2="13" stroke-opacity="0.5"/>
+        <line x1="5" y1="16.5" x2="11" y2="16.5" stroke-opacity="0.5"/>
+      </g>
+      <text x="62" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#FAFAFA" text-anchor="middle">PDF Analizė</text>
+      <text x="62" y="48" font-family="Inter,sans-serif" font-weight="400" font-size="9.5" fill="#94A3B8" text-anchor="middle">Docling · OCR + Layout</text>
+      <rect x="8" y="61" width="108" height="15" rx="5" fill="#EF4444" fill-opacity="0.1" stroke="#EF4444" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="62" y="72" class="badge" fill="#FC8181" text-anchor="middle">→ Markdown</text>
+    </g>
+  </g>
+
+  <!-- 03b: DOCX -->
+  <g transform="translate(450, 250)">
+    <g class="float-anim-3" filter="url(#f-glow-docx)">
+      <rect width="124" height="84" rx="12" fill="#030b18"/>
+      <rect width="124" height="84" rx="12" fill="url(#g-blue)"/>
+      <rect width="124" height="84" rx="12" fill="none" stroke="#3B82F6" stroke-width="1" stroke-opacity="0.4"/>
+      <rect x="0" y="0" width="124" height="3" rx="1.5" fill="#3B82F6" opacity="0.75"/>
+      <rect x="10" y="1.5" width="104" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#3B82F6" fill-opacity="0.13"/>
+      <g transform="translate(13, 12)" fill="none" stroke="#3B82F6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6">
+        <path d="M12 1H4a1.5 1.5 0 0 0-1.5 1.5v17A1.5 1.5 0 0 0 4 21h14a1.5 1.5 0 0 0 1.5-1.5V7z" stroke-opacity="0.9"/>
+        <path d="M12 1v6h6" stroke-opacity="0.9"/>
+        <path d="M5 13l2 3.5 2-2.5 2 2.5 2-3.5" stroke-opacity="0.6"/>
+      </g>
+      <text x="62" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#FAFAFA" text-anchor="middle">DOCX Analizė</text>
+      <text x="62" y="48" font-family="Inter,sans-serif" font-weight="400" font-size="9.5" fill="#94A3B8" text-anchor="middle">Docling · Word Parser</text>
+      <rect x="8" y="61" width="108" height="15" rx="5" fill="#3B82F6" fill-opacity="0.1" stroke="#3B82F6" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="62" y="72" class="badge" fill="#60A5FA" text-anchor="middle">→ Markdown</text>
+    </g>
+  </g>
+
+  <!-- 03c: XLSX -->
+  <g transform="translate(450, 362)">
+    <g class="float-anim-4" filter="url(#f-glow-xlsx)">
+      <rect width="124" height="84" rx="12" fill="#030e08"/>
+      <rect width="124" height="84" rx="12" fill="url(#g-green)"/>
+      <rect width="124" height="84" rx="12" fill="none" stroke="#10B981" stroke-width="1" stroke-opacity="0.4"/>
+      <rect x="0" y="0" width="124" height="3" rx="1.5" fill="#10B981" opacity="0.75"/>
+      <rect x="10" y="1.5" width="104" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#10B981" fill-opacity="0.13"/>
+      <g transform="translate(13, 12)" fill="none" stroke="#10B981" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6">
+        <path d="M12 1H4a1.5 1.5 0 0 0-1.5 1.5v17A1.5 1.5 0 0 0 4 21h14a1.5 1.5 0 0 0 1.5-1.5V7z" stroke-opacity="0.9"/>
+        <path d="M12 1v6h6" stroke-opacity="0.9"/>
+        <line x1="4.5" y1="12"   x2="14.5" y2="12"   stroke-opacity="0.6"/>
+        <line x1="4.5" y1="15.5" x2="14.5" y2="15.5" stroke-opacity="0.6"/>
+        <line x1="9.5" y1="10"   x2="9.5"  y2="18"   stroke-opacity="0.5"/>
+      </g>
+      <text x="62" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#FAFAFA" text-anchor="middle">XLSX Analizė</text>
+      <text x="62" y="48" font-family="Inter,sans-serif" font-weight="400" font-size="9.5" fill="#94A3B8" text-anchor="middle">Docling · Table Parser</text>
+      <rect x="8" y="61" width="108" height="15" rx="5" fill="#10B981" fill-opacity="0.1" stroke="#10B981" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="62" y="72" class="badge" fill="#34D399" text-anchor="middle">→ Markdown</text>
+    </g>
+  </g>
+
+  <!-- 03d: IMAGES -->
+  <g transform="translate(450, 474)">
+    <g class="float-anim-5" filter="url(#f-glow-img)">
+      <rect width="124" height="84" rx="12" fill="#060410"/>
+      <rect width="124" height="84" rx="12" fill="url(#g-purple)"/>
+      <rect width="124" height="84" rx="12" fill="none" stroke="#8B5CF6" stroke-width="1" stroke-opacity="0.4"/>
+      <rect x="0" y="0" width="124" height="3" rx="1.5" fill="#8B5CF6" opacity="0.75"/>
+      <rect x="10" y="1.5" width="104" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#8B5CF6" fill-opacity="0.13"/>
+      <g transform="translate(13, 12)" fill="none" stroke="#8B5CF6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6">
+        <rect x="2" y="2" width="18" height="15" rx="2" stroke-opacity="0.9"/>
+        <circle cx="7" cy="7.5" r="1.5" stroke-opacity="0.7"/>
+        <path d="M2 14l5-5 4 4 3-3 6 4" stroke-opacity="0.6"/>
+      </g>
+      <text x="62" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#FAFAFA" text-anchor="middle">Paveikslėliai</text>
+      <text x="62" y="48" font-family="Inter,sans-serif" font-weight="400" font-size="9.5" fill="#94A3B8" text-anchor="middle">Docling · Vision OCR</text>
+      <rect x="8" y="61" width="108" height="15" rx="5" fill="#8B5CF6" fill-opacity="0.1" stroke="#8B5CF6" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="62" y="72" class="badge" fill="#A78BFA" text-anchor="middle">→ Markdown</text>
+    </g>
+  </g>
+
+  <!-- 04a-04d: CLAUDE SONNET -->
+  <g transform="translate(638, 138)">
+    <g class="float-anim" filter="url(#f-glow-ai)">
+      <rect width="124" height="84" rx="12" fill="#0f0902"/>
+      <rect width="124" height="84" rx="12" fill="url(#g-orange)"/>
+      <rect width="124" height="84" rx="12" fill="none" stroke="#E17B5B" stroke-width="1" stroke-opacity="0.45"/>
+      <rect x="0" y="0" width="124" height="3" rx="1.5" fill="#E17B5B" opacity="0.75"/>
+      <rect x="10" y="1.5" width="104" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#E17B5B" fill-opacity="0.13"/>
+      <path d="M18 28 L23 18 L28 28" fill="none" stroke="#E17B5B" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" stroke-opacity="0.9"/>
+      <line x1="20" y1="24" x2="26" y2="24" stroke="#E17B5B" stroke-linecap="round" stroke-width="1.5" opacity="0.9"/>
+      <text x="62" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="11.5" fill="#FAFAFA" text-anchor="middle">Duomenų Išgavimas</text>
+      <text x="62" y="48" font-family="Inter,sans-serif" font-weight="500" font-size="10" fill="#E17B5B" text-anchor="middle" opacity="0.9">claude-sonnet-4</text>
+      <rect x="8" y="61" width="108" height="15" rx="5" fill="#E17B5B" fill-opacity="0.1" stroke="#E17B5B" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="62" y="72" class="badge" fill="#E17B5B" text-anchor="middle">→ Strukt. JSON</text>
+    </g>
+  </g>
+  <g transform="translate(638, 250)">
+    <g class="float-anim-2" filter="url(#f-glow-ai)">
+      <rect width="124" height="84" rx="12" fill="#0f0902"/>
+      <rect width="124" height="84" rx="12" fill="url(#g-orange)"/>
+      <rect width="124" height="84" rx="12" fill="none" stroke="#E17B5B" stroke-width="1" stroke-opacity="0.45"/>
+      <rect x="0" y="0" width="124" height="3" rx="1.5" fill="#E17B5B" opacity="0.75"/>
+      <rect x="10" y="1.5" width="104" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#E17B5B" fill-opacity="0.13"/>
+      <path d="M18 28 L23 18 L28 28" fill="none" stroke="#E17B5B" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" stroke-opacity="0.9"/>
+      <line x1="20" y1="24" x2="26" y2="24" stroke="#E17B5B" stroke-linecap="round" stroke-width="1.5" opacity="0.9"/>
+      <text x="62" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="11.5" fill="#FAFAFA" text-anchor="middle">Duomenų Išgavimas</text>
+      <text x="62" y="48" font-family="Inter,sans-serif" font-weight="500" font-size="10" fill="#E17B5B" text-anchor="middle" opacity="0.9">claude-sonnet-4</text>
+      <rect x="8" y="61" width="108" height="15" rx="5" fill="#E17B5B" fill-opacity="0.1" stroke="#E17B5B" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="62" y="72" class="badge" fill="#E17B5B" text-anchor="middle">→ Strukt. JSON</text>
+    </g>
+  </g>
+  <g transform="translate(638, 362)">
+    <g class="float-anim-3" filter="url(#f-glow-ai)">
+      <rect width="124" height="84" rx="12" fill="#0f0902"/>
+      <rect width="124" height="84" rx="12" fill="url(#g-orange)"/>
+      <rect width="124" height="84" rx="12" fill="none" stroke="#E17B5B" stroke-width="1" stroke-opacity="0.45"/>
+      <rect x="0" y="0" width="124" height="3" rx="1.5" fill="#E17B5B" opacity="0.75"/>
+      <rect x="10" y="1.5" width="104" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#E17B5B" fill-opacity="0.13"/>
+      <path d="M18 28 L23 18 L28 28" fill="none" stroke="#E17B5B" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" stroke-opacity="0.9"/>
+      <line x1="20" y1="24" x2="26" y2="24" stroke="#E17B5B" stroke-linecap="round" stroke-width="1.5" opacity="0.9"/>
+      <text x="62" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="11.5" fill="#FAFAFA" text-anchor="middle">Duomenų Išgavimas</text>
+      <text x="62" y="48" font-family="Inter,sans-serif" font-weight="500" font-size="10" fill="#E17B5B" text-anchor="middle" opacity="0.9">claude-sonnet-4</text>
+      <rect x="8" y="61" width="108" height="15" rx="5" fill="#E17B5B" fill-opacity="0.1" stroke="#E17B5B" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="62" y="72" class="badge" fill="#E17B5B" text-anchor="middle">→ Strukt. JSON</text>
+    </g>
+  </g>
+  <g transform="translate(638, 474)">
+    <g class="float-anim-4" filter="url(#f-glow-ai)">
+      <rect width="124" height="84" rx="12" fill="#0f0902"/>
+      <rect width="124" height="84" rx="12" fill="url(#g-orange)"/>
+      <rect width="124" height="84" rx="12" fill="none" stroke="#E17B5B" stroke-width="1" stroke-opacity="0.45"/>
+      <rect x="0" y="0" width="124" height="3" rx="1.5" fill="#E17B5B" opacity="0.75"/>
+      <rect x="10" y="1.5" width="104" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#E17B5B" fill-opacity="0.13"/>
+      <path d="M18 28 L23 18 L28 28" fill="none" stroke="#E17B5B" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" stroke-opacity="0.9"/>
+      <line x1="20" y1="24" x2="26" y2="24" stroke="#E17B5B" stroke-linecap="round" stroke-width="1.5" opacity="0.9"/>
+      <text x="62" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="11.5" fill="#FAFAFA" text-anchor="middle">Duomenų Išgavimas</text>
+      <text x="62" y="48" font-family="Inter,sans-serif" font-weight="500" font-size="10" fill="#E17B5B" text-anchor="middle" opacity="0.9">claude-sonnet-4</text>
+      <rect x="8" y="61" width="108" height="15" rx="5" fill="#E17B5B" fill-opacity="0.1" stroke="#E17B5B" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="62" y="72" class="badge" fill="#E17B5B" text-anchor="middle">→ Strukt. JSON</text>
+    </g>
+  </g>
+
+  <!-- 05: CLAUDE OPUS — centrepiece -->
+  <g transform="translate(876, 337)">
+    <g class="opus-pulse" filter="url(#f-glow-opus)">
+      <!-- Outer ring -->
+      <rect x="-5" y="-5" width="138" height="110" rx="17" fill="none" stroke="#E17B5B" stroke-width="1" stroke-opacity="0.16"/>
+      <!-- Card -->
+      <rect width="128" height="100" rx="14" fill="#150a02"/>
+      <rect width="128" height="100" rx="14" fill="url(#g-opus)"/>
+      <rect width="128" height="100" rx="14" fill="none" stroke="#E17B5B" stroke-width="1.6" stroke-opacity="0.65"/>
+      <!-- Top bar -->
+      <rect x="0" y="0" width="128" height="3.5" rx="1.75" fill="#E17B5B" opacity="0.9"/>
+      <rect x="14" y="2" width="100" height="1" rx="0.5" fill="white" opacity="0.1"/>
+      <!-- Icon bg -->
+      <rect x="9" y="10" width="32" height="32" rx="9" fill="#E17B5B" fill-opacity="0.16"/>
+      <!-- A icon -->
+      <path d="M17 37 L25 20 L33 37" fill="none" stroke="#E17B5B" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" stroke-opacity="0.95"/>
+      <line x1="20" y1="31" x2="30" y2="31" stroke="#E17B5B" stroke-linecap="round" stroke-width="1.8" opacity="0.95"/>
+      <!-- Text -->
+      <text x="64" y="32" font-family="Inter,sans-serif" font-weight="800" font-size="13.5" fill="#FAFAFA" text-anchor="middle">Apjungimas</text>
+      <text x="64" y="51" font-family="Inter,sans-serif" font-weight="600" font-size="11" fill="#E17B5B" text-anchor="middle">claude-opus-4</text>
+      <text x="64" y="67" font-family="Inter,sans-serif" font-weight="400" font-size="9.5" fill="#78716C" text-anchor="middle">Agregavimas · Sintezė</text>
+      <!-- Badge -->
+      <rect x="8" y="78" width="112" height="15" rx="5" fill="#E17B5B" fill-opacity="0.13" stroke="#E17B5B" stroke-opacity="0.28" stroke-width="0.7"/>
+      <text x="64" y="89" class="badge" fill="#E17B5B" text-anchor="middle">→ Kvalifikuota Ataskaita</text>
+    </g>
+  </g>
+
+  <!-- 06: QA EVALUATION -->
+  <g transform="translate(1118, 226)">
+    <g class="float-anim-3" filter="url(#f-glow-qa)">
+      <rect width="128" height="84" rx="12" fill="#030e09"/>
+      <rect width="128" height="84" rx="12" fill="url(#g-green)"/>
+      <rect width="128" height="84" rx="12" fill="none" stroke="#10B981" stroke-width="1" stroke-opacity="0.45"/>
+      <rect x="0" y="0" width="128" height="3" rx="1.5" fill="#10B981" opacity="0.8"/>
+      <rect x="10" y="1.5" width="108" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#10B981" fill-opacity="0.13"/>
+      <g transform="translate(13, 12)" fill="none" stroke="#10B981" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6">
+        <path d="M12 21s8-4 8-9V5l-8-3-8 3v7c0 5 8 9 8 9z" stroke-opacity="0.85"/>
+        <path d="M9 12l2 2 4-4" stroke-width="1.8" stroke-opacity="0.95"/>
+      </g>
+      <text x="64" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#FAFAFA" text-anchor="middle">QA Vertinimas</text>
+      <text x="64" y="48" font-family="Inter,sans-serif" font-weight="400" font-size="9.5" fill="#94A3B8" text-anchor="middle">Completeness Score</text>
+      <rect x="8" y="61" width="112" height="15" rx="5" fill="#10B981" fill-opacity="0.1" stroke="#10B981" stroke-opacity="0.2" stroke-width="0.7"/>
+      <text x="64" y="72" class="badge" fill="#34D399" text-anchor="middle">QA Score 0–100</text>
+    </g>
+  </g>
+
+  <!-- 07: FINAL REPORT -->
+  <g transform="translate(1118, 464)">
+    <g class="float-anim-5" filter="url(#f-glow-report)">
+      <rect width="128" height="84" rx="12" fill="#050616"/>
+      <rect width="128" height="84" rx="12" fill="url(#g-indigo)"/>
+      <rect width="128" height="84" rx="12" fill="none" stroke="#6366F1" stroke-width="1" stroke-opacity="0.45"/>
+      <rect x="0" y="0" width="128" height="3" rx="1.5" fill="#6366F1" opacity="0.8"/>
+      <rect x="10" y="1.5" width="108" height="1" rx="0.5" fill="white" opacity="0.07"/>
+      <rect x="9" y="9" width="28" height="28" rx="7" fill="#6366F1" fill-opacity="0.13"/>
+      <g transform="translate(13, 12)" fill="none" stroke="#818CF8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6">
+        <path d="M13 1H5a1.5 1.5 0 0 0-1.5 1.5v17A1.5 1.5 0 0 0 5 21h13a1.5 1.5 0 0 0 1.5-1.5V7z" stroke-opacity="0.9"/>
+        <path d="M13 1v6h6" stroke-opacity="0.9"/>
+        <line x1="7" y1="13" x2="16" y2="13" stroke-opacity="0.5"/>
+        <line x1="7" y1="16.5" x2="12" y2="16.5" stroke-opacity="0.5"/>
+      </g>
+      <text x="64" y="33" font-family="Inter,sans-serif" font-weight="700" font-size="12" fill="#FAFAFA" text-anchor="middle">Galutinė Ataskaita</text>
+      <text x="64" y="48" font-family="Inter,sans-serif" font-weight="400" font-size="9.5" fill="#94A3B8" text-anchor="middle">Eksportas + Q&amp;A Chat</text>
+      <rect x="8"  y="61" width="51" height="15" rx="5" fill="#EF4444" fill-opacity="0.1" stroke="#EF4444" stroke-opacity="0.28" stroke-width="0.7"/>
+      <text x="33.5" y="72" class="badge" fill="#FC8181" text-anchor="middle">PDF</text>
+      <rect x="69" y="61" width="51" height="15" rx="5" fill="#3B82F6" fill-opacity="0.1" stroke="#3B82F6" stroke-opacity="0.28" stroke-width="0.7"/>
+      <text x="94.5" y="72" class="badge" fill="#60A5FA" text-anchor="middle">DOCX</text>
+    </g>
+  </g>
+
+  <!-- Watermark -->
+  <text x="680" y="748" font-family="Inter,sans-serif" font-size="8.5" font-weight="400" fill="#1e293b" text-anchor="middle" letter-spacing="2.5">FOXDOC · PROCUREMENT ANALYZER · 2026</text>
+
+</svg>
+</div>
+</body>
+</html>

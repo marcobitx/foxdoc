@@ -1,0 +1,2 @@
+[    4013ms] [WARNING] [tiptap warn]: Duplicate extension names found: ['link', 'underline', 'trailingNode']. This can lead to issues. @ https://resend.com/relay-qWzP/static/posthog-recorder.js?v=1.335.0:0
+[    5418ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://resend.com/docs?_rsc=1r34m:0

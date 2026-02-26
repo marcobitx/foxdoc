@@ -1,0 +1,6 @@
+[    1181ms] [WARNING] drb-video: No poster image set on video element @ https://cdn.dribbble.com/assets/vite/assets/index-0a740f53.js:1769
+[    1684ms] [WARNING] drb-video: No poster image set on video element @ https://cdn.dribbble.com/assets/vite/assets/index-0a740f53.js:1769
+[    2260ms] [ERROR] Not signed in with the identity provider. @ https://dribbble.com/shots/26796330-AI-Customer-Service-Agent-SaaS-Landing-Page-UI-UX:0
+[    5021ms] [ERROR] [GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token. @ https://accounts.google.com/gsi/client:81
+[    6263ms] [WARNING] The resource https://cdn.dribbble.com/userupload/45777300/file/e8fbc5c86450a89a15942c12b83a13bd.png was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://dribbble.com/shots/26796330-AI-Customer-Service-Agent-SaaS-Landing-Page-UI-UX:0
+[   11060ms] [WARNING] The resource https://cdn.dribbble.com/userupload/45777300/file/e8fbc5c86450a89a15942c12b83a13bd.png was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ https://dribbble.com/shots/26796330-AI-Customer-Service-Agent-SaaS-Landing-Page-UI-UX:0
