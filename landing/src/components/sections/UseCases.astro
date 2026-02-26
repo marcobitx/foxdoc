@@ -31,7 +31,7 @@ const cases = [
 <section class="py-16 sm:py-24 px-4 sm:px-6">
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-12 sm:mb-16">
-      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #00ca88;">// naudojimo atvejai</p>
+      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #f59e0b;">// naudojimo atvejai</p>
       <h2 class="font-heading font-bold text-white">Kas naudoja foxDoc?</h2>
     </div>
 
@@ -39,19 +39,19 @@ const cases = [
       {cases.map((c) => (
         <a href={c.href}
            class="scroll-reveal group flex flex-col p-5 sm:p-6 rounded-2xl border transition-all duration-300"
-           style="border-color: rgba(255,255,255,0.08); background: #141720; text-decoration: none;"
-           onmouseover="this.style.borderColor='rgba(0,202,136,0.25)'; this.style.background='#1a1f2e';"
-           onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.background='#141720';">
+           style="border-color: rgba(168,162,158,0.15); background: #231c18; text-decoration: none;"
+           onmouseover="this.style.borderColor='rgba(245, 158, 11,0.25)'; this.style.background='#2e2520';"
+           onmouseout="this.style.borderColor='rgba(168,162,158,0.15)'; this.style.background='#231c18';">
           <span class="text-3xl mb-4">{c.icon}</span>
-          <p class="text-xs font-mono mb-2" style="color: #00ca88;">{c.tag}</p>
+          <p class="text-xs font-mono mb-2" style="color: #f59e0b;">{c.tag}</p>
           <h3 class="font-heading font-semibold text-white mb-3 text-base sm:text-lg leading-snug">{c.title}</h3>
-          <p class="text-sm leading-relaxed flex-1" style="color: #a0aec0;">{c.desc}</p>
+          <p class="text-sm leading-relaxed flex-1" style="color: #b5a99f;">{c.desc}</p>
           <div class="flex flex-wrap gap-2 mt-4">
             {c.tags.map(t => (
-              <span class="px-2 py-1 text-xs rounded-md" style="background: #252d3d; color: #a0aec0; border: 1px solid rgba(255,255,255,0.06);">{t}</span>
+              <span class="px-2 py-1 text-xs rounded-md" style="background: #3e332d; color: #b5a99f; border: 1px solid rgba(168,162,158,0.10);">{t}</span>
             ))}
           </div>
-          <p class="mt-4 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="color: #00ca88;">Sužinoti daugiau →</p>
+          <p class="mt-4 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200" style="color: #f59e0b;">Sužinoti daugiau →</p>
         </a>
       ))}
     </div>

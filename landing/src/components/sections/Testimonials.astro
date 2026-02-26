@@ -31,33 +31,33 @@ const testimonials = [
 <section class="py-16 sm:py-24 px-4 sm:px-6">
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-12 sm:mb-16">
-      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #00ca88;">// atsiliepimai</p>
+      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #f59e0b;">// atsiliepimai</p>
       <h2 class="font-heading font-bold text-white">Ką sako mūsų vartotojai</h2>
     </div>
 
     <div class="flex flex-col md:grid md:grid-cols-3 gap-5 sm:gap-6">
       {testimonials.map((t) => (
         <div class="scroll-reveal p-5 sm:p-6 rounded-2xl border flex flex-col transition-all duration-300"
-             style="border-color: rgba(255,255,255,0.08); background: #141720;"
-             onmouseover="this.style.borderColor='rgba(0,202,136,0.15)'"
-             onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
+             style="border-color: rgba(168,162,158,0.15); background: #231c18;"
+             onmouseover="this.style.borderColor='rgba(245, 158, 11,0.15)'"
+             onmouseout="this.style.borderColor='rgba(168,162,158,0.15)'">
           <!-- Stars -->
           <div class="flex gap-0.5 mb-4">
             {Array.from({length: t.stars}).map(() => (
-              <span class="text-base sm:text-lg" style="color: #00ca88;">★</span>
+              <span class="text-base sm:text-lg" style="color: #f59e0b;">★</span>
             ))}
           </div>
           <!-- Quote -->
-          <p class="text-sm sm:text-base leading-relaxed italic flex-1 mb-5" style="color: #a0aec0;">"{t.text}"</p>
+          <p class="text-sm sm:text-base leading-relaxed italic flex-1 mb-5" style="color: #b5a99f;">"{t.text}"</p>
           <!-- Author -->
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-                 style="background: rgba(0,202,136,0.15); color: #00ca88;">
+                 style="background: rgba(245, 158, 11,0.15); color: #f59e0b;">
               {t.initials}
             </div>
             <div>
               <p class="text-sm font-semibold text-white">{t.name}</p>
-              <p class="text-xs" style="color: #4a5568;">{t.role}, {t.org}</p>
+              <p class="text-xs" style="color: #6d5f55;">{t.role}, {t.org}</p>
             </div>
           </div>
         </div>

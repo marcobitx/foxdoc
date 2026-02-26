@@ -10,23 +10,23 @@ const partners = [
   { name: 'Kauno miesto savivaldybė', abbr: 'KS' },
 ];
 ---
-<section class="py-12 sm:py-16 px-4" style="border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
-  <p class="text-center text-xs sm:text-sm mb-8 font-medium tracking-wide uppercase" style="color: #4a5568;">
+<section class="py-12 sm:py-16 px-4" style="border-top: 1px solid rgba(168,162,158,0.10); border-bottom: 1px solid rgba(168,162,158,0.10);">
+  <p class="text-center text-xs sm:text-sm mb-8 font-medium tracking-wide uppercase" style="color: #6d5f55;">
     Pasitiki viešųjų pirkimų specialistai visoje Lietuvoje
   </p>
   <div class="relative overflow-hidden">
     <!-- Fade edges -->
-    <div class="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style="background: linear-gradient(to right, #0d0f14, transparent);"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style="background: linear-gradient(to left, #0d0f14, transparent);"></div>
+    <div class="absolute left-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style="background: linear-gradient(to right, #1a1512, transparent);"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-16 z-10 pointer-events-none" style="background: linear-gradient(to left, #1a1512, transparent);"></div>
     <!-- Marquee track -->
     <div class="marquee-track flex gap-12 sm:gap-16 whitespace-nowrap">
       {[...partners, ...partners, ...partners].map(p => (
         <div class="inline-flex items-center gap-3 shrink-0" style="opacity: 0.45;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.45'">
           <div class="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-mono font-bold shrink-0"
-               style="background: #1a1f2e; color: #00ca88; border: 1px solid rgba(255,255,255,0.06);">
+               style="background: #2e2520; color: #f59e0b; border: 1px solid rgba(168,162,158,0.10);">
             {p.abbr}
           </div>
-          <span class="text-sm font-medium" style="color: #a0aec0;">{p.name}</span>
+          <span class="text-sm font-medium" style="color: #b5a99f;">{p.name}</span>
         </div>
       ))}
     </div>

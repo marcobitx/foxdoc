@@ -22,19 +22,19 @@ const steps = [
 <section id="how-it-works" class="py-16 sm:py-24 px-4 sm:px-6">
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-12 sm:mb-16">
-      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #00ca88;">// kaip veikia</p>
+      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #f59e0b;">// kaip veikia</p>
       <h2 class="font-heading font-bold text-white">3 žingsniai iki išsamios ataskaitos</h2>
     </div>
 
     <div class="flex flex-col md:grid md:grid-cols-3 gap-6">
       {steps.map((step, i) => (
         <div class="scroll-reveal group relative p-6 rounded-2xl border transition-all duration-300 cursor-default"
-             style={`border-color: rgba(255,255,255,0.08); background: #141720; transition-delay: ${i * 80}ms;`}
-             onmouseover="this.style.borderColor='rgba(0,202,136,0.3)'; this.style.background='#1a1f2e';"
-             onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.background='#141720';">
-          <div class="font-mono text-5xl font-bold mb-4 select-none" style="color: rgba(0,202,136,0.12);">{step.num}</div>
+             style={`border-color: rgba(168,162,158,0.15); background: #231c18; transition-delay: ${i * 80}ms;`}
+             onmouseover="this.style.borderColor='rgba(245, 158, 11,0.3)'; this.style.background='#2e2520';"
+             onmouseout="this.style.borderColor='rgba(168,162,158,0.15)'; this.style.background='#231c18';">
+          <div class="font-mono text-5xl font-bold mb-4 select-none" style="color: rgba(245, 158, 11,0.12);">{step.num}</div>
           <h3 class="font-heading font-semibold text-white mb-2 text-lg">{step.title}</h3>
-          <p class="text-sm leading-relaxed" style="color: #a0aec0;">{step.desc}</p>
+          <p class="text-sm leading-relaxed" style="color: #b5a99f;">{step.desc}</p>
         </div>
       ))}
     </div>

@@ -84,13 +84,13 @@ const features = [
 
     <!-- Header -->
     <div style="text-align: center; margin-bottom: 4rem;">
-      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #00ca88; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
         // funkcijos
       </p>
-      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3.75rem); color: #fff; line-height: 1.15; margin: 0 0 1rem;">
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3.75rem); color: #fdf9f7; line-height: 1.15; margin: 0 0 1rem;">
         Viskas, ko reikia pirkimų analizei
       </h1>
-      <p style="color: #a0aec0; font-size: 1.125rem; max-width: 40rem; margin: 0 auto;">
+      <p style="color: #b5a99f; font-size: 1.125rem; max-width: 40rem; margin: 0 auto;">
         foxDoc automatizuoja rankinę dokumentų peržiūrą — nuo failo įkėlimo iki struktūrizuotos ataskaitos per 3 minutes.
       </p>
     </div>
@@ -98,26 +98,26 @@ const features = [
     <!-- Features grid -->
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 5rem;">
       {features.map(f => (
-        <div style="padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.08); background: #141720; transition: border-color 0.2s, background 0.2s;"
+        <div style="padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.15); background: #231c18; transition: border-color 0.2s, background 0.2s;"
              class="feature-card">
           <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
             <span style="font-size: 2rem;">{f.icon}</span>
-            <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #7c3aed; background: rgba(124,58,237,0.1); padding: 0.2rem 0.6rem; border-radius: 9999px; white-space: nowrap;">{f.tag}</span>
+            <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234, 88, 12,0.1); padding: 0.2rem 0.6rem; border-radius: 9999px; white-space: nowrap;">{f.tag}</span>
           </div>
-          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem; color: #fff; margin: 0 0 0.5rem;">{f.title}</h3>
-          <p style="color: #a0aec0; font-size: 0.875rem; line-height: 1.6; margin: 0;">{f.description}</p>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem; color: #fdf9f7; margin: 0 0 0.5rem;">{f.title}</h3>
+          <p style="color: #b5a99f; font-size: 0.875rem; line-height: 1.6; margin: 0;">{f.description}</p>
         </div>
       ))}
     </div>
 
     <!-- CTA -->
-    <div style="text-align: center; padding: 3rem 1.5rem; border-radius: 1rem; background: linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(0,202,136,0.06) 100%); border: 1px solid rgba(255,255,255,0.08);">
-      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #fff; margin: 0 0 0.75rem;">
+    <div style="text-align: center; padding: 3rem 1.5rem; border-radius: 1rem; background: linear-gradient(135deg, rgba(234, 88, 12,0.12) 0%, rgba(245, 158, 11,0.06) 100%); border: 1px solid rgba(168,162,158,0.15);">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #fdf9f7; margin: 0 0 0.75rem;">
         Išbandykite nemokamai
       </h2>
-      <p style="color: #a0aec0; margin: 0 0 1.5rem;">3 kreditai, nereikalinga kortelė — pradėkite dabar</p>
+      <p style="color: #b5a99f; margin: 0 0 1.5rem;">3 kreditai, nereikalinga kortelė — pradėkite dabar</p>
       <a href="https://app.foxdoc.io"
-         style="display: inline-flex; align-items: center; justify-content: center; padding: 0.875rem 2rem; border-radius: 0.5rem; background: #00ca88; color: #0d0f14; font-weight: 600; text-decoration: none; min-height: 44px; font-size: 1rem;">
+         style="display: inline-flex; align-items: center; justify-content: center; padding: 0.875rem 2rem; border-radius: 0.5rem; background: #f59e0b; color: #1a1512; font-weight: 600; text-decoration: none; min-height: 44px; font-size: 1rem;">
         Pradėti nemokamai
       </a>
     </div>
@@ -125,8 +125,8 @@ const features = [
 
   <style>
     .feature-card:hover {
-      border-color: rgba(0, 202, 136, 0.2);
-      background: #1a1f2e;
+      border-color: rgba(245, 158, 11, 0.2);
+      background: #2e2520;
     }
   </style>
 </Layout>

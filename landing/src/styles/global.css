@@ -8,14 +8,14 @@
 
 @theme {
   /* ── PRIMARY — action color (CTA, active links) ── */
-  --color-primary: #00ca88;
-  --color-primary-hover: #00b578;
-  --color-primary-subtle: rgba(0, 202, 136, 0.10);
-  --color-primary-glow: rgba(0, 202, 136, 0.25);
+  --color-primary: #f59e0b;
+  --color-primary-hover: #d97706;
+  --color-primary-subtle: rgba(245, 158, 11, 0.10);
+  --color-primary-glow: rgba(245, 158, 11, 0.25);
 
   /* ── ACCENT — decorative (gradients, backgrounds) ── */
-  --color-accent: #7c3aed;
-  --color-accent-subtle: rgba(124, 58, 237, 0.10);
+  --color-accent: #ea580c;
+  --color-accent-subtle: rgba(234, 88, 12, 0.10);
 
   /* ── SEMANTIC ── */
   --color-success: #22c55e;
@@ -24,18 +24,18 @@
   --color-info: #3b82f6;
 
   /* ── NEUTRALS ── */
-  --color-neutral-900: #0d0f14;
-  --color-neutral-800: #141720;
-  --color-neutral-700: #1a1f2e;
-  --color-neutral-600: #252d3d;
+  --color-neutral-900: #1a1512;
+  --color-neutral-800: #231c18;
+  --color-neutral-700: #2e2520;
+  --color-neutral-600: #3e332d;
   --color-neutral-400: rgba(255, 255, 255, 0.08);
   --color-neutral-300: rgba(255, 255, 255, 0.12);
 
   /* ── TEXT hierarchy ── */
-  --color-text-100: #ffffff;
-  --color-text-200: #e2e8f0;
-  --color-text-300: #a0aec0;
-  --color-text-400: #4a5568;
+  --color-text-100: #fdf9f7;
+  --color-text-200: #ede5df;
+  --color-text-300: #b5a99f;
+  --color-text-400: #6d5f55;
 
   /* ── FONTS ── */
   --font-heading: 'Space Grotesk', system-ui, sans-serif;
@@ -43,8 +43,8 @@
   --font-mono: 'JetBrains Mono', monospace;
 
   /* ── SHADOWS ── */
-  --shadow-glow: 0 0 24px rgba(0, 202, 136, 0.25);
-  --shadow-glow-sm: 0 0 12px rgba(0, 202, 136, 0.15);
+  --shadow-glow: 0 0 24px rgba(245, 158, 11, 0.25);
+  --shadow-glow-sm: 0 0 12px rgba(245, 158, 11, 0.15);
   --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.6);
 }
@@ -53,8 +53,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
-  background-color: #0d0f14;
-  color: #e2e8f0;
+  background-color: #1a1512;
+  color: #ede5df;
   scroll-behavior: smooth;
 }
 
@@ -67,7 +67,7 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
-  color: #ffffff;
+  color: #fdf9f7;
   margin: 0;
 }
 
@@ -81,8 +81,8 @@ h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #00ca88;
-  color: #0d0f14;
+  background: #f59e0b;
+  color: #1a1512;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -93,8 +93,8 @@ h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
   min-height: 44px;
 }
 .btn-primary:hover {
-  background: #00b578;
-  box-shadow: 0 0 24px rgba(0, 202, 136, 0.25);
+  background: #d97706;
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.25);
 }
 
 .btn-secondary {
@@ -102,7 +102,7 @@ h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+  color: #fdf9f7;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -113,7 +113,7 @@ h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
   min-height: 44px;
 }
 .btn-secondary:hover {
-  background: #1a1f2e;
+  background: #2e2520;
 }
 
 /* ── Scroll reveal animation ── */
