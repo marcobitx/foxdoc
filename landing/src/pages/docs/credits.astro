@@ -1,0 +1,66 @@
+---
+// landing/src/pages/docs/credits.astro
+// Credits system documentation — how credits work, sizes, add-ons
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+<DocsLayout title="Kreditų sistema" currentPath="/docs/credits">
+
+  <h1>Kreditų sistema</h1>
+  <p>foxDoc naudoja kreditų sistemą vietoje fiksuoto "neribotas" plano. Tai leidžia mokėti tik už faktinį naudojimą ir išlaiko paslaugos kokybę visiems vartotojams.</p>
+
+  <h2>Kaip skaičiuojami kreditai?</h2>
+  <p>Kreditai skaičiuojami pagal analizuojamų dokumentų kiekį:</p>
+
+  <table>
+    <thead>
+      <tr><th>Analizės dydis</th><th>Dokumentų kiekis</th><th>Kreditai</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Standartinė</td><td>1–15 dokumentų</td><td>1 kreditas</td></tr>
+      <tr><td>Didelė</td><td>16–50 dokumentų (ZIP)</td><td>3 kreditai</td></tr>
+      <tr><td>Labai didelė</td><td>50+ dokumentų</td><td>5 kreditai</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <p>Sistema apskaičiuoja kreditų kainą <strong>prieš</strong> paleidžiant analizę ir parodo patvirtinimo pranešimą. Niekada nenuskaičiuojama daugiau nei rodoma.</p>
+  </div>
+
+  <h2>Kreditai pagal planą</h2>
+  <table>
+    <thead>
+      <tr><th>Planas</th><th>Kreditai</th><th>Atsinaujinimas</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Free</td><td>3 (vienkartiniai)</td><td>Neatsikuria</td></tr>
+      <tr><td>Starter</td><td>20/mėn.</td><td>Kiekvieną mėnesį</td></tr>
+      <tr><td>Pro</td><td>75/mėn.</td><td>Kiekvieną mėnesį</td></tr>
+      <tr><td>Team</td><td>200/mėn.</td><td>Kiekvieną mėnesį</td></tr>
+      <tr><td>Enterprise</td><td>Neriboti</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Add-on kreditų paketai</h2>
+  <p>Jei kreditų pritrūksta mėnesio eigoje, galite pirkti papildomus paketus. Prieinami visuose mokamos planose.</p>
+  <table>
+    <thead>
+      <tr><th>Paketas</th><th>Kaina</th><th>Vieneto kaina</th><th>Galiojimas</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>10 kreditų</td><td>€9</td><td>€0.90/kreditas</td><td>12 mėnesių</td></tr>
+      <tr><td>50 kreditų</td><td>€35</td><td>€0.70/kreditas</td><td>12 mėnesių</td></tr>
+      <tr><td>100 kreditų</td><td>€59</td><td>€0.59/kreditas</td><td>12 mėnesių</td></tr>
+    </tbody>
+  </table>
+
+  <h2>D.U.K.</h2>
+  <h3>Ar nepanaudoti kreditai perkeliami?</h3>
+  <p>Mėnesiniai plano kreditai <strong>neperkeliami</strong> — jie atsinaujina kiekvieną mėnesį. Tačiau papildomai įsigyti (add-on) kreditai galioja <strong>12 mėnesių</strong> nuo pirkimo datos.</p>
+
+  <h3>Kas atsitinka baigus kreditus?</h3>
+  <p>Sistema neleids paleisti analizės be kreditų. Pasiūlys arba pirkti add-on paketą, arba keisti planą.</p>
+
+  <h3>Ar galima peržiūrėti kreditų naudojimą?</h3>
+  <p>Taip — paskyroje yra kreditų naudojimo istorija su datos žyma kiekvienai analizei.</p>
+
+</DocsLayout>

@@ -1,0 +1,132 @@
+---
+// landing/src/pages/features.astro
+// Features page — full list of foxDoc capabilities
+// Related: Layout.astro, global.css
+import Layout from '../layouts/Layout.astro';
+
+const features = [
+  {
+    icon: '📄',
+    title: 'Daugiaformatė analizė',
+    description: 'Palaikome PDF, DOCX, XLSX failus ir ZIP archyvus su iki 50+ dokumentų vienu paketu. Nereikia konvertuoti — tiesiog įkelkite.',
+    tag: 'Dokumentai',
+  },
+  {
+    icon: '🤖',
+    title: 'LLM-powered duomenų ištraukimas',
+    description: 'Didelio kalbos modelio analizė ištraukia CPV kodus, sutarties vertes, terminus, techninius reikalavimus, kvalifikacinius kriterijus ir daugiau.',
+    tag: 'AI',
+  },
+  {
+    icon: '📊',
+    title: 'Struktūrizuota ataskaita',
+    description: 'Visi surinkti duomenys pateikiami aiškioje struktūrizuotoje ataskaitoje su sekcijomis, lentelėmis ir kokybės balu (QA Score).',
+    tag: 'Ataskaita',
+  },
+  {
+    icon: '✅',
+    title: 'QA kokybės balas',
+    description: 'Automatinis ataskatos išsamumo tikrinimas. Balas nuo 0–100 rodo, kiek pilnai ištraukta informacija — žemesnis balas signalizuoja neaiškią dokumentaciją.',
+    tag: 'Kokybė',
+  },
+  {
+    icon: '💬',
+    title: 'Pokalbių analizė (Chat)',
+    description: 'Po analizės galite užduoti papildomus klausimus apie dokumentus. AI atsako remdamasis išanalizuota medžiaga.',
+    tag: 'Chat',
+  },
+  {
+    icon: '📤',
+    title: 'PDF ir DOCX eksportas',
+    description: 'Ataskaitas eksportuokite į PDF (Starter+) arba DOCX formatą (Pro+) — tinkama struktūra kolegoms ir audito tikslams.',
+    tag: 'Eksportas',
+  },
+  {
+    icon: '⚡',
+    title: 'Lygiagreti dokumentų apdorojimas',
+    description: 'Iki 5 dokumentų analizuojami vienu metu. Didelius ZIP paketus apdorojame greitai — tipinė 50-dokumentų analizė trunka ~3 min.',
+    tag: 'Greitis',
+  },
+  {
+    icon: '🗜️',
+    title: 'ZIP archyvų palaikymas',
+    description: 'Įkelkite visą pirkimo dokumentų paketą kaip ZIP — sistema automatiškai išpakuoja ir analizuoja kiekvieną dokumentą atskirai.',
+    tag: 'ZIP',
+  },
+  {
+    icon: '🔒',
+    title: 'Saugumas ir GDPR',
+    description: 'Dokumentai apdorojami saugiai. Enterprise planuose prieinamas GDPR DPA susitarimas, VPC/on-premise diegimas ir audito žurnalai.',
+    tag: 'Saugumas',
+  },
+  {
+    icon: '🔧',
+    title: 'Modelio pasirinkimas',
+    description: 'Pro ir aukštesniuose planuose galite pasirinkti LLM modelį — balansas tarp greičio, kainos ir tikslumo pagal jūsų poreikius.',
+    tag: 'Pro+',
+  },
+  {
+    icon: '🔌',
+    title: 'API prieiga',
+    description: 'Team plane galite integruoti FoxDoc analizę į savo sistemas per REST API. Automatizuokite pirkimų stebėseną.',
+    tag: 'Team+',
+  },
+  {
+    icon: '📋',
+    title: 'Pasirinktiniai promptai',
+    description: 'Team plane galite pritaikyti analizės šabloną — nurodykite papildomus laukus ar specifines sritis, kurias turi aprašyti AI.',
+    tag: 'Team+',
+  },
+];
+---
+<Layout title="Funkcijos — foxDoc">
+  <div style="max-width: 72rem; margin: 0 auto; padding: 5rem 1.5rem 4rem;">
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 4rem;">
+      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #00ca88; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+        // funkcijos
+      </p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3.75rem); color: #fff; line-height: 1.15; margin: 0 0 1rem;">
+        Viskas, ko reikia pirkimų analizei
+      </h1>
+      <p style="color: #a0aec0; font-size: 1.125rem; max-width: 40rem; margin: 0 auto;">
+        foxDoc automatizuoja rankinę dokumentų peržiūrą — nuo failo įkėlimo iki struktūrizuotos ataskaitos per 3 minutes.
+      </p>
+    </div>
+
+    <!-- Features grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 5rem;">
+      {features.map(f => (
+        <div style="padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.08); background: #141720; transition: border-color 0.2s, background 0.2s;"
+             class="feature-card">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+            <span style="font-size: 2rem;">{f.icon}</span>
+            <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #7c3aed; background: rgba(124,58,237,0.1); padding: 0.2rem 0.6rem; border-radius: 9999px; white-space: nowrap;">{f.tag}</span>
+          </div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.05rem; color: #fff; margin: 0 0 0.5rem;">{f.title}</h3>
+          <p style="color: #a0aec0; font-size: 0.875rem; line-height: 1.6; margin: 0;">{f.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- CTA -->
+    <div style="text-align: center; padding: 3rem 1.5rem; border-radius: 1rem; background: linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(0,202,136,0.06) 100%); border: 1px solid rgba(255,255,255,0.08);">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #fff; margin: 0 0 0.75rem;">
+        Išbandykite nemokamai
+      </h2>
+      <p style="color: #a0aec0; margin: 0 0 1.5rem;">3 kreditai, nereikalinga kortelė — pradėkite dabar</p>
+      <a href="https://app.foxdoc.io"
+         style="display: inline-flex; align-items: center; justify-content: center; padding: 0.875rem 2rem; border-radius: 0.5rem; background: #00ca88; color: #0d0f14; font-weight: 600; text-decoration: none; min-height: 44px; font-size: 1rem;">
+        Pradėti nemokamai
+      </a>
+    </div>
+  </div>
+
+  <style>
+    .feature-card:hover {
+      border-color: rgba(0, 202, 136, 0.2);
+      background: #1a1f2e;
+    }
+  </style>
+</Layout>

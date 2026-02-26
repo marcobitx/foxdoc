@@ -1,0 +1,63 @@
+---
+// landing/src/pages/docs/index.astro
+// Documentation home — overview, quick links to all sections
+// Related: DocsLayout.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+<DocsLayout title="Dokumentacija" currentPath="/docs">
+
+  <h1>foxDoc dokumentacija</h1>
+  <p>Viskas, ką reikia žinoti norint pradėti naudoti foxDoc ir gauti maksimalią naudą iš AI pirkimų analizės.</p>
+
+  <div class="callout">
+    <p>
+      <strong style="color: #00ca88;">Nauja?</strong> Pradėkite nuo <a href="/docs/getting-started">Greitos pradžios</a> — pirmos analizės atliksite per 5 minutes.
+    </p>
+  </div>
+
+  <h2>Greitoji navigacija</h2>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin: 1.5rem 0 2.5rem;">
+    {[
+      { href: '/docs/getting-started', icon: '🚀', title: 'Greita pradžia', desc: 'Pirma analizė per 5 min.' },
+      { href: '/docs/credits', icon: '💳', title: 'Kreditų sistema', desc: 'Kaip skaičiuojami kreditai' },
+      { href: '/docs/formats', icon: '📄', title: 'Palaikomi formatai', desc: 'PDF, DOCX, XLSX, ZIP' },
+      { href: '/docs/qa-score', icon: '✅', title: 'QA kokybės balas', desc: 'Ką reiškia balas 0–100' },
+    ].map(card => (
+      <a href={card.href} style="display: flex; flex-direction: column; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.08); background: #141720; text-decoration: none; transition: border-color 0.2s, background 0.2s;" class="docs-card">
+        <span style="font-size: 1.5rem; margin-bottom: 0.5rem;">{card.icon}</span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #fff; font-size: 0.95rem; margin-bottom: 0.25rem;">{card.title}</span>
+        <span style="font-size: 0.8rem; color: #a0aec0;">{card.desc}</span>
+      </a>
+    ))}
+  </div>
+
+  <h2>Kaip veikia foxDoc</h2>
+  <ol>
+    <li><strong>Įkelkite dokumentus</strong> — PDF, DOCX, XLSX arba ZIP failai (iki 50+ dokumentų vienu metu)</li>
+    <li><strong>Sistema analizuoja</strong> — Docling konvertuoja į tekstą, LLM ištraukia struktūrizuotus duomenis</li>
+    <li><strong>Gaunate ataskaitą</strong> — CPV kodai, vertės, terminai, techniniai reikalavimai, QA balas</li>
+    <li><strong>Klauskite klausimų</strong> — pokalbių interfejsas leidžia teirautis detalių apie dokumentus</li>
+    <li><strong>Eksportuokite</strong> — parsisiųskite PDF arba DOCX (Starter+ / Pro+)</li>
+  </ol>
+
+  <h2>Techniniai duomenys</h2>
+  <table>
+    <thead>
+      <tr><th>Parametras</th><th>Vertė</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Maksimalus failo dydis</td><td>50 MB vienam failui</td></tr>
+      <tr><td>Maksimalus ZIP dydis</td><td>200 MB</td></tr>
+      <tr><td>Palaikomi formatai</td><td>PDF, DOCX, XLSX, ZIP</td></tr>
+      <tr><td>Kalbos</td><td>Lietuvių, anglų (LT prioritetas)</td></tr>
+      <tr><td>Vidutinis analizės laikas</td><td>1–5 minutės (priklausomai nuo dokumentų kiekio)</td></tr>
+      <tr><td>LLM modelis</td><td>Claude Sonnet (numatytasis), pasirenkamas Pro+</td></tr>
+    </tbody>
+  </table>
+
+</DocsLayout>
+
+<style>
+  .docs-card:hover { border-color: rgba(0,202,136,0.2) !important; background: #1a1f2e !important; }
+</style>

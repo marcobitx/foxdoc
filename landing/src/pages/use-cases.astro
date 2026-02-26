@@ -1,0 +1,141 @@
+---
+// landing/src/pages/use-cases.astro
+// Detailed use cases page — 3 audience segments with examples
+// Related: Layout.astro, UseCases.astro (landing preview)
+import Layout from '../layouts/Layout.astro';
+
+const audiences = [
+  {
+    id: 'perkanciosios',
+    icon: '🏛️',
+    title: 'Perkančios organizacijos',
+    subtitle: 'Savivaldybės, ministerijos, viešosios institucijos',
+    description: 'Gaunate dešimtis pasiūlymų per mėnesį. Kiekvieno rankinė peržiūra užima valandas. foxDoc automatizuoja šį procesą.',
+    scenarios: [
+      {
+        title: 'Pasiūlymų atitikties tikrinimas',
+        desc: 'Įkelkite visus gautus pasiūlymus kaip ZIP — sistema kiekvieną išanalizuoja pagal techninius reikalavimus ir pateikia atitikties santrauką.',
+      },
+      {
+        title: 'Techninių reikalavimų santrauka',
+        desc: 'Norint greitai suvokti pirkimo sąlygų esmę prieš posėdį — 3 minutės, o ne 3 valandos.',
+      },
+      {
+        title: 'Dokumentacijos auditas',
+        desc: 'Prieš skelbiant pirkimą, patikrinkite ar visa reikiama informacija yra dokumentuose. QA balas parodo spragas.',
+      },
+    ],
+    stat: '4–6 valandos → 3 minutės',
+    statLabel: 'Vieno pirkimo paketo analizės laikas',
+  },
+  {
+    id: 'tiekejai',
+    icon: '📦',
+    title: 'Tiekėjai ir rangovai',
+    subtitle: 'Įmonės, teikiančios pasiūlymus viešiems pirkimams',
+    description: 'Norint pateikti konkurencingą pasiūlymą, reikia tiksliai suprasti visas pirkimo sąlygas. foxDoc tai padaro akimirksniu.',
+    scenarios: [
+      {
+        title: 'Pirkimo sąlygų analizė',
+        desc: 'Prieš teikdami pasiūlymą sužinokite visus techninius reikalavimus, terminus, kvalifikacinius kriterijus ir rizikos faktorius.',
+      },
+      {
+        title: 'CPV kodų ir vertės identifikavimas',
+        desc: 'Greitai nustatykite ar pirkimas atitinka jūsų veiklos sritį pagal CPV kodus ir sutarties vertę.',
+      },
+      {
+        title: 'Konkurentų pasiūlymų lyginimas',
+        desc: 'Laimėję pirkimą ar baigus procedūrą — analizuokite konkurentų pasiūlymus ir mokykitės iš rezultatų.',
+      },
+    ],
+    stat: '85%',
+    statLabel: 'Tiekėjų, kurie praleidžia svarbius reikalavimus rankinės peržiūros metu',
+  },
+  {
+    id: 'auditoriai',
+    icon: '🔍',
+    title: 'Auditoriai ir konsultantai',
+    subtitle: 'Viešųjų pirkimų audito ir konsultavimo įmonės',
+    description: 'Dirbate su dešimtimis pirkimų per mėnesį. foxDoc leidžia sistemingai patikrinti kiekvieną paketą per minutę.',
+    scenarios: [
+      {
+        title: 'Procedūrinių klaidų paieška',
+        desc: 'Sistemingai analizuokite pirkimų dokumentų paketus dėl neatitikčių teisės aktų reikalavimams ir procedūrinių spragų.',
+      },
+      {
+        title: 'Atitikties ataskaitos generavimas',
+        desc: 'Eksportuokite struktūrizuotas ataskaitas PDF arba DOCX formatu — tinkamos audito išvadoms dokumentuoti.',
+      },
+      {
+        title: 'Didelių pirkimų portfelių peržiūra',
+        desc: 'Masinis įkėlimas (Team planas) leidžia per vieną sesiją išanalizuoti visą institucijos pirkimų archyvą.',
+      },
+    ],
+    stat: '10x',
+    statLabel: 'Daugiau pirkimų išanalizuojama per tą patį laiką',
+  },
+];
+---
+<Layout title="Naudojimo atvejai — foxDoc">
+  <div style="max-width: 72rem; margin: 0 auto; padding: 5rem 1.5rem 4rem;">
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 4rem;">
+      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #00ca88; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+        // naudojimo atvejai
+      </p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2rem, 5vw, 3.75rem); color: #fff; line-height: 1.15; margin: 0 0 1rem;">
+        Kas naudoja foxDoc?
+      </h1>
+      <p style="color: #a0aec0; font-size: 1.125rem; max-width: 40rem; margin: 0 auto;">
+        Trys pagrindinės tikslinės grupės, kurios kasdien sutaupo valandas naudodamos AI pirkimų analizei.
+      </p>
+    </div>
+
+    <!-- Audience sections -->
+    {audiences.map((a, i) => (
+      <div id={a.id} style={`margin-bottom: 5rem; padding-top: 1rem; ${i > 0 ? 'border-top: 1px solid rgba(255,255,255,0.06);' : ''}`}>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+
+          <!-- Header row -->
+          <div style="display: flex; align-items: flex-start; gap: 1.25rem;">
+            <span style="font-size: 2.5rem; flex-shrink: 0;">{a.icon}</span>
+            <div>
+              <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #7c3aed; margin: 0 0 0.25rem;">{a.subtitle}</p>
+              <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2rem); color: #fff; margin: 0 0 0.75rem;">{a.title}</h2>
+              <p style="color: #a0aec0; max-width: 42rem; margin: 0;">{a.description}</p>
+            </div>
+          </div>
+
+          <!-- Stat -->
+          <div style="display: inline-flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-radius: 0.75rem; background: rgba(0,202,136,0.06); border: 1px solid rgba(0,202,136,0.15); width: fit-content;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #00ca88;">{a.stat}</span>
+            <span style="font-size: 0.875rem; color: #a0aec0; max-width: 16rem;">{a.statLabel}</span>
+          </div>
+
+          <!-- Scenarios -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+            {a.scenarios.map(sc => (
+              <div style="padding: 1.25rem; border-radius: 0.875rem; border: 1px solid rgba(255,255,255,0.08); background: #141720;">
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; color: #fff; margin: 0 0 0.5rem;">{sc.title}</h3>
+                <p style="color: #a0aec0; font-size: 0.875rem; line-height: 1.6; margin: 0;">{sc.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    ))}
+
+    <!-- CTA -->
+    <div style="text-align: center; padding: 3rem 1.5rem; border-radius: 1rem; background: linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(0,202,136,0.06) 100%); border: 1px solid rgba(255,255,255,0.08);">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.75rem; color: #fff; margin: 0 0 0.75rem;">
+        Pradėkite nemokamai šiandien
+      </h2>
+      <p style="color: #a0aec0; margin: 0 0 1.5rem;">3 kreditai, jokios kortelės — įsitikinkite patys</p>
+      <a href="https://app.foxdoc.io"
+         style="display: inline-flex; align-items: center; justify-content: center; padding: 0.875rem 2rem; border-radius: 0.5rem; background: #00ca88; color: #0d0f14; font-weight: 600; text-decoration: none; min-height: 44px; font-size: 1rem;">
+        Išbandyti nemokamai
+      </a>
+    </div>
+  </div>
+</Layout>
