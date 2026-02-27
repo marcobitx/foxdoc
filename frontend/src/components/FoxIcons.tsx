@@ -127,6 +127,31 @@ export function FoxBrain(props: IconProps) {
     );
 }
 
+/* ── FoxCalendar — fox ears over a calendar grid 📅🦊 ─────────── */
+/* A calendar page with fox ears peeking up from behind */
+export function FoxCalendar(props: IconProps) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+            {/* Fox ears peeking over the calendar */}
+            <path d="M7 7 L9 3 L11 6.5" fill="currentColor" opacity="0.3" stroke="currentColor" />
+            <path d="M13 6.5 L15 3 L17 7" fill="currentColor" opacity="0.3" stroke="currentColor" />
+            {/* Calendar body */}
+            <rect x="3" y="7" width="18" height="15" rx="2" />
+            {/* Calendar top bar */}
+            <line x1="3" y1="11" x2="21" y2="11" />
+            {/* Calendar binding rings */}
+            <line x1="8" y1="5" x2="8" y2="9" />
+            <line x1="16" y1="5" x2="16" y2="9" />
+            {/* Grid dots — represents days */}
+            <circle cx="8" cy="15" r="1" fill="currentColor" stroke="none" opacity="0.5" />
+            <circle cx="12" cy="15" r="1" fill="currentColor" stroke="none" opacity="0.5" />
+            <circle cx="16" cy="15" r="1" fill="currentColor" stroke="none" opacity="0.5" />
+            <circle cx="8" cy="19" r="1" fill="currentColor" stroke="none" opacity="0.3" />
+            <circle cx="12" cy="19" r="1" fill="currentColor" stroke="none" opacity="0.3" />
+        </svg>
+    );
+}
+
 /* ── FoxGuard — security / shield 🛡️🦊 ──────────────────────── */
 /* A shield with fox ears poking up from the top */
 export function FoxGuard(props: IconProps) {

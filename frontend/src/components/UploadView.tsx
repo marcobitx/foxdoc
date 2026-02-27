@@ -27,7 +27,7 @@ export default function UploadView() {
           <div className="h-4 w-px bg-surface-700/40" />
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest">AI paruošta</span>
+            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest">Paruošta analizuoti</span>
           </div>
         </div>
 
@@ -39,7 +39,7 @@ export default function UploadView() {
           <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>
             <span style={{ background: 'linear-gradient(135deg, #fcd34d, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>fox</span>
             <span className="text-surface-100">Doc</span>
-          </span>{' '}pasiruošęs suuosti visas rizikas jūsų dokumentuose.
+          </span>{' '}pasiruošęs identifikuoti visas rizikas jūsų dokumentuose.
         </p>
       </div>
 

@@ -32,6 +32,8 @@ function getBreadcrumbs(view: AppView, reviewMode: boolean): BreadcrumbSegment[]
         : [{ label: 'Nauja analizė', view: 'upload' }, { label: 'Ataskaita' }];
     case 'history':
       return [{ label: 'Istorija' }];
+    case 'calendar':
+      return [{ label: 'Kalendorius' }];
     case 'settings':
       return [{ label: 'Nustatymai' }];
     case 'notes':
