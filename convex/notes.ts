@@ -8,6 +8,7 @@ import { v } from "convex/values";
 
 export const create = mutation({
   args: {
+    user_id: v.optional(v.id("users")),
     title: v.string(),
     content: v.string(),
     status: v.string(),
@@ -20,6 +21,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const now = Date.now();
     const insertArgs: any = {
+      user_id: args.user_id,
       title: args.title,
       content: args.content,
       status: args.status,
@@ -154,9 +156,48 @@ export const list = query({
   },
 });
 
+export const listByUser = query({
+  args: {
+    user_id: v.id("users"),
+    limit: v.number(),
+    offset: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const all = await ctx.db
+      .query("notes")
+      .withIndex("by_user", (q) => q.eq("user_id", args.user_id))
+      .order("desc")
+      .collect();
+
+    const page = all.slice(args.offset, args.offset + args.limit);
+    return page.map((doc) => ({
+      ...doc,
+      _id: doc._id.toString(),
+      analysis_id: doc.analysis_id?.toString() ?? null,
+    }));
+  },
+});
+
 export const allTags = query({
   handler: async (ctx) => {
     const all = await ctx.db.query("notes").collect();
+    const tagCounts: Record<string, number> = {};
+    for (const note of all) {
+      for (const tag of note.tags) {
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      }
+    }
+    return tagCounts;
+  },
+});
+
+export const allTagsByUser = query({
+  args: { user_id: v.id("users") },
+  handler: async (ctx, args) => {
+    const all = await ctx.db
+      .query("notes")
+      .withIndex("by_user", (q) => q.eq("user_id", args.user_id))
+      .collect();
     const tagCounts: Record<string, number> = {};
     for (const note of all) {
       for (const tag of note.tags) {

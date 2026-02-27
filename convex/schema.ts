@@ -81,6 +81,7 @@ export default defineSchema({
 
   // ── Notes (user notes/memos) ──
   notes: defineTable({
+    user_id: v.optional(v.id("users")),
     title: v.string(),
     content: v.string(),
     status: v.string(),          // "idea" | "in_progress" | "done" | "archived"
@@ -91,7 +92,8 @@ export default defineSchema({
     analysis_id: v.optional(v.id("analyses")),
     updated_at: v.number(),      // epoch ms
   })
-    .index("by_status", ["status"]),
+    .index("by_status", ["status"])
+    .index("by_user", ["user_id"]),
 
   // ── Auth relay codes (cross-domain session transfer) ──
   auth_relay_codes: defineTable({
