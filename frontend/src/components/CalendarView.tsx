@@ -23,7 +23,6 @@ import { listAnalyses, type AnalysisSummary } from '../lib/api';
 import CustomSelect from './CustomSelect';
 import ScrollText from './ScrollText';
 import Tooltip from './Tooltip';
-import LineDivider from './LineDivider';
 
 interface Props {
   onSelect: (id: string) => void;
@@ -312,92 +311,99 @@ export default function CalendarView({ onSelect, onNew }: Props) {
       {/* ── Dashboard Content ────────────────────────────────── */}
       {!loading && (
         <>
-          {/* ── KPI Strip ──────────────────────────────────────── */}
-          <div className="relative rounded-2xl border border-surface-600/30 bg-surface-800/55 mb-6 overflow-hidden">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-brand-500/0 via-brand-500/40 to-brand-500/0" />
-
-            <div className="grid grid-cols-2 lg:grid-cols-4">
-              {/* Month analyses */}
-              <div className="relative px-6 py-5 group">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[32px] font-extrabold text-white tracking-tighter leading-none">{monthStats.total}</span>
-                  {monthStats.activeDays > 0 && (
-                    <span className="text-[11px] font-bold text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded-md">
-                      {monthStats.activeDays} d.
-                    </span>
-                  )}
-                </div>
-                <p className="text-[11px] text-surface-500 font-bold uppercase tracking-widest mt-1.5">Šį mėnesį</p>
-                <div className="absolute top-5 right-5 w-2 h-2 rounded-full bg-brand-500/30" />
-              </div>
-
-              {/* Completed */}
-              <div className="relative px-6 py-5 group">
-                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[32px] font-extrabold text-white tracking-tighter leading-none">{monthStats.completed}</span>
-                  {monthStats.total > 0 && (
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-12 h-1 rounded-full bg-surface-800 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-emerald-500/70"
-                          style={{ width: `${Math.round((monthStats.completed / monthStats.total) * 100)}%`, transition: 'width 0.6s ease-out' }}
-                        />
-                      </div>
-                      <span className="text-[10px] font-mono text-surface-600">{Math.round((monthStats.completed / monthStats.total) * 100)}%</span>
+          {/* ── KPI Cards ─────────────────────────────────────── */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {[
+              {
+                value: monthStats.total,
+                label: 'Šį mėnesį',
+                suffix: monthStats.activeDays > 0 ? `${monthStats.activeDays} d.` : undefined,
+                glow: 'shadow-[0_0_15px_rgba(245,158,11,0.15)]',
+                gradient: 'from-brand-500/50 via-brand-400/20 to-brand-600/50',
+                icon: (
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <rect x="4" y="6" width="20" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M4 11h20" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M9 4v4M19 4v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                    <circle cx="10" cy="17" r="1.5" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
+                    <circle cx="18" cy="17" r="1.5" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
+                    <circle cx="14" cy="17" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+                  </svg>
+                ),
+              },
+              {
+                value: monthStats.completed,
+                label: 'Baigtos',
+                glow: 'shadow-[0_0_15px_rgba(16,185,129,0.15)]',
+                gradient: 'from-emerald-500/50 via-emerald-400/20 to-emerald-600/50',
+                icon: (
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 3a11 11 0 110 22 11 11 0 010-22z" stroke="currentColor" strokeWidth="1.2" strokeDasharray="3 2" />
+                    <circle cx="14" cy="14" r="7" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M10.5 14.5l2 2 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+              },
+              {
+                value: monthStats.totalValue > 0
+                  ? monthStats.totalValue >= 1_000_000
+                    ? `${(monthStats.totalValue / 1_000_000).toFixed(1)}M`
+                    : monthStats.totalValue >= 1_000
+                      ? `${(monthStats.totalValue / 1_000).toFixed(0)}K`
+                      : formatValue(monthStats.totalValue)
+                  : '—',
+                label: 'Vertė',
+                sub: monthStats.totalValue > 0 ? 'EUR' : undefined,
+                glow: 'shadow-[0_0_15px_rgba(245,158,11,0.12)]',
+                gradient: 'from-amber-500/50 via-yellow-400/20 to-amber-600/50',
+                icon: (
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 3l3.5 5.5H24l-5 4.5 2 6.5-7-4-7 4 2-6.5-5-4.5h6.5L14 3z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" opacity="0.35" />
+                    <path d="M14 8l2 3.5h4l-3 2.5 1 4-4-2.5-4 2.5 1-4-3-2.5h4L14 8z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+                  </svg>
+                ),
+              },
+              {
+                value: monthStats.avgScore > 0 ? Math.round(monthStats.avgScore * 100) : '—',
+                label: 'Vid. kokybė',
+                sub: monthStats.avgScore > 0 ? '%' : undefined,
+                glow: 'shadow-[0_0_15px_rgba(139,92,246,0.15)]',
+                gradient: 'from-violet-500/50 via-purple-400/20 to-violet-600/50',
+                icon: (
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 4l2.5 5 5.5.8-4 3.9.9 5.5L14 16.5l-4.9 2.7.9-5.5-4-3.9 5.5-.8L14 4z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+                    <circle cx="14" cy="14" r="11" stroke="currentColor" strokeWidth="1.2" opacity="0.25" />
+                    <path d="M7 7l2 2M21 7l-2 2M7 21l2-2M21 21l-2-2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.3" />
+                  </svg>
+                ),
+              },
+            ].map((kpi) => (
+              <div
+                key={kpi.label}
+                className={`group rounded-xl p-[2px] bg-gradient-to-br ${kpi.gradient} ${kpi.glow}
+                  transition-all duration-500 ease-out hover:shadow-[0_0_20px_rgba(245,158,11,0.1)]`}
+              >
+                <div className="rounded-[10px] bg-surface-800/60 px-5 py-4 h-full">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="text-surface-500 transition-colors duration-300 group-hover:text-surface-300">
+                      {kpi.icon}
                     </div>
-                  )}
-                </div>
-                <p className="text-[11px] text-surface-500 font-bold uppercase tracking-widest mt-1.5">Baigtos</p>
-                <div className="absolute top-5 right-5 w-2 h-2 rounded-full bg-emerald-500/30" />
-              </div>
-
-              {/* Total Value */}
-              <div className="relative px-6 py-5 group">
-                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
-                <span className="text-[32px] font-extrabold text-white tracking-tighter leading-none">
-                  {monthStats.totalValue > 0
-                    ? monthStats.totalValue >= 1_000_000
-                      ? `${(monthStats.totalValue / 1_000_000).toFixed(1)}M`
-                      : monthStats.totalValue >= 1_000
-                        ? `${(monthStats.totalValue / 1_000).toFixed(0)}K`
-                        : formatValue(monthStats.totalValue)
-                    : '—'}
-                </span>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <p className="text-[11px] text-surface-500 font-bold uppercase tracking-widest">Vertė</p>
-                  {monthStats.totalValue > 0 && (
-                    <span className="text-[10px] font-mono text-surface-600">EUR</span>
-                  )}
-                </div>
-                <div className="absolute top-5 right-5 w-2 h-2 rounded-full bg-amber-500/30" />
-              </div>
-
-              {/* Activity Streak */}
-              <div className="relative px-6 py-5 group">
-                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
-                <div className="flex items-baseline gap-1">
-                  <span className="text-[32px] font-extrabold tracking-tighter leading-none"
-                    style={{ color: monthStats.avgScore >= 0.8 ? '#34d399' : monthStats.avgScore >= 0.5 ? '#fbbf24' : monthStats.avgScore > 0 ? '#f87171' : 'white' }}>
-                    {monthStats.avgScore > 0 ? Math.round(monthStats.avgScore * 100) : '—'}
-                  </span>
-                  {monthStats.avgScore > 0 && <span className="text-[16px] font-bold text-surface-500">%</span>}
-                </div>
-                <p className="text-[11px] text-surface-500 font-bold uppercase tracking-widest mt-1.5">Vid. kokybė</p>
-                {monthStats.avgScore > 0 && (
-                  <div className="absolute top-4 right-4 w-7 h-7">
-                    <svg viewBox="0 0 28 28" className="w-full h-full -rotate-90">
-                      <circle cx="14" cy="14" r="11" fill="none" stroke="rgba(62,51,45,0.4)" strokeWidth="2" />
-                      <circle cx="14" cy="14" r="11" fill="none"
-                        stroke={monthStats.avgScore >= 0.8 ? '#34d399' : monthStats.avgScore >= 0.5 ? '#fbbf24' : '#f87171'}
-                        strokeWidth="2" strokeLinecap="round"
-                        strokeDasharray={`${monthStats.avgScore * 69.1} ${69.1 - monthStats.avgScore * 69.1}`}
-                        style={{ transition: 'stroke-dasharray 0.8s ease-out' }} />
-                    </svg>
                   </div>
-                )}
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-[26px] font-bold text-white tracking-tight leading-none">
+                      {kpi.value}
+                    </span>
+                    {kpi.sub && <span className="text-sm font-medium text-surface-600">{kpi.sub}</span>}
+                    {kpi.suffix && (
+                      <span className="text-[10px] font-semibold text-brand-400/80 ml-0.5">{kpi.suffix}</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5">
+                    {kpi.label}
+                  </p>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
 
           {/* ── Calendar Controls ──────────────────────────────── */}
