@@ -151,7 +151,7 @@ function AuthFormInner() {
           className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all ${
             tab === "signIn"
               ? "bg-neutral-700 text-white shadow-sm"
-              : "text-neutral-400 hover:text-neutral-300"
+              : "text-neutral-300 hover:text-neutral-200"
           }`}
         >
           Prisijungti
@@ -161,7 +161,7 @@ function AuthFormInner() {
           className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all ${
             tab === "signUp"
               ? "bg-neutral-700 text-white shadow-sm"
-              : "text-neutral-400 hover:text-neutral-300"
+              : "text-neutral-300 hover:text-neutral-200"
           }`}
         >
           Registruotis
@@ -184,14 +184,14 @@ function AuthFormInner() {
 
       <div className="flex items-center gap-3 my-6">
         <div className="flex-1 h-px bg-neutral-700"></div>
-        <span className="text-xs text-neutral-500 uppercase tracking-wider">arba</span>
+        <span className="text-xs text-neutral-400 uppercase tracking-wider">arba</span>
         <div className="flex-1 h-px bg-neutral-700"></div>
       </div>
 
       <form onSubmit={handleEmailAuth} className="space-y-4">
         {tab === "signUp" && (
           <div>
-            <label className="block text-sm text-neutral-400 mb-1.5">Vardas</label>
+            <label className="block text-sm text-neutral-300 mb-1.5">Vardas</label>
             <input
               type="text"
               value={name}
@@ -202,7 +202,7 @@ function AuthFormInner() {
           </div>
         )}
         <div>
-          <label className="block text-sm text-neutral-400 mb-1.5">El. paštas</label>
+          <label className="block text-sm text-neutral-300 mb-1.5">El. paštas</label>
           <input
             type="email"
             value={email}
@@ -213,7 +213,7 @@ function AuthFormInner() {
           />
         </div>
         <div>
-          <label className="block text-sm text-neutral-400 mb-1.5">Slaptažodis</label>
+          <label className="block text-sm text-neutral-300 mb-1.5">Slaptažodis</label>
           <input
             type="password"
             value={password}
@@ -241,14 +241,14 @@ function AuthFormInner() {
       </form>
 
       {tab === "signIn" && (
-        <p className="text-center text-sm text-neutral-500 mt-4">
+        <p className="text-center text-sm text-neutral-400 mt-4">
           <button className="text-amber-500 hover:underline">
             Pamiršote slaptažodį?
           </button>
         </p>
       )}
 
-      <p className="text-center text-xs text-neutral-600 mt-6">
+      <p className="text-center text-xs text-neutral-400 mt-6">
         {tab === "signUp"
           ? "Registruodamiesi sutinkate su naudojimo sąlygomis ir privatumo politika."
           : "Neturite paskyros? "}
