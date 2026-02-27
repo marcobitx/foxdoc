@@ -155,9 +155,10 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
   const stats = useMemo(() => {
     const completed = analyses.filter((a) => a.status === 'COMPLETED');
     const totalValue = analyses.reduce((sum, a) => sum + (a.estimated_value || 0), 0);
+    const withScore = analyses.filter((a) => a.completeness_score != null && a.completeness_score > 0);
     const avgScore =
-      completed.length > 0
-        ? completed.reduce((sum, a) => sum + (a.completeness_score || 0), 0) / completed.length
+      withScore.length > 0
+        ? withScore.reduce((sum, a) => sum + (a.completeness_score || 0), 0) / withScore.length
         : 0;
     const totalFiles = analyses.reduce((sum, a) => sum + a.file_count, 0);
 
