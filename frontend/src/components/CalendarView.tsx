@@ -380,7 +380,7 @@ export default function CalendarView({ onSelect, onNew }: Props) {
             ].map((kpi) => (
               <div
                 key={kpi.label}
-                className={`group rounded-xl p-[4px] bg-gradient-to-br ${kpi.gradient} ${kpi.glow}
+                className={`group rounded-xl p-[6px] bg-gradient-to-br ${kpi.gradient} ${kpi.glow}
                   transition-all duration-500 ease-out hover:shadow-[0_0_20px_rgba(245,158,11,0.1)]`}
               >
                 <div className="rounded-[9px] bg-[#3a332c] px-5 py-4 h-full">
