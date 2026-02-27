@@ -245,12 +245,10 @@ export default function App() {
 
           {/* ── Decorative divider between main & right panel ──────── */}
           <div className="hidden lg:block relative w-[20px] flex-shrink-0" aria-hidden="true">
-            {/* Horizontal line */}
-            <div className="absolute top-[24px] left-0 right-[9px] h-[1px] bg-surface-400/35" />
+            {/* Horizontal line — extends left across full main content area */}
+            <div className="absolute top-[24px] right-[9px] h-[1px] bg-surface-400/35" style={{ left: '-2000px' }} />
             {/* Vertical line — starts where horizontal ends, goes down */}
             <div className="absolute top-[24px] right-[9px] w-[1px] bottom-[24px] bg-surface-400/35" />
-            {/* Dot — start of horizontal */}
-            <div className="absolute top-[24px] left-[-2px] -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
             {/* Dot — junction */}
             <div className="absolute top-[24px] right-[9px] -translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
             {/* Dot — bottom */}
