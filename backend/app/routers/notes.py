@@ -27,8 +27,8 @@ router = APIRouter(prefix="/api/notes", tags=["notes"])
 async def list_notes(
     limit: int = 100,
     offset: int = 0,
-    db: ConvexDB = Depends(get_db),
     user_id: str | None = Depends(get_current_user_id),
+    db: ConvexDB = Depends(get_db),
 ):
     """List notes for authenticated user (newest first). Returns empty if no auth."""
     if not user_id:
