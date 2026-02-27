@@ -229,7 +229,10 @@ export default function App() {
           onNewAnalysis={handleNewAnalysis}
         />
 
-        <div className={clsx('flex-1 flex overflow-hidden min-h-0', state.view !== 'upload' && 'scroll-fade')}>
+        <div className={clsx('flex-1 flex overflow-hidden min-h-0 relative', state.view !== 'upload' && 'scroll-fade')}>
+          {/* Horizontal divider dots at component edges */}
+          <div className="hidden lg:block absolute top-0 left-0 -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50 z-10" />
+          <div className="hidden lg:block absolute top-0 right-0 -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50 z-10" />
           <main className="flex-1 overflow-y-auto pb-24 lg:pb-0 scrollbar-thin">
             <div className={clsx(
                 'animate-fade-in',
@@ -245,14 +248,10 @@ export default function App() {
 
           {/* ── Decorative divider between main & right panel ──────── */}
           <div className="hidden lg:block relative w-[20px] flex-shrink-0" aria-hidden="true">
-            {/* Horizontal line — full width: left edge to right edge */}
+            {/* Horizontal line — full component width */}
             <div className="absolute top-0 h-[1px] bg-surface-400/35" style={{ left: '-2000px', right: '-2000px' }} />
-            {/* Vertical line — full height: top to bottom */}
+            {/* Vertical line — full height */}
             <div className="absolute top-0 right-[9px] w-[1px] bottom-0 bg-surface-400/35" />
-            {/* Dot — horizontal start (left edge) */}
-            <div className="absolute top-0 left-0 -translate-y-1/2 -translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
-            {/* Dot — horizontal end (right edge) */}
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
             {/* Dot — junction */}
             <div className="absolute top-0 right-[9px] -translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
             {/* Dot — vertical bottom */}

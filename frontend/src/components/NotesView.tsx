@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import CustomSelect from './CustomSelect';
 import Tooltip from './Tooltip';
+import LineDivider from './LineDivider';
 import { listAnalyses, type AnalysisSummary } from '../lib/api';
 import {
   appStore,
@@ -1273,7 +1274,8 @@ export default function NotesView() {
                 { val: stats.done, label: 'Atlikta', dot: 'bg-emerald-500/30' },
                 { val: stats.highPriority, label: 'Aukštas prior.', dot: 'bg-red-500/30' },
               ].map((kpi, i) => (
-                <div key={kpi.label} className={clsx('relative px-5 py-4', i > 0 && 'border-l border-surface-700/40')}>
+                <div key={kpi.label} className="relative px-5 py-4">
+                  {i > 0 && <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />}
                   <span className="text-[28px] font-extrabold text-white tracking-tighter leading-none">{kpi.val}</span>
                   <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest mt-1">{kpi.label}</p>
                   <div className={clsx('absolute top-4 right-4 w-2 h-2 rounded-full', kpi.dot)} />

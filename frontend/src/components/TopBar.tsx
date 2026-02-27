@@ -6,6 +6,7 @@
 import { AlertTriangle, X, ChevronRight, Home, XCircle, Plus } from 'lucide-react';
 import { appStore, useStore, type AppView } from '../lib/store';
 import Tooltip from './Tooltip';
+import LineDivider from './LineDivider';
 
 interface Props {
   currentView: AppView;
@@ -63,7 +64,7 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
   const crumbs = getBreadcrumbs(currentView, state.reviewMode);
 
   return (
-    <header className="flex-shrink-0 border-b border-surface-700/20">
+    <header className="flex-shrink-0">
       <div className="flex items-center justify-between h-16 pl-6 pr-4 md:pl-10 md:pr-5">
         {/* Left — interactive breadcrumb */}
         <nav aria-label="Breadcrumb" className="flex items-center gap-0 min-w-0">
@@ -201,6 +202,7 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
           </button>
         </div>
       )}
+      <LineDivider orientation="horizontal" />
     </header>
   );
 }
