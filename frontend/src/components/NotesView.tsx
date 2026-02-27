@@ -1265,25 +1265,75 @@ export default function NotesView() {
           {/* ── KPI Cards ─────────────────────────────────────── */}
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
             {[
-              { val: stats.total, label: 'Viso' },
-              { val: stats.idea, label: 'Idėjos' },
-              { val: stats.inProgress, label: 'Vykdoma' },
-              { val: stats.done, label: 'Atlikta' },
-              { val: stats.highPriority, label: 'Aukštas prior.' },
+              {
+                val: stats.total, label: 'Viso',
+                gradient: 'from-brand-500/60 via-brand-600/30 to-brand-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                    <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                    <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                    <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ),
+              },
+              {
+                val: stats.idea, label: 'Idėjos',
+                gradient: 'from-blue-500/60 via-blue-600/30 to-blue-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <path d="M9 21h6M12 3a6 6 0 014 10.5V17H8v-3.5A6 6 0 0112 3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M10 17v2a2 2 0 004 0v-2" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ),
+              },
+              {
+                val: stats.inProgress, label: 'Vykdoma',
+                gradient: 'from-amber-500/60 via-amber-600/30 to-amber-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+              },
+              {
+                val: stats.done, label: 'Atlikta',
+                gradient: 'from-emerald-500/60 via-emerald-600/30 to-emerald-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+              },
+              {
+                val: stats.highPriority, label: 'Aukštas prior.',
+                gradient: 'from-red-500/60 via-red-600/30 to-red-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <path d="M12 3c.5 0 1 .3 1.2.7l7.5 13c.4.8-.1 1.8-1.2 1.8H4.5c-1 0-1.6-1-1.2-1.8l7.5-13c.2-.4.7-.7 1.2-.7z" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M12 9v4M12 16v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                ),
+              },
             ].map((kpi) => (
               <div
                 key={kpi.label}
-                className="group rounded-xl border border-surface-700/25 bg-surface-800/40 px-5 py-4
+                className={`group rounded-xl p-[1.5px] bg-gradient-to-br ${kpi.gradient}
                   transition-all duration-300 ease-out
-                  hover:-translate-y-0.5 hover:border-surface-500/30 hover:bg-surface-800/60
-                  hover:shadow-lg hover:shadow-black/20"
+                  hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/25`}
               >
-                <span className="text-2xl font-bold text-white tracking-tight leading-none transition-colors duration-300 group-hover:text-brand-300">
-                  {kpi.val}
-                </span>
-                <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5 transition-colors duration-300 group-hover:text-surface-400">
-                  {kpi.label}
-                </p>
+                <div className="rounded-[10px] bg-surface-900/90 px-5 py-4 h-full backdrop-blur-sm">
+                  <div className="text-surface-600 mb-2 transition-colors duration-300 group-hover:text-surface-400">
+                    {kpi.icon}
+                  </div>
+                  <span className="text-2xl font-bold text-white tracking-tight leading-none transition-colors duration-300 group-hover:text-brand-300">
+                    {kpi.val}
+                  </span>
+                  <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5 transition-colors duration-300 group-hover:text-surface-400">
+                    {kpi.label}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

@@ -403,8 +403,30 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
           {/* ── KPI Cards ─────────────────────────────────────── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
             {[
-              { value: stats.total, label: 'Analizės', suffix: stats.inProgress > 0 ? `+${stats.inProgress}` : undefined },
-              { value: stats.completed, label: 'Baigtos' },
+              {
+                value: stats.total,
+                label: 'Analizės',
+                suffix: stats.inProgress > 0 ? `+${stats.inProgress}` : undefined,
+                gradient: 'from-brand-500/60 via-brand-600/30 to-brand-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <rect x="3" y="3" width="14" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
+                    <rect x="7" y="1" width="14" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M11 7h6M11 11h6M11 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                ),
+              },
+              {
+                value: stats.completed,
+                label: 'Baigtos',
+                gradient: 'from-emerald-500/60 via-emerald-600/30 to-emerald-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ),
+              },
               {
                 value: stats.totalValue > 0
                   ? stats.totalValue >= 1_000_000
@@ -415,32 +437,52 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   : '—',
                 label: 'Bendra vertė',
                 sub: stats.totalValue > 0 ? 'EUR' : undefined,
+                gradient: 'from-amber-500/60 via-amber-600/30 to-amber-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21l2-7.5L2 9h7l3-7z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  </svg>
+                ),
               },
               {
                 value: stats.avgScore > 0 ? Math.round(stats.avgScore * 100) : '—',
                 label: 'Vid. kokybė',
                 sub: stats.avgScore > 0 ? '%' : undefined,
+                gradient: 'from-violet-500/60 via-violet-600/30 to-violet-500/60',
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                    <path d="M12 3l1.5 5H19l-4 3.5 1.5 5.5-4.5-3-4.5 3 1.5-5.5L5 8h5.5L12 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" opacity="0.4" />
+                    <path d="M12 7v10M8 11l4 2 4-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ),
               },
             ].map((kpi) => (
               <div
                 key={kpi.label}
-                className="group rounded-xl border border-surface-700/25 bg-surface-800/40 px-5 py-4
+                className={`group rounded-xl p-[1.5px] bg-gradient-to-br ${kpi.gradient}
                   transition-all duration-300 ease-out
-                  hover:-translate-y-0.5 hover:border-surface-500/30 hover:bg-surface-800/60
-                  hover:shadow-lg hover:shadow-black/20"
+                  hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/25`}
               >
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-2xl font-bold text-white tracking-tight leading-none transition-colors duration-300 group-hover:text-brand-300">
-                    {kpi.value}
-                  </span>
-                  {kpi.sub && <span className="text-sm font-medium text-surface-600 transition-colors duration-300 group-hover:text-surface-500">{kpi.sub}</span>}
-                  {kpi.suffix && (
-                    <span className="text-[10px] font-semibold text-brand-400/80 ml-0.5">{kpi.suffix}</span>
-                  )}
+                <div className="rounded-[10px] bg-surface-900/90 px-5 py-4 h-full backdrop-blur-sm">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="text-surface-600 transition-colors duration-300 group-hover:text-surface-400">
+                      {kpi.icon}
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-2xl font-bold text-white tracking-tight leading-none transition-colors duration-300 group-hover:text-brand-300">
+                      {kpi.value}
+                    </span>
+                    {kpi.sub && <span className="text-sm font-medium text-surface-600 transition-colors duration-300 group-hover:text-surface-500">{kpi.sub}</span>}
+                    {kpi.suffix && (
+                      <span className="text-[10px] font-semibold text-brand-400/80 ml-0.5">{kpi.suffix}</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5 transition-colors duration-300 group-hover:text-surface-400">
+                    {kpi.label}
+                  </p>
                 </div>
-                <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5 transition-colors duration-300 group-hover:text-surface-400">
-                  {kpi.label}
-                </p>
               </div>
             ))}
           </div>
