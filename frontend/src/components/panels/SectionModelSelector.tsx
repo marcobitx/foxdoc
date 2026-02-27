@@ -6,6 +6,7 @@
 import { ChevronRight, Sparkles } from 'lucide-react';
 import { appStore, useStore } from '../../lib/store';
 import { ProviderLogo } from '../ProviderLogos';
+import Tooltip from '../Tooltip';
 
 export default function SectionModelSelector() {
   const state = useStore(appStore);
@@ -14,56 +15,62 @@ export default function SectionModelSelector() {
   return (
     <div className="p-4 bg-transparent">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-brand-400" />
-          <h3 className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Modelis</h3>
-        </div>
-        <button
-          onClick={() => appStore.setState({ modelPanelOpen: true })}
-          className="text-[10px] text-brand-400 hover:text-brand-300 font-bold uppercase tracking-tight transition-colors flex items-center gap-1 group"
-        >
-          Keisti
-          <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-        </button>
+        <Tooltip content="AI modelis naudojamas analizei vykdyti" side="left">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+            <h3 className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Modelis</h3>
+          </div>
+        </Tooltip>
+        <Tooltip content="Pasirinkti AI modelį" side="left">
+          <button
+            onClick={() => appStore.setState({ modelPanelOpen: true })}
+            className="text-[10px] text-brand-400 hover:text-brand-300 font-bold uppercase tracking-tight transition-colors flex items-center gap-1 group"
+          >
+            Keisti
+            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+          </button>
+        </Tooltip>
       </div>
 
-      <button
-        onClick={() => appStore.setState({ modelPanelOpen: true })}
-        className="w-full text-left p-3 rounded-xl border border-surface-600/30 bg-surface-800/50 hover:bg-surface-700/55 hover:border-surface-500/40 transition-all group overflow-hidden"
-      >
-        {/* Left accent stripe */}
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0">
-            {m ? <ProviderLogo modelId={m.id} size={24} /> : (
-              <span className="text-[14px] font-bold text-surface-500">?</span>
-            )}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p
-              className="text-[13px] font-bold leading-tight transition-colors text-surface-50"
-            >
-              {m ? m.name : 'Nepasirinkta'}
-            </p>
-            {m && (
-              <div className="mt-2 space-y-1.5">
-                <div>
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded text-brand-400 bg-brand-500/5 border border-brand-500/10">
-                    {Math.round(m.context_length / 1000)}k ctx
-                  </span>
+      <Tooltip content={m ? `${m.name} — ${Math.round(m.context_length / 1000)}k kontekstas` : 'Paspauskite norėdami pasirinkti modelį'} side="left" className="w-full">
+        <button
+          onClick={() => appStore.setState({ modelPanelOpen: true })}
+          className="w-full text-left p-3 rounded-xl border border-surface-600/30 bg-surface-800/50 hover:bg-surface-700/55 hover:border-surface-500/40 transition-all group overflow-hidden"
+        >
+          {/* Left accent stripe */}
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0">
+              {m ? <ProviderLogo modelId={m.id} size={24} /> : (
+                <span className="text-[14px] font-bold text-surface-500">?</span>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p
+                className="text-[13px] font-bold leading-tight transition-colors text-surface-50"
+              >
+                {m ? m.name : 'Nepasirinkta'}
+              </p>
+              {m && (
+                <div className="mt-2 space-y-1.5">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded text-brand-400 bg-brand-500/5 border border-brand-500/10">
+                      {Math.round(m.context_length / 1000)}k ctx
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[10px] font-mono text-surface-400">
+                      <span className="text-surface-600">IN:</span> ${m.pricing_prompt.toFixed(2)}/1M
+                    </span>
+                    <span className="text-[10px] font-mono text-surface-400">
+                      <span className="text-surface-600">OUT:</span> ${m.pricing_completion.toFixed(2)}/1M
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-[10px] font-mono text-surface-400">
-                    <span className="text-surface-600">IN:</span> ${m.pricing_prompt.toFixed(2)}/1M
-                  </span>
-                  <span className="text-[10px] font-mono text-surface-400">
-                    <span className="text-surface-600">OUT:</span> ${m.pricing_completion.toFixed(2)}/1M
-                  </span>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      </button>
+        </button>
+      </Tooltip>
     </div>
   );
 }

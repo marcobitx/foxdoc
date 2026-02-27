@@ -6,12 +6,13 @@
 import { Brain } from 'lucide-react';
 import { appStore, useStore } from '../../lib/store';
 import { clsx } from 'clsx';
+import Tooltip from '../Tooltip';
 
 const LEVELS = [
-  { id: 'off',    label: 'Off',    tokens: '0',    desc: 'Be mąstymo — greičiausias' },
-  { id: 'low',    label: 'Low',    tokens: '2k',   desc: 'Trumpas mąstymas' },
-  { id: 'medium', label: 'Med',    tokens: '5k',   desc: 'Vidutinis mąstymas' },
-  { id: 'high',   label: 'High',   tokens: '10k',  desc: 'Gilus mąstymas' },
+  { id: 'off',    label: 'Off',    tokens: '0',    desc: 'Be mąstymo — greičiausias',  tooltip: 'Išjungtas mąstymas — greičiausias, mažiausia kaina' },
+  { id: 'low',    label: 'Low',    tokens: '2k',   desc: 'Trumpas mąstymas',            tooltip: '2 000 tokenų mąstymui — geras balansas' },
+  { id: 'medium', label: 'Med',    tokens: '5k',   desc: 'Vidutinis mąstymas',           tooltip: '5 000 tokenų mąstymui — gilesnis samprotavimas' },
+  { id: 'high',   label: 'High',   tokens: '10k',  desc: 'Gilus mąstymas',               tooltip: '10 000 tokenų mąstymui — maksimalus tikslumas' },
 ] as const;
 
 export default function SectionThinking() {
@@ -28,13 +29,17 @@ export default function SectionThinking() {
   return (
     <div className="p-4 bg-transparent">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Brain className="w-3.5 h-3.5 text-brand-400" />
-          <h3 className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Thinking</h3>
-        </div>
-        <span className="text-[10px] font-mono text-surface-400">
-          {meta.tokens} tokenų
-        </span>
+        <Tooltip content="AI mąstymo gylis — daugiau tokenų = tikslesni rezultatai, bet lėčiau" side="left">
+          <div className="flex items-center gap-2">
+            <Brain className="w-3.5 h-3.5 text-brand-400" />
+            <h3 className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Thinking</h3>
+          </div>
+        </Tooltip>
+        <Tooltip content={meta.tooltip} side="left">
+          <span className="text-[10px] font-mono text-surface-400">
+            {meta.tokens} tokenų
+          </span>
+        </Tooltip>
       </div>
 
       {/* Slider */}
@@ -56,16 +61,17 @@ export default function SectionThinking() {
         {/* Labels */}
         <div className="flex justify-between mt-1.5 px-0.5">
           {LEVELS.map((level, idx) => (
-            <button
-              key={level.id}
-              onClick={() => appStore.setState({ selectedThinking: level.id })}
-              className={clsx(
-                'text-[9px] font-bold uppercase tracking-wider transition-colors',
-                currentIdx === idx ? 'text-brand-400' : 'text-surface-600 hover:text-surface-400',
-              )}
-            >
-              {level.label}
-            </button>
+            <Tooltip key={level.id} content={level.tooltip} side="left">
+              <button
+                onClick={() => appStore.setState({ selectedThinking: level.id })}
+                className={clsx(
+                  'text-[9px] font-bold uppercase tracking-wider transition-colors',
+                  currentIdx === idx ? 'text-brand-400' : 'text-surface-600 hover:text-surface-400',
+                )}
+              >
+                {level.label}
+              </button>
+            </Tooltip>
           ))}
         </div>
       </div>
