@@ -392,12 +392,9 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
             <Inbox className="w-8 h-8 text-brand-400" />
           </div>
           <p className="text-xl font-bold text-white mb-2 tracking-tight">Analizių istorija tuščia</p>
-          <p className="text-[14px] text-surface-500 mb-8 max-w-xs mx-auto">
+          <p className="text-[14px] text-surface-500 max-w-xs mx-auto">
             Pradėkite naują analizę įkeldami dokumentus pagrindiniame lange.
           </p>
-          <button onClick={onNew} className="btn-professional">
-            Pradėti naują analizę
-          </button>
         </div>
       )}
 
