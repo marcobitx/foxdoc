@@ -47,7 +47,7 @@ const STATUS_META: Record<string, { label: string; cls: string }> = {
   CANCELED: { label: 'Atšaukta', cls: 'badge-neutral' },
 };
 
-type SortField = 'created_at' | 'project_title' | 'estimated_value' | 'status';
+type SortField = 'created_at' | 'project_title' | 'estimated_value' | 'completeness_score' | 'status';
 type SortDir = 'asc' | 'desc';
 
 function formatDate(iso: string): string {
@@ -233,6 +233,9 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
           break;
         case 'estimated_value':
           cmp = (a.estimated_value || 0) - (b.estimated_value || 0);
+          break;
+        case 'completeness_score':
+          cmp = (a.completeness_score || 0) - (b.completeness_score || 0);
           break;
         case 'status': {
           const order: Record<string, number> = {
@@ -658,8 +661,8 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
             <div className="grid gap-0 px-3 sm:px-5 py-3 border-b border-surface-700/40
                             text-[11px] text-surface-500 font-bold uppercase tracking-widest
                             grid-cols-[44px_1fr_auto_36px]
-                            md:grid-cols-[48px_1fr_100px_100px_90px_120px]
-                            lg:grid-cols-[48px_1fr_150px_100px_100px_90px_140px]">
+                            md:grid-cols-[48px_1fr_100px_100px_70px_90px_120px]
+                            lg:grid-cols-[48px_1fr_150px_100px_100px_70px_90px_140px]">
               {/* Select all checkbox */}
               <div className="flex items-center justify-center">
                 <Tooltip content="Pažymėti visus" side="bottom">
@@ -700,6 +703,12 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                 Vertė <SortIcon field="estimated_value" />
               </button>
               <button
+                onClick={() => toggleSort('completeness_score')}
+                className="hidden md:flex items-center gap-1.5 justify-center hover:text-surface-300 transition-colors"
+              >
+                Kokybė <SortIcon field="completeness_score" />
+              </button>
+              <button
                 onClick={() => toggleSort('status')}
                 className="flex items-center gap-1.5 justify-center hover:text-surface-300 transition-colors"
               >
@@ -724,16 +733,15 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
               return (
                 <div
                   key={a.id}
-                  onClick={() => clickable && onSelect(a.id)}
                   className={`grid gap-0 px-3 sm:px-5 py-3.5 w-full text-left
                              grid-cols-[44px_1fr_auto_36px]
-                             md:grid-cols-[48px_1fr_100px_100px_90px_120px]
-                             lg:grid-cols-[48px_1fr_150px_100px_100px_90px_140px]
+                             md:grid-cols-[48px_1fr_100px_100px_70px_90px_120px]
+                             lg:grid-cols-[48px_1fr_150px_100px_100px_70px_90px_140px]
                              border-b border-surface-700/20 last:border-b-0 group
                              transition-all duration-200
                              hover:bg-surface-800/50 animate-stagger
                              ${isSelected ? 'bg-brand-500/5 border-l-2 border-l-brand-500/40' : ''}
-                             ${!clickable ? 'opacity-60' : 'cursor-pointer'}`}
+                             ${!clickable ? 'opacity-60' : ''}`}
                   style={{ animationDelay: `${i * 30}ms` }}
                 >
                   {/* Row checkbox */}
@@ -772,6 +780,15 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                       {a.estimated_value != null && (
                         <span className="md:hidden text-[11px] font-bold text-amber-400">
                           {formatValue(a.estimated_value, a.currency)}
+                        </span>
+                      )}
+                      {/* Quality inline — mobile only */}
+                      {a.completeness_score != null && (
+                        <span className={`md:hidden text-[11px] font-bold ${
+                          Math.round(a.completeness_score * 100) >= 80 ? 'text-emerald-400' :
+                          Math.round(a.completeness_score * 100) >= 50 ? 'text-amber-400' : 'text-red-400'
+                        }`}>
+                          {Math.round(a.completeness_score * 100)}%
                         </span>
                       )}
                       {a.model && (
@@ -829,6 +846,25 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                     }`}>
                       {formatValue(a.estimated_value, a.currency)}
                     </span>
+                  </div>
+
+                  {/* Quality score */}
+                  <div className="hidden md:flex items-center justify-center">
+                    {a.completeness_score != null ? (() => {
+                      const score = Math.round(a.completeness_score * 100);
+                      const color = score >= 80 ? 'text-emerald-400' : score >= 50 ? 'text-amber-400' : 'text-red-400';
+                      const bgColor = score >= 80 ? 'bg-emerald-500' : score >= 50 ? 'bg-amber-500' : 'bg-red-500';
+                      return (
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-6 h-1 rounded-full bg-surface-700/60 overflow-hidden">
+                            <div className={`h-full rounded-full ${bgColor}`} style={{ width: `${Math.min(score, 100)}%` }} />
+                          </div>
+                          <span className={`text-[12px] font-bold font-mono ${color}`}>{score}%</span>
+                        </div>
+                      );
+                    })() : (
+                      <span className="text-[12px] text-surface-600">—</span>
+                    )}
                   </div>
 
                   {/* Status */}
