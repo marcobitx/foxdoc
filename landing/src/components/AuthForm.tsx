@@ -73,7 +73,7 @@ function AuthFormInner() {
 
   if (redirecting) {
     return (
-      <div className="text-center text-neutral-300 py-8">
+      <div className="text-center text-[#6d5f55] py-8">
         Nukreipiama į aplikaciją...
       </div>
     );
@@ -83,7 +83,7 @@ function AuthFormInner() {
   if (isAuthenticated && token && !justSignedIn) {
     return (
       <div className="w-full max-w-md mx-auto space-y-4">
-        <p className="text-center text-neutral-300 text-sm mb-2">
+        <p className="text-center text-[#6d5f55] text-sm mb-2">
           Jūs jau prisijungęs.
         </p>
         <button
@@ -97,7 +97,7 @@ function AuthFormInner() {
             await signOut();
             clearSignInPending();
           }}
-          className="w-full py-3 px-4 rounded-lg bg-[#2a2320] text-neutral-300 font-medium hover:bg-[#3e332d] border border-[#3e332d] transition-colors"
+          className="w-full py-3 px-4 rounded-lg bg-[#f0e8df] text-[#3d3028] font-medium hover:bg-[#e8dfd5] border border-[#e5ddd4] transition-colors"
         >
           Atsijungti ir prisijungti kitu
         </button>
@@ -145,13 +145,13 @@ function AuthFormInner() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="flex mb-6 bg-[#2a2320] rounded-lg p-1">
+      <div className="flex mb-6 bg-[#f0e8df] rounded-lg p-1">
         <button
           onClick={() => setTab("signIn")}
           className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all ${
             tab === "signIn"
-              ? "bg-[#3e332d] text-white shadow-sm"
-              : "text-neutral-200 hover:text-white"
+              ? "bg-white text-[#1a1512] shadow-sm"
+              : "text-[#6d5f55] hover:text-[#1a1512]"
           }`}
         >
           Prisijungti
@@ -160,8 +160,8 @@ function AuthFormInner() {
           onClick={() => setTab("signUp")}
           className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all ${
             tab === "signUp"
-              ? "bg-[#3e332d] text-white shadow-sm"
-              : "text-neutral-200 hover:text-white"
+              ? "bg-white text-[#1a1512] shadow-sm"
+              : "text-[#6d5f55] hover:text-[#1a1512]"
           }`}
         >
           Registruotis
@@ -171,7 +171,7 @@ function AuthFormInner() {
       <button
         onClick={handleGoogle}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg bg-white text-neutral-900 font-medium hover:bg-neutral-100 transition-colors disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg bg-white text-neutral-900 font-medium hover:bg-neutral-50 border border-[#e5ddd4] transition-colors disabled:opacity-50"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
@@ -183,37 +183,37 @@ function AuthFormInner() {
       </button>
 
       <div className="flex items-center gap-3 my-6">
-        <div className="flex-1 h-px bg-[#3e332d]"></div>
-        <span className="text-xs text-neutral-400 uppercase tracking-wider">arba</span>
-        <div className="flex-1 h-px bg-[#3e332d]"></div>
+        <div className="flex-1 h-px bg-[#e5ddd4]"></div>
+        <span className="text-xs text-[#a89888] uppercase tracking-wider">arba</span>
+        <div className="flex-1 h-px bg-[#e5ddd4]"></div>
       </div>
 
       <form onSubmit={handleEmailAuth} className="space-y-4">
         {tab === "signUp" && (
           <div>
-            <label className="block text-sm text-neutral-200 mb-1.5">Vardas</label>
+            <label className="block text-sm text-[#3d3028] mb-1.5">Vardas</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Jonas Jonaitis"
-              className="w-full px-4 py-3 bg-[#2a2320] border border-[#3e332d] rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full px-4 py-3 bg-[#f8f3ed] border border-[#e5ddd4] rounded-lg text-[#1a1512] placeholder-[#a89888] focus:outline-none focus:border-amber-500 transition-colors"
             />
           </div>
         )}
         <div>
-          <label className="block text-sm text-neutral-200 mb-1.5">El. paštas</label>
+          <label className="block text-sm text-[#3d3028] mb-1.5">El. paštas</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="jonas@organizacija.lt"
-            className="w-full px-4 py-3 bg-[#2a2320] border border-[#3e332d] rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full px-4 py-3 bg-[#f8f3ed] border border-[#e5ddd4] rounded-lg text-[#1a1512] placeholder-[#a89888] focus:outline-none focus:border-amber-500 transition-colors"
           />
         </div>
         <div>
-          <label className="block text-sm text-neutral-200 mb-1.5">Slaptažodis</label>
+          <label className="block text-sm text-[#3d3028] mb-1.5">Slaptažodis</label>
           <input
             type="password"
             value={password}
@@ -221,12 +221,12 @@ function AuthFormInner() {
             required
             minLength={8}
             placeholder="Mažiausiai 8 simboliai"
-            className="w-full px-4 py-3 bg-[#2a2320] border border-[#3e332d] rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full px-4 py-3 bg-[#f8f3ed] border border-[#e5ddd4] rounded-lg text-[#1a1512] placeholder-[#a89888] focus:outline-none focus:border-amber-500 transition-colors"
           />
         </div>
 
         {error && (
-          <div className="text-red-400 text-sm bg-red-500/10 px-4 py-2.5 rounded-lg">
+          <div className="text-red-600 text-sm bg-red-50 px-4 py-2.5 rounded-lg border border-red-200">
             {error}
           </div>
         )}
@@ -241,14 +241,14 @@ function AuthFormInner() {
       </form>
 
       {tab === "signIn" && (
-        <p className="text-center text-sm text-neutral-400 mt-4">
+        <p className="text-center text-sm text-[#a89888] mt-4">
           <button className="text-amber-500 hover:underline">
             Pamiršote slaptažodį?
           </button>
         </p>
       )}
 
-      <p className="text-center text-xs text-neutral-400 mt-6">
+      <p className="text-center text-xs text-[#a89888] mt-6">
         {tab === "signUp"
           ? "Registruodamiesi sutinkate su naudojimo sąlygomis ir privatumo politika."
           : "Neturite paskyros? "}
