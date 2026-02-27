@@ -27,7 +27,7 @@ export default function UploadView() {
           <div className="h-4 w-px bg-surface-700/40" />
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest">AI analizė paruošta</span>
+            <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest">Paruošta analizuoti</span>
           </div>
         </div>
 
