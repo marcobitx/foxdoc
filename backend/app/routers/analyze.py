@@ -20,6 +20,7 @@ from sse_starlette.sse import EventSourceResponse
 from app.auth import get_optional_user_id
 from app.config import AppSettings, get_settings
 from app.convex_client import ConvexDB, get_db
+from app.middleware.auth import require_auth
 from app.models.schemas import (
     AggregatedReport,
     AnalysisDetail,
@@ -162,6 +163,7 @@ def _build_detail(record: dict, documents: list[dict]) -> AnalysisDetail:
 async def create_analysis(
     files: list[UploadFile],
     model: str = Form("anthropic/claude-sonnet-4"),
+    user_id: str = Depends(require_auth),
     db: ConvexDB = Depends(get_db),
     settings: AppSettings = Depends(get_settings),
     user_id: str | None = Depends(get_optional_user_id),
@@ -467,6 +469,7 @@ async def get_document_content(
 async def list_analyses(
     limit: int = Query(20, le=100),
     offset: int = Query(0, ge=0),
+    user_id: str = Depends(require_auth),
     db: ConvexDB = Depends(get_db),
     user_id: str | None = Depends(get_optional_user_id),
 ):

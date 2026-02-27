@@ -17,6 +17,7 @@ export const create = mutation({
     color: v.optional(v.string()),
     pinned: v.boolean(),
     analysis_id: v.optional(v.string()),
+    user_id: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -36,6 +37,13 @@ export const create = mutation({
       const analysisDocId = ctx.db.normalizeId("analyses", args.analysis_id);
       if (analysisDocId) {
         insertArgs.analysis_id = analysisDocId;
+      }
+    }
+
+    if (args.user_id) {
+      const userDocId = ctx.db.normalizeId("users", args.user_id);
+      if (userDocId) {
+        insertArgs.user_id = userDocId;
       }
     }
 
@@ -179,10 +187,26 @@ export const listByUser = query({
 });
 
 export const allTags = query({
-  handler: async (ctx) => {
-    const all = await ctx.db.query("notes").collect();
+  args: {
+    user_id: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let notes;
+    if (args.user_id) {
+      const userDocId = ctx.db.normalizeId("users", args.user_id);
+      if (userDocId) {
+        notes = await ctx.db
+          .query("notes")
+          .withIndex("by_user", (q) => q.eq("user_id", userDocId))
+          .collect();
+      } else {
+        notes = [];
+      }
+    } else {
+      notes = await ctx.db.query("notes").collect();
+    }
     const tagCounts: Record<string, number> = {};
-    for (const note of all) {
+    for (const note of notes) {
       for (const tag of note.tags) {
         tagCounts[tag] = (tagCounts[tag] || 0) + 1;
       }
