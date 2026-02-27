@@ -401,29 +401,34 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
       {!loading && analyses.length > 0 && (
         <>
           {/* ── KPI Cards ─────────────────────────────────────── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
               {
                 value: stats.total,
                 label: 'Analizės',
                 suffix: stats.inProgress > 0 ? `+${stats.inProgress}` : undefined,
-                gradient: 'from-brand-500/60 via-brand-600/30 to-brand-500/60',
+                glow: 'shadow-[0_0_15px_rgba(245,158,11,0.15)]',
+                gradient: 'from-brand-500/50 via-brand-400/20 to-brand-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <rect x="3" y="3" width="14" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
-                    <rect x="7" y="1" width="14" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M11 7h6M11 11h6M11 15h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <rect x="5" y="4" width="13" height="17" rx="2.5" stroke="currentColor" strokeWidth="1.2" opacity="0.35" />
+                    <rect x="8" y="2" width="13" height="17" rx="2.5" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M12 7.5h5.5M12 11h5.5M12 14.5h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                    <circle cx="21" cy="21" r="5" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M21 18.5v5M18.5 21h5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
                   </svg>
                 ),
               },
               {
                 value: stats.completed,
                 label: 'Baigtos',
-                gradient: 'from-emerald-500/60 via-emerald-600/30 to-emerald-500/60',
+                glow: 'shadow-[0_0_15px_rgba(16,185,129,0.15)]',
+                gradient: 'from-emerald-500/50 via-emerald-400/20 to-emerald-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 3a11 11 0 110 22 11 11 0 010-22z" stroke="currentColor" strokeWidth="1.2" strokeDasharray="3 2" />
+                    <circle cx="14" cy="14" r="7" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M10.5 14.5l2 2 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 ),
               },
@@ -437,10 +442,12 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   : '—',
                 label: 'Bendra vertė',
                 sub: stats.totalValue > 0 ? 'EUR' : undefined,
-                gradient: 'from-amber-500/60 via-amber-600/30 to-amber-500/60',
+                glow: 'shadow-[0_0_15px_rgba(245,158,11,0.12)]',
+                gradient: 'from-amber-500/50 via-yellow-400/20 to-amber-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21l2-7.5L2 9h7l3-7z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 3l3.5 5.5H24l-5 4.5 2 6.5-7-4-7 4 2-6.5-5-4.5h6.5L14 3z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" opacity="0.35" />
+                    <path d="M14 8l2 3.5h4l-3 2.5 1 4-4-2.5-4 2.5 1-4-3-2.5h4L14 8z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
                   </svg>
                 ),
               },
@@ -448,38 +455,38 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                 value: stats.avgScore > 0 ? Math.round(stats.avgScore * 100) : '—',
                 label: 'Vid. kokybė',
                 sub: stats.avgScore > 0 ? '%' : undefined,
-                gradient: 'from-violet-500/60 via-violet-600/30 to-violet-500/60',
+                glow: 'shadow-[0_0_15px_rgba(139,92,246,0.15)]',
+                gradient: 'from-violet-500/50 via-purple-400/20 to-violet-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <path d="M12 3l1.5 5H19l-4 3.5 1.5 5.5-4.5-3-4.5 3 1.5-5.5L5 8h5.5L12 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" opacity="0.4" />
-                    <path d="M12 7v10M8 11l4 2 4-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 4l2.5 5 5.5.8-4 3.9.9 5.5L14 16.5l-4.9 2.7.9-5.5-4-3.9 5.5-.8L14 4z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+                    <circle cx="14" cy="14" r="11" stroke="currentColor" strokeWidth="1.2" opacity="0.25" />
+                    <path d="M7 7l2 2M21 7l-2 2M7 21l2-2M21 21l-2-2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.3" />
                   </svg>
                 ),
               },
             ].map((kpi) => (
               <div
                 key={kpi.label}
-                className={`group rounded-xl p-[1.5px] bg-gradient-to-br ${kpi.gradient}
-                  transition-all duration-300 ease-out
-                  hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/25`}
+                className={`group rounded-xl p-[2px] bg-gradient-to-br ${kpi.gradient} ${kpi.glow}
+                  transition-all duration-500 ease-out hover:shadow-[0_0_20px_rgba(245,158,11,0.1)]`}
               >
-                <div className="rounded-[10px] bg-surface-900 px-5 py-4 h-full">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="text-surface-600 transition-colors duration-300 group-hover:text-surface-400">
+                <div className="rounded-[10px] bg-surface-800/60 px-5 py-4 h-full">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="text-surface-500 transition-colors duration-300 group-hover:text-surface-300">
                       {kpi.icon}
                     </div>
                   </div>
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl font-bold text-white tracking-tight leading-none transition-colors duration-300 group-hover:text-brand-300">
+                    <span className="text-[26px] font-bold text-white tracking-tight leading-none">
                       {kpi.value}
                     </span>
-                    {kpi.sub && <span className="text-sm font-medium text-surface-600 transition-colors duration-300 group-hover:text-surface-500">{kpi.sub}</span>}
+                    {kpi.sub && <span className="text-sm font-medium text-surface-600">{kpi.sub}</span>}
                     {kpi.suffix && (
                       <span className="text-[10px] font-semibold text-brand-400/80 ml-0.5">{kpi.suffix}</span>
                     )}
                   </div>
-                  <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5 transition-colors duration-300 group-hover:text-surface-400">
+                  <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5">
                     {kpi.label}
                   </p>
                 </div>

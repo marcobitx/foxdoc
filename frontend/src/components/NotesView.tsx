@@ -1263,74 +1263,84 @@ export default function NotesView() {
       {!notesLoading && notesList.length > 0 && (
         <>
           {/* ── KPI Cards ─────────────────────────────────────── */}
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
             {[
               {
                 val: stats.total, label: 'Viso',
-                gradient: 'from-brand-500/60 via-brand-600/30 to-brand-500/60',
+                glow: 'shadow-[0_0_15px_rgba(245,158,11,0.15)]',
+                gradient: 'from-brand-500/50 via-brand-400/20 to-brand-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-                    <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-                    <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-                    <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <rect x="4" y="4" width="8.5" height="8.5" rx="2" stroke="currentColor" strokeWidth="1.2" />
+                    <rect x="15.5" y="4" width="8.5" height="8.5" rx="2" stroke="currentColor" strokeWidth="1.2" />
+                    <rect x="4" y="15.5" width="8.5" height="8.5" rx="2" stroke="currentColor" strokeWidth="1.2" />
+                    <rect x="15.5" y="15.5" width="8.5" height="8.5" rx="2" stroke="currentColor" strokeWidth="1.2" opacity="0.4" />
+                    <path d="M19.75 18v4M17.75 20h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
                   </svg>
                 ),
               },
               {
                 val: stats.idea, label: 'Idėjos',
-                gradient: 'from-blue-500/60 via-blue-600/30 to-blue-500/60',
+                glow: 'shadow-[0_0_15px_rgba(59,130,246,0.15)]',
+                gradient: 'from-blue-500/50 via-blue-400/20 to-blue-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <path d="M9 21h6M12 3a6 6 0 014 10.5V17H8v-3.5A6 6 0 0112 3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M10 17v2a2 2 0 004 0v-2" stroke="currentColor" strokeWidth="1.5" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 4a7.5 7.5 0 015 13.1V20h-10v-2.9A7.5 7.5 0 0114 4z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                    <path d="M11 20v1.5a3 3 0 006 0V20" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M14 8v3M11.5 10l1.5 1.5M16.5 10l-1.5 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+                    <path d="M10 24h8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
                   </svg>
                 ),
               },
               {
                 val: stats.inProgress, label: 'Vykdoma',
-                gradient: 'from-amber-500/60 via-amber-600/30 to-amber-500/60',
+                glow: 'shadow-[0_0_15px_rgba(245,158,11,0.12)]',
+                gradient: 'from-amber-500/50 via-yellow-400/20 to-amber-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M15 3L5 16h8.5l-1.5 9L23 12h-8.5L16 3h-1z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M8 6l-3 2M20 6l3 2M6 22l2-1M22 22l-2-1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.3" />
                   </svg>
                 ),
               },
               {
                 val: stats.done, label: 'Atlikta',
-                gradient: 'from-emerald-500/60 via-emerald-600/30 to-emerald-500/60',
+                glow: 'shadow-[0_0_15px_rgba(16,185,129,0.15)]',
+                gradient: 'from-emerald-500/50 via-emerald-400/20 to-emerald-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 3a11 11 0 110 22 11 11 0 010-22z" stroke="currentColor" strokeWidth="1.2" strokeDasharray="3 2" />
+                    <circle cx="14" cy="14" r="7" stroke="currentColor" strokeWidth="1.2" />
+                    <path d="M10.5 14.5l2 2 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 ),
               },
               {
                 val: stats.highPriority, label: 'Aukštas prior.',
-                gradient: 'from-red-500/60 via-red-600/30 to-red-500/60',
+                glow: 'shadow-[0_0_15px_rgba(239,68,68,0.15)]',
+                gradient: 'from-red-500/50 via-red-400/20 to-red-600/50',
                 icon: (
-                  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                    <path d="M12 3c.5 0 1 .3 1.2.7l7.5 13c.4.8-.1 1.8-1.2 1.8H4.5c-1 0-1.6-1-1.2-1.8l7.5-13c.2-.4.7-.7 1.2-.7z" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M12 9v4M12 16v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
+                    <path d="M14 4c3 1 5 4 5 8-1 3-2 5-5 7-3-2-4-4-5-7 0-4 2-7 5-8z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+                    <path d="M14 4c1.5 2 2 4 2 6s-.5 4-2 6c-1.5-2-2-4-2-6s.5-4 2-6z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" opacity="0.35" />
+                    <path d="M12 22h4M11 24h6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
                   </svg>
                 ),
               },
             ].map((kpi) => (
               <div
                 key={kpi.label}
-                className={`group rounded-xl p-[1.5px] bg-gradient-to-br ${kpi.gradient}
-                  transition-all duration-300 ease-out
-                  hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/25`}
+                className={`group rounded-xl p-[2px] bg-gradient-to-br ${kpi.gradient} ${kpi.glow}
+                  transition-all duration-500 ease-out hover:shadow-[0_0_20px_rgba(245,158,11,0.1)]`}
               >
-                <div className="rounded-[10px] bg-surface-900 px-5 py-4 h-full">
-                  <div className="text-surface-600 mb-2 transition-colors duration-300 group-hover:text-surface-400">
+                <div className="rounded-[10px] bg-surface-800/60 px-5 py-4 h-full">
+                  <div className="text-surface-500 mb-3 transition-colors duration-300 group-hover:text-surface-300">
                     {kpi.icon}
                   </div>
-                  <span className="text-2xl font-bold text-white tracking-tight leading-none transition-colors duration-300 group-hover:text-brand-300">
+                  <span className="text-[26px] font-bold text-white tracking-tight leading-none">
                     {kpi.val}
                   </span>
-                  <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5 transition-colors duration-300 group-hover:text-surface-400">
+                  <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5">
                     {kpi.label}
                   </p>
                 </div>
