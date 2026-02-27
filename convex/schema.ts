@@ -92,4 +92,28 @@ export default defineSchema({
     updated_at: v.number(),      // epoch ms
   })
     .index("by_status", ["status"]),
+
+  // ── Auth relay codes (cross-domain session transfer) ──
+  auth_relay_codes: defineTable({
+    code: v.string(),
+    user_id: v.id("users"),
+    session_id: v.string(),
+    jwt: v.string(),
+    refresh_token: v.string(),
+    expires_at: v.number(),
+    used: v.boolean(),
+  })
+    .index("by_code", ["code"])
+    .index("by_expires_at", ["expires_at"]),
+
+  // ── User credits (Free plan auto-assigned on registration) ──
+  user_credits: defineTable({
+    user_id: v.id("users"),
+    plan: v.string(),           // "free" | "starter" | "pro" | "team"
+    credits_total: v.number(),  // credits per month
+    credits_used: v.number(),   // credits used this period
+    period_start: v.number(),   // epoch ms — start of current billing period
+    period_end: v.number(),     // epoch ms — end of current billing period
+  })
+    .index("by_user", ["user_id"]),
 });
