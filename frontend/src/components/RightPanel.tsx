@@ -55,18 +55,18 @@ export default function RightPanel({ currentView, analysisId }: Props) {
           : 'w-[320px]',
       )}
     >
-      {/* Decorative cross divider — horizontal + vertical lines with dots */}
+      {/* Decorative L-divider — horizontal + vertical lines joined with dots */}
       <div className="absolute inset-0 pointer-events-none z-10" aria-hidden="true">
-        {/* Horizontal line — from left edge to 12px right, at y=50% of top area */}
-        <div className="absolute top-[20px] left-0 w-[10px] h-[1px] bg-surface-500/30" />
-        {/* Vertical line — from junction down to near bottom */}
-        <div className="absolute top-[20px] left-0 w-[1px] bottom-[20px] bg-surface-500/30" />
-        {/* Dot — start of horizontal line */}
-        <div className="absolute top-[20px] left-0 -translate-y-1/2 w-[4px] h-[4px] rounded-full bg-surface-500/40" />
-        {/* Dot — end of horizontal line / junction */}
-        <div className="absolute top-[20px] left-[10px] -translate-y-1/2 -translate-x-1/2 w-[4px] h-[4px] rounded-full bg-surface-500/40" />
-        {/* Dot — bottom end of vertical line */}
-        <div className="absolute bottom-[20px] left-0 -translate-x-[calc(50%-0.5px)] w-[4px] h-[4px] rounded-full bg-surface-500/40" />
+        {/* Horizontal line — from dot to junction */}
+        <div className="absolute top-[20px] left-[2px] w-[10px] h-[1px] bg-surface-400/40" />
+        {/* Vertical line — from junction down to bottom dot */}
+        <div className="absolute top-[20px] left-[12px] w-[1px] bottom-[20px] bg-surface-400/40" style={{ transform: 'translateX(-0.5px)' }} />
+        {/* Dot — start of horizontal */}
+        <div className="absolute top-[20px] left-0 -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
+        {/* Dot — junction where lines meet */}
+        <div className="absolute top-[20px] left-[12px] -translate-y-1/2 -translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
+        {/* Dot — bottom of vertical */}
+        <div className="absolute bottom-[20px] left-[12px] translate-y-1/2 -translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
       </div>
       {/* Tips views — collapsible, identical pattern to IconSidebar */}
       {isTipsView && (
