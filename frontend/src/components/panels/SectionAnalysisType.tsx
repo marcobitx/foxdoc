@@ -51,9 +51,16 @@ export default function SectionAnalysisType() {
               <Icon className="w-3.5 h-3.5 text-brand-400" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-bold leading-tight text-surface-50">
-                {meta.label}
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-[13px] font-bold leading-tight text-surface-50">
+                  {meta.label}
+                </p>
+                {type === 'detailed' && (
+                  <span className="inline-flex items-center px-1.5 py-[1px] rounded-full text-[7px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 border border-brand-500/20 flex-shrink-0">
+                    Rek.
+                  </span>
+                )}
+              </div>
               <p className="text-[11px] text-surface-500 mt-1 leading-snug">
                 {meta.desc}
               </p>

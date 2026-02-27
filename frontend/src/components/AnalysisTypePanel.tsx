@@ -14,13 +14,14 @@ interface AnalysisTypeOption {
   icon: any;
   label: string;
   desc: string;
+  recommended?: boolean;
 }
 
 const ANALYSIS_TYPES: AnalysisTypeOption[] = [
   { id: 'quick',        icon: Zap,           label: 'Greita apžvalga',  desc: 'Pagrindinė info: pavadinimas, vertė, terminai, organizacija. Greičiausias variantas.' },
   { id: 'requirements', icon: ClipboardList, label: 'Reikalavimai',     desc: 'Kvalifikacija, techninė specifikacija, vertinimo kriterijai, pateikimo reikalavimai.' },
   { id: 'risks',        icon: ShieldAlert,   label: 'Rizikų analizė',  desc: 'Rizikos, baudos, netesybos, terminai, sutarties sąlygos, finansinės garantijos.' },
-  { id: 'detailed',     icon: Search,        label: 'Detali analizė',  desc: 'Pilna analizė — visi 13 laukų maksimaliai detaliai. Rekomenduojama naujam pirkimui.' },
+  { id: 'detailed',     icon: Search,        label: 'Detali analizė',  desc: 'Pilna analizė — visi 13 laukų maksimaliai detaliai. Rekomenduojama naujam pirkimui.', recommended: true },
   { id: 'custom',       icon: Pencil,        label: 'Individuali',      desc: 'Aprašykite savo instrukcijas laisvu tekstu — AI analizuos pagal jūsų poreikius.' },
 ];
 
@@ -145,12 +146,19 @@ export default function AnalysisTypePanel() {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className={clsx(
-                    "text-[13px] font-bold leading-tight transition-colors",
-                    isSelected ? "text-brand-300" : "text-surface-100"
-                  )}>
-                    {type.label}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className={clsx(
+                      "text-[13px] font-bold leading-tight transition-colors",
+                      isSelected ? "text-brand-300" : "text-surface-100"
+                    )}>
+                      {type.label}
+                    </p>
+                    {type.recommended && (
+                      <span className="inline-flex items-center px-1.5 py-[1px] rounded-full text-[8px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 border border-brand-500/20">
+                        Rekomenduojama
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[11px] text-surface-500 mt-1 leading-snug">
                     {type.desc}
                   </p>
