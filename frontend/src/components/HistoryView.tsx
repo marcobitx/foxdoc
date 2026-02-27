@@ -28,7 +28,6 @@ import { listAnalyses, deleteAnalysis, listNotes, type AnalysisSummary } from '.
 import CustomSelect from './CustomSelect';
 import ScrollText from './ScrollText';
 import Tooltip from './Tooltip';
-import LineDivider from './LineDivider';
 
 interface Props {
   onSelect: (id: string) => void;
@@ -401,102 +400,49 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
       {/* ── Dashboard Content ────────────────────────────────── */}
       {!loading && analyses.length > 0 && (
         <>
-          {/* ── KPI Strip ──────────────────────────────────────── */}
-          <div className="relative rounded-2xl border border-surface-600/30 bg-surface-800/55 mb-6">
-            {/* Decorative top gradient line */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-brand-500/0 via-brand-500/40 to-brand-500/0 rounded-t-2xl overflow-hidden" />
-
-            <div className="grid grid-cols-2 lg:grid-cols-4">
-              {/* Total Analyses */}
-              <div className="relative px-6 py-5 group">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[32px] font-extrabold text-white tracking-tighter leading-none">{stats.total}</span>
-                  {stats.inProgress > 0 && (
-                    <span className="text-[11px] font-bold text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded-md">
-                      +{stats.inProgress} vykdoma
-                    </span>
-                  )}
-                </div>
-                <p className="text-[11px] text-surface-500 font-bold uppercase tracking-widest mt-1.5">Analizės</p>
-                {/* Accent dot */}
-                <div className="absolute top-5 right-5 w-2 h-2 rounded-full bg-brand-500/30" />
-              </div>
-
-              {/* Completed */}
-              <div className="relative px-6 py-5 group">
-                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[32px] font-extrabold text-white tracking-tighter leading-none">{stats.completed}</span>
-                  {stats.failed > 0 && (
-                    <span className="text-[11px] font-bold text-red-400 bg-red-500/10 px-1.5 py-0.5 rounded-md">
-                      {stats.failed} klaidos
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <p className="text-[11px] text-surface-500 font-bold uppercase tracking-widest">Baigtos</p>
-                  {stats.total > 0 && (
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-12 h-1 rounded-full bg-surface-800 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-emerald-500/70"
-                          style={{ width: `${Math.round((stats.completed / stats.total) * 100)}%`, transition: 'width 0.6s ease-out' }}
-                        />
-                      </div>
-                      <span className="text-[10px] font-mono text-surface-600">{Math.round((stats.completed / stats.total) * 100)}%</span>
-                    </div>
-                  )}
-                </div>
-                <div className="absolute top-5 right-5 w-2 h-2 rounded-full bg-emerald-500/30" />
-              </div>
-
-              {/* Total Value */}
-              <div className="relative px-6 py-5 group">
-                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
-                <span className="text-[32px] font-extrabold text-white tracking-tighter leading-none">
-                  {stats.totalValue > 0
-                    ? stats.totalValue >= 1_000_000
-                      ? `${(stats.totalValue / 1_000_000).toFixed(1)}M`
-                      : stats.totalValue >= 1_000
-                        ? `${(stats.totalValue / 1_000).toFixed(0)}K`
-                        : formatValue(stats.totalValue, 'EUR')
-                    : '—'}
-                </span>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <p className="text-[11px] text-surface-500 font-bold uppercase tracking-widest">Bendra vertė</p>
-                  {stats.totalValue > 0 && (
-                    <span className="text-[10px] font-mono text-surface-600">EUR</span>
-                  )}
-                </div>
-                <div className="absolute top-5 right-5 w-2 h-2 rounded-full bg-amber-500/30" />
-              </div>
-
-              {/* Avg Quality */}
-              <div className="relative px-6 py-5 group">
-                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
-                <div className="flex items-baseline gap-1">
-                  <span className="text-[32px] font-extrabold tracking-tighter leading-none"
-                    style={{ color: stats.avgScore >= 0.8 ? '#34d399' : stats.avgScore >= 0.5 ? '#fbbf24' : stats.avgScore > 0 ? '#f87171' : 'white' }}>
-                    {stats.avgScore > 0 ? Math.round(stats.avgScore * 100) : '—'}
+          {/* ── KPI Cards ─────────────────────────────────────── */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {[
+              { value: stats.total, label: 'Analizės', suffix: stats.inProgress > 0 ? `+${stats.inProgress}` : undefined },
+              { value: stats.completed, label: 'Baigtos' },
+              {
+                value: stats.totalValue > 0
+                  ? stats.totalValue >= 1_000_000
+                    ? `${(stats.totalValue / 1_000_000).toFixed(1)}M`
+                    : stats.totalValue >= 1_000
+                      ? `${(stats.totalValue / 1_000).toFixed(0)}K`
+                      : formatValue(stats.totalValue, 'EUR')
+                  : '—',
+                label: 'Bendra vertė',
+                sub: stats.totalValue > 0 ? 'EUR' : undefined,
+              },
+              {
+                value: stats.avgScore > 0 ? Math.round(stats.avgScore * 100) : '—',
+                label: 'Vid. kokybė',
+                sub: stats.avgScore > 0 ? '%' : undefined,
+              },
+            ].map((kpi) => (
+              <div
+                key={kpi.label}
+                className="group rounded-xl border border-surface-700/25 bg-surface-800/40 px-5 py-4
+                  transition-all duration-300 ease-out
+                  hover:-translate-y-0.5 hover:border-surface-500/30 hover:bg-surface-800/60
+                  hover:shadow-lg hover:shadow-black/20"
+              >
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-2xl font-bold text-white tracking-tight leading-none transition-colors duration-300 group-hover:text-brand-300">
+                    {kpi.value}
                   </span>
-                  {stats.avgScore > 0 && <span className="text-[16px] font-bold text-surface-500">%</span>}
+                  {kpi.sub && <span className="text-sm font-medium text-surface-600 transition-colors duration-300 group-hover:text-surface-500">{kpi.sub}</span>}
+                  {kpi.suffix && (
+                    <span className="text-[10px] font-semibold text-brand-400/80 ml-0.5">{kpi.suffix}</span>
+                  )}
                 </div>
-                <p className="text-[11px] text-surface-500 font-bold uppercase tracking-widest mt-1.5">Vid. kokybė</p>
-                {/* Mini quality arc */}
-                {stats.avgScore > 0 && (
-                  <div className="absolute top-4 right-4 w-7 h-7">
-                    <svg viewBox="0 0 28 28" className="w-full h-full -rotate-90">
-                      <circle cx="14" cy="14" r="11" fill="none" stroke="rgba(62,51,45,0.4)" strokeWidth="2" />
-                      <circle cx="14" cy="14" r="11" fill="none"
-                        stroke={stats.avgScore >= 0.8 ? '#34d399' : stats.avgScore >= 0.5 ? '#fbbf24' : '#f87171'}
-                        strokeWidth="2" strokeLinecap="round"
-                        strokeDasharray={`${stats.avgScore * 69.1} ${69.1 - stats.avgScore * 69.1}`}
-                        style={{ transition: 'stroke-dasharray 0.8s ease-out' }} />
-                    </svg>
-                  </div>
-                )}
+                <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5 transition-colors duration-300 group-hover:text-surface-400">
+                  {kpi.label}
+                </p>
               </div>
-            </div>
+            ))}
           </div>
 
           {/* ── Filters Row 1: Search + Dropdowns ────────────────── */}

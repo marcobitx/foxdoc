@@ -37,7 +37,6 @@ import {
 } from 'lucide-react';
 import CustomSelect from './CustomSelect';
 import Tooltip from './Tooltip';
-import LineDivider from './LineDivider';
 import { listAnalyses, type AnalysisSummary } from '../lib/api';
 import {
   appStore,
@@ -1263,25 +1262,30 @@ export default function NotesView() {
       {/* ── Dashboard (when notes exist) ─────────────────────── */}
       {!notesLoading && notesList.length > 0 && (
         <>
-          {/* ── KPI Strip ──────────────────────────────────────── */}
-          <div className="relative rounded-2xl border border-surface-600/30 bg-surface-800/55 mb-5">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-brand-500/0 via-brand-500/40 to-brand-500/0" />
-            <div className="grid grid-cols-2 lg:grid-cols-5">
-              {[
-                { val: stats.total, label: 'Viso', dot: 'bg-brand-500/30' },
-                { val: stats.idea, label: 'Idėjos', dot: 'bg-blue-500/30' },
-                { val: stats.inProgress, label: 'Vykdoma', dot: 'bg-amber-500/30' },
-                { val: stats.done, label: 'Atlikta', dot: 'bg-emerald-500/30' },
-                { val: stats.highPriority, label: 'Aukštas prior.', dot: 'bg-red-500/30' },
-              ].map((kpi, i) => (
-                <div key={kpi.label} className="relative px-5 py-4">
-                  {i > 0 && <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />}
-                  <span className="text-[28px] font-extrabold text-white tracking-tighter leading-none">{kpi.val}</span>
-                  <p className="text-[10px] text-surface-500 font-bold uppercase tracking-widest mt-1">{kpi.label}</p>
-                  <div className={clsx('absolute top-4 right-4 w-2 h-2 rounded-full', kpi.dot)} />
-                </div>
-              ))}
-            </div>
+          {/* ── KPI Cards ─────────────────────────────────────── */}
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+            {[
+              { val: stats.total, label: 'Viso' },
+              { val: stats.idea, label: 'Idėjos' },
+              { val: stats.inProgress, label: 'Vykdoma' },
+              { val: stats.done, label: 'Atlikta' },
+              { val: stats.highPriority, label: 'Aukštas prior.' },
+            ].map((kpi) => (
+              <div
+                key={kpi.label}
+                className="group rounded-xl border border-surface-700/25 bg-surface-800/40 px-5 py-4
+                  transition-all duration-300 ease-out
+                  hover:-translate-y-0.5 hover:border-surface-500/30 hover:bg-surface-800/60
+                  hover:shadow-lg hover:shadow-black/20"
+              >
+                <span className="text-2xl font-bold text-white tracking-tight leading-none transition-colors duration-300 group-hover:text-brand-300">
+                  {kpi.val}
+                </span>
+                <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5 transition-colors duration-300 group-hover:text-surface-400">
+                  {kpi.label}
+                </p>
+              </div>
+            ))}
           </div>
 
           {/* ── Filter Bar — two rows ────────────────────────── */}
