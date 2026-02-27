@@ -1269,63 +1269,31 @@ export default function NotesView() {
                 val: stats.total, label: 'Viso',
                 glow: 'shadow-[0_0_15px_rgba(245,158,11,0.15)]',
                 gradient: 'from-brand-500/50 via-brand-400/20 to-brand-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <rect x="4" y="4" width="8.5" height="8.5" rx="2" stroke="currentColor" strokeWidth="1.2" />
-                    <rect x="15.5" y="4" width="8.5" height="8.5" rx="2" stroke="currentColor" strokeWidth="1.2" />
-                    <rect x="4" y="15.5" width="8.5" height="8.5" rx="2" stroke="currentColor" strokeWidth="1.2" />
-                    <rect x="15.5" y="15.5" width="8.5" height="8.5" rx="2" stroke="currentColor" strokeWidth="1.2" opacity="0.4" />
-                    <path d="M19.75 18v4M17.75 20h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-total.svg" alt="" className="w-6 h-6" />,
               },
               {
                 val: stats.idea, label: 'Idėjos',
                 glow: 'shadow-[0_0_15px_rgba(59,130,246,0.15)]',
                 gradient: 'from-blue-500/50 via-blue-400/20 to-blue-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <path d="M14 4a7.5 7.5 0 015 13.1V20h-10v-2.9A7.5 7.5 0 0114 4z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                    <path d="M11 20v1.5a3 3 0 006 0V20" stroke="currentColor" strokeWidth="1.2" />
-                    <path d="M14 8v3M11.5 10l1.5 1.5M16.5 10l-1.5 1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-                    <path d="M10 24h8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-ideas.svg" alt="" className="w-6 h-6" />,
               },
               {
                 val: stats.inProgress, label: 'Vykdoma',
                 glow: 'shadow-[0_0_15px_rgba(245,158,11,0.12)]',
                 gradient: 'from-amber-500/50 via-yellow-400/20 to-amber-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <path d="M15 3L5 16h8.5l-1.5 9L23 12h-8.5L16 3h-1z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M8 6l-3 2M20 6l3 2M6 22l2-1M22 22l-2-1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.3" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-progress.svg" alt="" className="w-6 h-6" />,
               },
               {
                 val: stats.done, label: 'Atlikta',
                 glow: 'shadow-[0_0_15px_rgba(16,185,129,0.15)]',
                 gradient: 'from-emerald-500/50 via-emerald-400/20 to-emerald-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <path d="M14 3a11 11 0 110 22 11 11 0 010-22z" stroke="currentColor" strokeWidth="1.2" strokeDasharray="3 2" />
-                    <circle cx="14" cy="14" r="7" stroke="currentColor" strokeWidth="1.2" />
-                    <path d="M10.5 14.5l2 2 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-completed.svg" alt="" className="w-6 h-6" />,
               },
               {
                 val: stats.highPriority, label: 'Aukštas prior.',
                 glow: 'shadow-[0_0_15px_rgba(239,68,68,0.15)]',
                 gradient: 'from-red-500/50 via-red-400/20 to-red-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <path d="M14 4c3 1 5 4 5 8-1 3-2 5-5 7-3-2-4-4-5-7 0-4 2-7 5-8z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-                    <path d="M14 4c1.5 2 2 4 2 6s-.5 4-2 6c-1.5-2-2-4-2-6s.5-4 2-6z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" opacity="0.35" />
-                    <path d="M12 22h4M11 24h6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-priority.svg" alt="" className="w-6 h-6" />,
               },
             ].map((kpi) => (
               <div

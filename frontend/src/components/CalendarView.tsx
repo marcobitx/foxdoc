@@ -320,29 +320,14 @@ export default function CalendarView({ onSelect, onNew }: Props) {
                 suffix: monthStats.activeDays > 0 ? `${monthStats.activeDays} d.` : undefined,
                 glow: 'shadow-[0_0_15px_rgba(245,158,11,0.15)]',
                 gradient: 'from-brand-500/50 via-brand-400/20 to-brand-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <rect x="4" y="6" width="20" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.2" />
-                    <path d="M4 11h20" stroke="currentColor" strokeWidth="1.2" />
-                    <path d="M9 4v4M19 4v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                    <circle cx="10" cy="17" r="1.5" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
-                    <circle cx="18" cy="17" r="1.5" stroke="currentColor" strokeWidth="1.2" opacity="0.5" />
-                    <circle cx="14" cy="17" r="1.5" stroke="currentColor" strokeWidth="1.2" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-calendar.svg" alt="" className="w-6 h-6" />,
               },
               {
                 value: monthStats.completed,
                 label: 'Baigtos',
                 glow: 'shadow-[0_0_15px_rgba(16,185,129,0.15)]',
                 gradient: 'from-emerald-500/50 via-emerald-400/20 to-emerald-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <path d="M14 3a11 11 0 110 22 11 11 0 010-22z" stroke="currentColor" strokeWidth="1.2" strokeDasharray="3 2" />
-                    <circle cx="14" cy="14" r="7" stroke="currentColor" strokeWidth="1.2" />
-                    <path d="M10.5 14.5l2 2 5-5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-completed.svg" alt="" className="w-6 h-6" />,
               },
               {
                 value: monthStats.totalValue > 0
@@ -356,12 +341,7 @@ export default function CalendarView({ onSelect, onNew }: Props) {
                 sub: monthStats.totalValue > 0 ? 'EUR' : undefined,
                 glow: 'shadow-[0_0_15px_rgba(245,158,11,0.12)]',
                 gradient: 'from-amber-500/50 via-yellow-400/20 to-amber-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <path d="M14 3l3.5 5.5H24l-5 4.5 2 6.5-7-4-7 4 2-6.5-5-4.5h6.5L14 3z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" opacity="0.35" />
-                    <path d="M14 8l2 3.5h4l-3 2.5 1 4-4-2.5-4 2.5 1-4-3-2.5h4L14 8z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-value.svg" alt="" className="w-6 h-6" />,
               },
               {
                 value: monthStats.avgScore > 0 ? Math.round(monthStats.avgScore * 100) : '—',
@@ -369,13 +349,7 @@ export default function CalendarView({ onSelect, onNew }: Props) {
                 sub: monthStats.avgScore > 0 ? '%' : undefined,
                 glow: 'shadow-[0_0_15px_rgba(139,92,246,0.15)]',
                 gradient: 'from-violet-500/50 via-purple-400/20 to-violet-600/50',
-                icon: (
-                  <svg viewBox="0 0 28 28" fill="none" className="w-6 h-6">
-                    <path d="M14 4l2.5 5 5.5.8-4 3.9.9 5.5L14 16.5l-4.9 2.7.9-5.5-4-3.9 5.5-.8L14 4z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
-                    <circle cx="14" cy="14" r="11" stroke="currentColor" strokeWidth="1.2" opacity="0.25" />
-                    <path d="M7 7l2 2M21 7l-2 2M7 21l2-2M21 21l-2-2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.3" />
-                  </svg>
-                ),
+                icon: <img src="/icons/kpi-quality.svg" alt="" className="w-6 h-6" />,
               },
             ].map((kpi) => (
               <div
