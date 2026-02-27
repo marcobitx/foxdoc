@@ -468,10 +468,10 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
             ].map((kpi) => (
               <div
                 key={kpi.label}
-                className={`group rounded-xl p-[2px] bg-gradient-to-br ${kpi.gradient} ${kpi.glow}
+                className={`group rounded-xl p-[4px] bg-gradient-to-br ${kpi.gradient} ${kpi.glow}
                   transition-all duration-500 ease-out hover:shadow-[0_0_20px_rgba(245,158,11,0.1)]`}
               >
-                <div className="rounded-[10px] bg-surface-800/60 px-5 py-4 h-full">
+                <div className="rounded-[9px] bg-[#3a332c] px-5 py-4 h-full">
                   <div className="flex items-start justify-between mb-3">
                     <div className="text-surface-500 transition-colors duration-300 group-hover:text-surface-300">
                       {kpi.icon}
