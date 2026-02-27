@@ -1,0 +1,168 @@
+---
+// landing/src/components/ProductMockup.astro
+// CSS-only product mockup showing foxDoc analysis results preview
+// Decorative element for auth showcase panel — no real data
+// Related: AuthShowcase.astro, auth.astro
+---
+
+<div class="mockup-container">
+  <div class="mockup-card">
+    <!-- Top bar with traffic lights and label -->
+    <div class="top-bar">
+      <div class="traffic-lights">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-amber"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <span class="top-label">foxDoc — Analizė</span>
+    </div>
+
+    <!-- Analysis row with score ring and stats -->
+    <div class="analysis-row">
+      <svg class="score-ring" width="48" height="48" viewBox="0 0 48 48">
+        <circle
+          cx="24"
+          cy="24"
+          r="20"
+          fill="none"
+          stroke="#2a2320"
+          stroke-width="4"
+        />
+        <circle
+          cx="24"
+          cy="24"
+          r="20"
+          fill="none"
+          stroke="#d4a24e"
+          stroke-width="4"
+          stroke-dasharray="103 126"
+          stroke-dashoffset="0"
+          stroke-linecap="round"
+          transform="rotate(-90 24 24)"
+        />
+        <text x="24" y="26" text-anchor="middle" fill="#ede5df" font-size="11" font-family="'JetBrains Mono', monospace">82</text>
+      </svg>
+      <div class="stats-text">
+        <span class="stats-title">Pirkimo dokumentai</span>
+        <span class="stats-detail">12 dokumentų &bull; 3 tiekėjai</span>
+      </div>
+    </div>
+
+    <!-- Mini bar chart -->
+    <div class="bar-chart">
+      <div class="bar" style="height: 65%; opacity: 0.5;"></div>
+      <div class="bar" style="height: 85%; opacity: 0.8;"></div>
+      <div class="bar" style="height: 100%; opacity: 1.0;"></div>
+      <div class="bar" style="height: 72%; opacity: 0.6;"></div>
+      <div class="bar" style="height: 45%; opacity: 0.3;"></div>
+      <div class="bar" style="height: 90%; opacity: 0.9;"></div>
+      <div class="bar" style="height: 58%; opacity: 0.4;"></div>
+    </div>
+    <div class="chart-labels">
+      <span>Kaina</span>
+      <span>Kokybė</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mockup-container {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+  }
+
+  .mockup-card {
+    max-width: 280px;
+    width: 100%;
+    background: #1a1512;
+    border: 1px solid #2e2520;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .traffic-lights {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .dot-red {
+    background: #e5534b;
+  }
+
+  .dot-amber {
+    background: #d4a24e;
+  }
+
+  .dot-green {
+    background: #57ab5a;
+  }
+
+  .top-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.625rem;
+    color: #6d5f55;
+  }
+
+  .analysis-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .score-ring {
+    flex-shrink: 0;
+  }
+
+  .stats-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .stats-title {
+    font-size: 0.75rem;
+    color: #ede5df;
+  }
+
+  .stats-detail {
+    font-size: 0.625rem;
+    color: #6d5f55;
+  }
+
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 32px;
+    margin-bottom: 0.35rem;
+  }
+
+  .bar {
+    flex: 1;
+    background: #d4a24e;
+    border-radius: 2px 2px 0 0;
+  }
+
+  .chart-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.5rem;
+    color: #6d5f55;
+  }
+</style>
