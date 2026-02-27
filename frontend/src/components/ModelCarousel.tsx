@@ -47,7 +47,7 @@ function ProviderPill({ p, suffix }: { p: Provider; suffix: string }) {
 export default function ModelCarousel() {
   return (
     <div className="mt-8 md:mt-10 animate-fade-in" style={{ animationDelay: '500ms' }}>
-      <p className="text-center text-[9px] font-bold uppercase tracking-[0.25em] text-surface-600/70 mb-3">
+      <p className="text-center text-[9px] font-bold uppercase tracking-[0.25em] text-surface-200 mb-3">
         Palaikomi AI modeliai
       </p>
 
