@@ -464,7 +464,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   transition-all duration-300 ease-out
                   hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/25`}
               >
-                <div className="rounded-[10px] bg-surface-800/70 px-5 py-4 h-full backdrop-blur-sm">
+                <div className="rounded-[10px] bg-surface-900 px-5 py-4 h-full">
                   <div className="flex items-start justify-between mb-2">
                     <div className="text-surface-600 transition-colors duration-300 group-hover:text-surface-400">
                       {kpi.icon}
