@@ -42,22 +42,32 @@ async def get_current_user_id(request: Request) -> str | None:
 
     try:
         jwks = await get_jwks()
+        keys = jwks.get("keys", [])
         header = jwt.get_unverified_header(token)
+        token_kid = header.get("kid")
+
+        # Match by kid if available, otherwise use the first (only) key
         key = next(
-            (k for k in jwks.get("keys", []) if k["kid"] == header.get("kid")),
+            (k for k in keys if k.get("kid") == token_kid),
             None,
         )
+        if not key and len(keys) == 1:
+            # Convex JWKS often has a single key without kid — use it directly
+            key = keys[0]
         if not key:
-            # Key not found — invalidate cache and retry once (keys may have rotated)
+            # Invalidate cache and retry once (keys may have rotated)
             global _jwks_cache
             _jwks_cache = None
             jwks = await get_jwks()
+            keys = jwks.get("keys", [])
             key = next(
-                (k for k in jwks.get("keys", []) if k["kid"] == header.get("kid")),
+                (k for k in keys if k.get("kid") == token_kid),
                 None,
             )
+            if not key and len(keys) == 1:
+                key = keys[0]
             if not key:
-                logger.warning("JWT kid %s not found in JWKS", header.get("kid"))
+                logger.warning("JWT kid %s not found in JWKS", token_kid)
                 return None
 
         payload = jwt.decode(
