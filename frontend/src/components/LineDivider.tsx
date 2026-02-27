@@ -20,7 +20,7 @@ export default function LineDivider({ orientation, className = '' }: Props) {
   }
 
   return (
-    <div className={`relative h-full w-[5px] flex justify-center ${className}`} aria-hidden="true">
+    <div className={`h-full w-[5px] flex justify-center ${className}`} aria-hidden="true">
       <div className="absolute inset-y-[2px] left-1/2 w-[1px] bg-surface-400/35 -translate-x-1/2" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
