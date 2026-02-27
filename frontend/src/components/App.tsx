@@ -229,7 +229,7 @@ export default function App() {
           onNewAnalysis={handleNewAnalysis}
         />
 
-        <div className={clsx('flex-1 flex overflow-hidden min-h-0 relative', state.view !== 'upload' && 'scroll-fade')}>
+        <div className={clsx('flex-1 flex overflow-hidden min-h-0 relative', (state.view === 'analyzing' || state.view === 'results') && 'scroll-fade')}>
           {/* Horizontal divider dots at component edges */}
           <div className="hidden lg:block absolute top-0 left-0 -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50 z-10" />
           <div className="hidden lg:block absolute top-0 right-0 -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50 z-10" />
