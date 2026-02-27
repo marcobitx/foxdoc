@@ -202,7 +202,6 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
           </button>
         </div>
       )}
-      <LineDivider orientation="horizontal" />
     </header>
   );
 }
