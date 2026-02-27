@@ -39,7 +39,7 @@ export default function UploadView() {
           <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>
             <span style={{ background: 'linear-gradient(135deg, #fcd34d, #f59e0b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>fox</span>
             <span className="text-surface-100">Doc</span>
-          </span>{' '}pasiruošęs suuosti visas rizikas jūsų dokumentuose.
+          </span>{' '}pasiruošęs identifikuoti visas rizikas jūsų dokumentuose.
         </p>
       </div>
 
