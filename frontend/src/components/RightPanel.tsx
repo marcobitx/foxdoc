@@ -179,7 +179,7 @@ export default function RightPanel({ currentView, analysisId }: Props) {
       {!isTipsView && !isNotesView && (
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           <div className="p-3 space-y-3">
-            <div className="enterprise-card overflow-hidden border-t-0 rounded-t-none">
+            <div className="enterprise-card overflow-hidden">
               {currentView === 'upload' && <UploadPanel />}
               {currentView === 'analyzing' && <AnalyzingPanel />}
               {currentView === 'results' && analysisId && <ResultsPanel analysisId={analysisId} />}
