@@ -54,11 +54,11 @@ function isActive(href: string) {
 
     <!-- Desktop CTA + Mobile hamburger -->
     <div class="flex items-center gap-3">
-      <a href="https://app.foxdoc.io/login"
+      <a href="/auth"
          class="hidden md:block text-sm font-medium nav-link">
         Prisijungti
       </a>
-      <a href="https://app.foxdoc.io"
+      <a href="/auth"
          class="hidden md:inline-flex btn-primary">
         Išbandyti nemokamai
       </a>
@@ -70,7 +70,7 @@ function isActive(href: string) {
 <!-- Sticky mobile CTA bar at bottom -->
 <div class="fixed bottom-0 left-0 right-0 z-40 md:hidden px-4 pb-4 pt-2"
      style="background: rgba(26,21,18,0.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(168,162,158,0.10);">
-  <a href="https://app.foxdoc.io" class="btn-primary w-full text-sm">
+  <a href="/auth" class="btn-primary w-full text-sm">
     Išbandyti nemokamai — nemokamai
   </a>
 </div>

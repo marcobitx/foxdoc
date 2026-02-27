@@ -15,7 +15,7 @@ const plans = [
     users: 1,
     highlight: false,
     cta: 'Pradėti nemokamai',
-    ctaHref: 'https://app.foxdoc.io?plan=free',
+    ctaHref: '/auth?plan=free',
     features: [
       { text: 'PDF, DOCX, XLSX analizė', ok: true },
       { text: 'Pagrindinė struktūrizuota ataskaita', ok: true },
@@ -35,7 +35,7 @@ const plans = [
     users: 3,
     highlight: true,
     cta: 'Rinktis Pro',
-    ctaHref: 'https://app.foxdoc.io?plan=pro',
+    ctaHref: '/auth?plan=pro',
     features: [
       { text: 'Visi failų formatai + ZIP', ok: true },
       { text: 'Pilna ataskaita su QA balu', ok: true },
@@ -55,7 +55,7 @@ const plans = [
     users: 10,
     highlight: false,
     cta: 'Rinktis Team',
-    ctaHref: 'https://app.foxdoc.io?plan=team',
+    ctaHref: '/auth?plan=team',
     features: [
       { text: 'Visi Pro funkcijos', ok: true },
       { text: 'API prieiga', ok: true },

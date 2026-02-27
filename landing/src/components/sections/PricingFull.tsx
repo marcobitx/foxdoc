@@ -58,7 +58,7 @@ const plans = [
   {
     name: 'Free', monthly: 0, annual: 0, annualTotal: 0, credits: '3 vienkartiniai', users: '1', highlight: false,
     desc: 'Išbandykite be įsipareigojimų',
-    cta: 'Pradėti nemokamai', ctaHref: 'https://app.foxdoc.io?plan=free',
+    cta: 'Pradėti nemokamai', ctaHref: '/auth?plan=free',
     features: [
       { text: 'PDF, DOCX, XLSX analizė', ok: true },
       { text: 'Pagrindinė struktūrizuota ataskaita', ok: true },
@@ -72,7 +72,7 @@ const plans = [
   {
     name: 'Pro', monthly: 59, annual: 49, annualTotal: 590, credits: '75 / mėn.', users: '3', highlight: true,
     desc: 'Specialistams ir komandoms',
-    cta: 'Rinktis Pro', ctaHref: 'https://app.foxdoc.io?plan=pro',
+    cta: 'Rinktis Pro', ctaHref: '/auth?plan=pro',
     features: [
       { text: 'Visi failų formatai + ZIP', ok: true },
       { text: 'Pilna ataskaita su QA balu', ok: true },
@@ -86,7 +86,7 @@ const plans = [
   {
     name: 'Team', monthly: 149, annual: 124, annualTotal: 1490, credits: '200 / mėn.', users: '10', highlight: false,
     desc: 'Organizacijoms ir agentūroms',
-    cta: 'Rinktis Team', ctaHref: 'https://app.foxdoc.io?plan=team',
+    cta: 'Rinktis Team', ctaHref: '/auth?plan=team',
     features: [
       { text: 'Visi Pro funkcijos', ok: true },
       { text: 'API prieiga', ok: true },
@@ -529,7 +529,7 @@ export default function PricingFull() {
               <p style={{ color: '#b5a99f', fontSize: '0.875rem', margin: '0 0 1rem' }}>kreditų</p>
               <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fdf9f7', margin: '0 0 0.25rem' }}>€{a.price}</p>
               <p style={{ fontSize: '0.75rem', color: '#ea580c', margin: '0 0 1.25rem' }}>{a.perCredit}/kreditas</p>
-              <a href="https://app.foxdoc.io/billing" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(168,162,158,0.22)', color: '#fdf9f7', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600, transition: 'background 0.2s' }}>
+              <a href="/auth" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(168,162,158,0.22)', color: '#fdf9f7', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600, transition: 'background 0.2s' }}>
                 Pirkti
               </a>
             </div>
