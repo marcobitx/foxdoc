@@ -470,11 +470,10 @@ async def list_analyses(
     db: ConvexDB = Depends(get_db),
     user_id: str | None = Depends(get_current_user_id),
 ):
-    """List past analyses, most recent first."""
-    if user_id:
-        records = await db.list_analyses_by_user(user_id=user_id, limit=limit, offset=offset)
-    else:
-        records = await db.list_analyses(limit=limit, offset=offset)
+    """List past analyses, most recent first. Requires valid user for results."""
+    if not user_id:
+        return []
+    records = await db.list_analyses_by_user(user_id=user_id, limit=limit, offset=offset)
 
     summaries = []
     for record in records:

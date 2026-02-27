@@ -30,10 +30,10 @@ async def list_notes(
     db: ConvexDB = Depends(get_db),
     user_id: str | None = Depends(get_current_user_id),
 ):
-    """List all notes (newest first)."""
-    if user_id:
-        return await db.list_notes_by_user(user_id=user_id, limit=limit, offset=offset)
-    return await db.list_notes(limit=limit, offset=offset)
+    """List notes for authenticated user (newest first). Returns empty if no auth."""
+    if not user_id:
+        return []
+    return await db.list_notes_by_user(user_id=user_id, limit=limit, offset=offset)
 
 
 @router.get("/{note_id}")

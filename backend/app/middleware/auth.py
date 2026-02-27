@@ -48,7 +48,17 @@ async def get_current_user_id(request: Request) -> str | None:
             None,
         )
         if not key:
-            return None
+            # Key not found — invalidate cache and retry once (keys may have rotated)
+            global _jwks_cache
+            _jwks_cache = None
+            jwks = await get_jwks()
+            key = next(
+                (k for k in jwks.get("keys", []) if k["kid"] == header.get("kid")),
+                None,
+            )
+            if not key:
+                logger.warning("JWT kid %s not found in JWKS", header.get("kid"))
+                return None
 
         payload = jwt.decode(
             token,
