@@ -1,5 +1,12 @@
 // API client for the Procurement Analyzer backend
 
+import { getAuthToken } from "./authToken";
+
+function authHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 const BASE = '/api';
 
 export interface Analysis {
@@ -67,41 +74,41 @@ export async function createAnalysis(files: File[], model?: string): Promise<{ i
     form.append('files', f);
   }
   if (model) form.append('model', model);
-  const res = await fetch(`${BASE}/analyze`, { method: 'POST', body: form });
+  const res = await fetch(`${BASE}/analyze`, { method: 'POST', headers: { ...authHeaders() }, body: form });
   if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
   return res.json();
 }
 
 export async function getAnalysis(id: string): Promise<Analysis> {
-  const res = await fetch(`${BASE}/analyze/${id}`);
+  const res = await fetch(`${BASE}/analyze/${id}`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
   return res.json();
 }
 
 export async function listAnalyses(limit = 50, offset = 0): Promise<AnalysisSummary[]> {
-  const res = await fetch(`${BASE}/analyses?limit=${limit}&offset=${offset}`);
+  const res = await fetch(`${BASE}/analyses?limit=${limit}&offset=${offset}`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
 
 export async function deleteAnalysis(id: string): Promise<void> {
-  const res = await fetch(`${BASE}/analyze/${id}`, { method: 'DELETE' });
+  const res = await fetch(`${BASE}/analyze/${id}`, { method: 'DELETE', headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
 }
 
 export async function cancelAnalysis(id: string): Promise<void> {
-  const res = await fetch(`${BASE}/analyze/${id}/cancel`, { method: 'POST' });
+  const res = await fetch(`${BASE}/analyze/${id}/cancel`, { method: 'POST', headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
 }
 
 export async function exportAnalysis(id: string, format: 'pdf' | 'docx'): Promise<Blob> {
-  const res = await fetch(`${BASE}/analyze/${id}/export?format=${format}`);
+  const res = await fetch(`${BASE}/analyze/${id}/export?format=${format}`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
   return res.blob();
 }
 
 export async function getDocumentContent(analysisId: string, filename: string): Promise<{ filename: string; content: string; page_count: number; doc_type: string }> {
-  const res = await fetch(`${BASE}/analyze/${analysisId}/documents/${encodeURIComponent(filename)}/content`);
+  const res = await fetch(`${BASE}/analyze/${analysisId}/documents/${encodeURIComponent(filename)}/content`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
   return res.json();
 }
@@ -166,7 +173,7 @@ export function streamProgress(id: string, onEvent: (e: SSEEvent) => void, onDon
 export async function* streamChat(id: string, question: string): AsyncGenerator<string> {
   const res = await fetch(`${BASE}/analyze/${id}/chat`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ message: question }),
   });
   if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
@@ -195,7 +202,7 @@ export async function* streamChat(id: string, question: string): AsyncGenerator<
 }
 
 export async function getChatHistory(id: string): Promise<ChatMessage[]> {
-  const res = await fetch(`${BASE}/analyze/${id}/chat/history`);
+  const res = await fetch(`${BASE}/analyze/${id}/chat/history`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
@@ -203,7 +210,7 @@ export async function getChatHistory(id: string): Promise<ChatMessage[]> {
 // ── Settings ─────────────────────────────────────────────────────────────────
 
 export async function getSettings(): Promise<Settings> {
-  const res = await fetch(`${BASE}/settings`);
+  const res = await fetch(`${BASE}/settings`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
@@ -211,7 +218,7 @@ export async function getSettings(): Promise<Settings> {
 export async function updateSettings(data: { default_model?: string; openrouter_api_key?: string }): Promise<Settings> {
   const res = await fetch(`${BASE}/settings`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(res.statusText);
@@ -219,14 +226,14 @@ export async function updateSettings(data: { default_model?: string; openrouter_
 }
 
 export async function getModels(): Promise<ModelInfo[]> {
-  const res = await fetch(`${BASE}/models`);
+  const res = await fetch(`${BASE}/models`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
   const data = await res.json();
   return data.models || [];
 }
 
 export async function searchAllModels(query: string): Promise<ModelInfo[]> {
-  const res = await fetch(`${BASE}/models/search?q=${encodeURIComponent(query)}`);
+  const res = await fetch(`${BASE}/models/search?q=${encodeURIComponent(query)}`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
   const data = await res.json();
   return data.models || [];
@@ -250,7 +257,7 @@ export interface TokenUsageStats {
 }
 
 export async function getUsageStats(): Promise<TokenUsageStats> {
-  const res = await fetch(`${BASE}/usage`);
+  const res = await fetch(`${BASE}/usage`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
@@ -272,13 +279,13 @@ export interface NoteData {
 }
 
 export async function listNotes(limit = 100, offset = 0): Promise<NoteData[]> {
-  const res = await fetch(`${BASE}/notes?limit=${limit}&offset=${offset}`);
+  const res = await fetch(`${BASE}/notes?limit=${limit}&offset=${offset}`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
 
 export async function getNote(id: string): Promise<NoteData> {
-  const res = await fetch(`${BASE}/notes/${id}`);
+  const res = await fetch(`${BASE}/notes/${id}`, { headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }
@@ -295,7 +302,7 @@ export async function createNoteApi(data: {
 }): Promise<{ id: string }> {
   const res = await fetch(`${BASE}/notes`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
@@ -314,21 +321,21 @@ export async function updateNoteApi(id: string, data: {
 }): Promise<void> {
   const res = await fetch(`${BASE}/notes/${id}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
 }
 
 export async function deleteNoteApi(id: string): Promise<void> {
-  const res = await fetch(`${BASE}/notes/${id}`, { method: 'DELETE' });
+  const res = await fetch(`${BASE}/notes/${id}`, { method: 'DELETE', headers: { ...authHeaders() } });
   if (!res.ok) throw new Error(res.statusText);
 }
 
 export async function bulkDeleteNotes(ids: string[]): Promise<void> {
   const res = await fetch(`${BASE}/notes/bulk/delete`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ ids }),
   });
   if (!res.ok) throw new Error(res.statusText);
@@ -337,7 +344,7 @@ export async function bulkDeleteNotes(ids: string[]): Promise<void> {
 export async function bulkUpdateNotesStatus(ids: string[], status: string): Promise<void> {
   const res = await fetch(`${BASE}/notes/bulk/status`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ ids, status }),
   });
   if (!res.ok) throw new Error(res.statusText);
