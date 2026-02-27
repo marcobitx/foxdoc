@@ -151,7 +151,7 @@ function AuthFormInner() {
           className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all ${
             tab === "signIn"
               ? "bg-neutral-700 text-white shadow-sm"
-              : "text-neutral-300 hover:text-neutral-200"
+              : "text-neutral-200 hover:text-white"
           }`}
         >
           Prisijungti
@@ -161,7 +161,7 @@ function AuthFormInner() {
           className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all ${
             tab === "signUp"
               ? "bg-neutral-700 text-white shadow-sm"
-              : "text-neutral-300 hover:text-neutral-200"
+              : "text-neutral-200 hover:text-white"
           }`}
         >
           Registruotis
@@ -191,7 +191,7 @@ function AuthFormInner() {
       <form onSubmit={handleEmailAuth} className="space-y-4">
         {tab === "signUp" && (
           <div>
-            <label className="block text-sm text-neutral-300 mb-1.5">Vardas</label>
+            <label className="block text-sm text-neutral-200 mb-1.5">Vardas</label>
             <input
               type="text"
               value={name}
@@ -202,7 +202,7 @@ function AuthFormInner() {
           </div>
         )}
         <div>
-          <label className="block text-sm text-neutral-300 mb-1.5">El. paštas</label>
+          <label className="block text-sm text-neutral-200 mb-1.5">El. paštas</label>
           <input
             type="email"
             value={email}
@@ -213,7 +213,7 @@ function AuthFormInner() {
           />
         </div>
         <div>
-          <label className="block text-sm text-neutral-300 mb-1.5">Slaptažodis</label>
+          <label className="block text-sm text-neutral-200 mb-1.5">Slaptažodis</label>
           <input
             type="password"
             value={password}
