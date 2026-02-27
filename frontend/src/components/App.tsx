@@ -36,8 +36,8 @@ function getActiveNav(view: AppView): AppView {
 const MOBILE_NAV: { view: AppView; icon: any; label: string }[] = [
   { view: 'upload', icon: Plus, label: 'Nauja' },
   { view: 'history', icon: Clock, label: 'Istorija' },
-  { view: 'calendar', icon: CalendarDays, label: 'Kalendorius' },
-  { view: 'settings', icon: Settings, label: 'Nustatymai' },
+  { view: 'calendar', icon: CalendarDays, label: 'Kalend.' },
+  { view: 'settings', icon: Settings, label: 'Nust.' },
 ];
 
 export default function App() {

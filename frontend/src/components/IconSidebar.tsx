@@ -26,8 +26,8 @@ interface Props {
 const MAIN_NAV: { view: AppView; icon: any; label: string }[] = [
   { view: 'upload', icon: FoxScan, label: 'Nauja analizė' },
   { view: 'history', icon: FoxPaw, label: 'Istorija' },
-  { view: 'calendar', icon: FoxCalendar, label: 'Kalendorius' },
   { view: 'notes', icon: FoxNote, label: 'Užrašai' },
+  { view: 'calendar', icon: FoxCalendar, label: 'Kalendorius' },
 ];
 
 const BOTTOM_NAV: { view: AppView; icon: any; label: string }[] = [

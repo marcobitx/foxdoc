@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  Inbox,
   FileText,
   Clock,
   Building2,
@@ -310,21 +309,8 @@ export default function CalendarView({ onSelect, onNew }: Props) {
         </div>
       )}
 
-      {/* ── Empty ─────────────────────────────────────────────── */}
-      {!loading && analyses.length === 0 && (
-        <div className="text-center py-24 animate-fade-in enterprise-card">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-brand-500/5 flex items-center justify-center border border-brand-500/10">
-            <Inbox className="w-8 h-8 text-brand-400" />
-          </div>
-          <p className="text-xl font-bold text-white mb-2 tracking-tight">Kalendorius tuščias</p>
-          <p className="text-[14px] text-surface-500 max-w-xs mx-auto">
-            Pradėkite naują analizę ir ji atsiras kalendoriuje.
-          </p>
-        </div>
-      )}
-
       {/* ── Dashboard Content ────────────────────────────────── */}
-      {!loading && analyses.length > 0 && (
+      {!loading && (
         <>
           {/* ── KPI Strip ──────────────────────────────────────── */}
           <div className="relative rounded-2xl border border-surface-600/30 bg-surface-800/55 mb-6 overflow-hidden">
