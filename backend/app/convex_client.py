@@ -83,14 +83,14 @@ class ConvexDB:
     #  Analyses
     # ------------------------------------------------------------------ #
 
-    async def create_analysis(self, model: str) -> str:
+    async def create_analysis(self, model: str, user_id: str | None = None) -> str:
         """Create a new analysis record and return its ID."""
         if self.is_convex:
             try:
-                result = self._client.mutation(
-                    "analyses:create",
-                    {"model": model, "status": "pending"},
-                )
+                args: dict[str, Any] = {"model": model, "status": "pending"}
+                if user_id:
+                    args["user_id"] = user_id
+                result = self._client.mutation("analyses:create", args)
                 return str(result)
             except Exception as e:
                 logger.error("Convex create_analysis failed: %s", e)
@@ -103,6 +103,7 @@ class ConvexDB:
                 "_creationTime": self._now_iso(),
                 "status": "pending",
                 "model": model,
+                "user_id": user_id,
                 "report_json": None,
                 "qa_json": None,
                 "metrics_json": None,
@@ -821,6 +822,7 @@ class ConvexDB:
         color: Optional[str] = "default",
         pinned: bool = False,
         analysis_id: Optional[str] = None,
+        user_id: str | None = None,
     ) -> str:
         """Create a new note. Returns note ID."""
         if self.is_convex:
@@ -837,6 +839,8 @@ class ConvexDB:
                     args["color"] = color
                 if analysis_id is not None:
                     args["analysis_id"] = analysis_id
+                if user_id:
+                    args["user_id"] = user_id
                 result = self._client.mutation("notes:create", args)
                 return str(result)
             except Exception as e:
@@ -857,6 +861,7 @@ class ConvexDB:
                 "color": color,
                 "pinned": pinned,
                 "analysis_id": analysis_id,
+                "user_id": user_id,
                 "updated_at": int(datetime.now(timezone.utc).timestamp() * 1000),
             }
             return nid
@@ -965,6 +970,33 @@ class ConvexDB:
         async with self._lock:
             all_records = sorted(
                 self._table("notes").values(),
+                key=lambda r: r.get("_creationTime", ""),
+                reverse=True,
+            )
+            page = all_records[offset : offset + limit]
+            return [dict(r) for r in page]
+
+    async def list_notes_by_user(
+        self, user_id: str, limit: int = 100, offset: int = 0
+    ) -> list[dict]:
+        """List notes owned by a specific user."""
+        if self.is_convex:
+            try:
+                return self._client.query(
+                    "notes:listByUser",
+                    {"user_id": user_id, "limit": limit, "offset": offset},
+                )
+            except Exception as e:
+                logger.error("Convex list_notes_by_user failed: %s", e)
+                raise
+
+        async with self._lock:
+            all_records = sorted(
+                [
+                    r
+                    for r in self._table("notes").values()
+                    if r.get("user_id") == user_id
+                ],
                 key=lambda r: r.get("_creationTime", ""),
                 reverse=True,
             )

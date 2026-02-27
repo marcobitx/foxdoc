@@ -17,6 +17,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
 from sse_starlette.sse import EventSourceResponse
 
+from app.auth import get_optional_user_id
 from app.config import AppSettings, get_settings
 from app.convex_client import ConvexDB, get_db
 from app.models.schemas import (
@@ -163,6 +164,7 @@ async def create_analysis(
     model: str = Form("anthropic/claude-sonnet-4"),
     db: ConvexDB = Depends(get_db),
     settings: AppSettings = Depends(get_settings),
+    user_id: str | None = Depends(get_optional_user_id),
 ):
     """Upload files and start analysis. Returns analysis ID immediately."""
 
@@ -213,7 +215,7 @@ async def create_analysis(
         logger.info("Saved upload: %s (%d bytes)", f.filename, len(content))
 
     # ── Create DB record
-    analysis_id = await db.create_analysis(model=model)
+    analysis_id = await db.create_analysis(model=model, user_id=user_id)
     logger.info("Created analysis %s with model %s", analysis_id, model)
 
     # ── Spawn background pipeline task
@@ -466,9 +468,13 @@ async def list_analyses(
     limit: int = Query(20, le=100),
     offset: int = Query(0, ge=0),
     db: ConvexDB = Depends(get_db),
+    user_id: str | None = Depends(get_optional_user_id),
 ):
     """List past analyses, most recent first."""
-    records = await db.list_analyses(limit=limit, offset=offset)
+    if user_id:
+        records = await db.list_analyses_by_user(user_id=user_id, limit=limit, offset=offset)
+    else:
+        records = await db.list_analyses(limit=limit, offset=offset)
 
     summaries = []
     for record in records:

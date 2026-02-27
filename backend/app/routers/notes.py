@@ -9,6 +9,7 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from app.auth import get_optional_user_id
 from app.convex_client import ConvexDB, get_db
 from app.models.schemas import (
     NoteBulkAction,
@@ -27,8 +28,11 @@ async def list_notes(
     limit: int = 100,
     offset: int = 0,
     db: ConvexDB = Depends(get_db),
+    user_id: str | None = Depends(get_optional_user_id),
 ):
     """List all notes (newest first)."""
+    if user_id:
+        return await db.list_notes_by_user(user_id=user_id, limit=limit, offset=offset)
     return await db.list_notes(limit=limit, offset=offset)
 
 
@@ -42,7 +46,11 @@ async def get_note(note_id: str, db: ConvexDB = Depends(get_db)):
 
 
 @router.post("", status_code=201)
-async def create_note(body: NoteCreate, db: ConvexDB = Depends(get_db)):
+async def create_note(
+    body: NoteCreate,
+    db: ConvexDB = Depends(get_db),
+    user_id: str | None = Depends(get_optional_user_id),
+):
     """Create a new note."""
     note_id = await db.create_note(
         title=body.title,
@@ -53,6 +61,7 @@ async def create_note(body: NoteCreate, db: ConvexDB = Depends(get_db)):
         color=body.color,
         pinned=body.pinned,
         analysis_id=body.analysis_id,
+        user_id=user_id,
     )
     return {"id": note_id}
 
