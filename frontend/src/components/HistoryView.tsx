@@ -664,7 +664,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                             md:grid-cols-[48px_1fr_100px_100px_70px_90px_120px]
                             lg:grid-cols-[48px_1fr_150px_100px_100px_70px_90px_140px]">
               {/* Select all checkbox */}
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center pl-1">
                 <Tooltip content="Pažymėti visus" side="bottom">
                 <button
                   onClick={toggleSelectAll}
@@ -745,7 +745,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   style={{ animationDelay: `${i * 30}ms` }}
                 >
                   {/* Row checkbox */}
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center pl-1">
                     <button
                       onClick={(e) => toggleSelect(a.id, e)}
                       className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0
