@@ -1,10 +1,11 @@
 ---
 // landing/src/pages/auth.astro
-// Login/signup page for foxdoc.io
+// Split-screen auth page — showcase panel (left) + auth form (right)
 // Authenticates users and redirects to app.foxdoc.io via relay code
-// Related: AuthForm.tsx, LandingConvexProvider.tsx
+// Related: AuthShowcase.astro, AuthForm.tsx, LandingConvexProvider.tsx
 
 import AuthForm from '../components/AuthForm';
+import AuthShowcase from '../components/AuthShowcase.astro';
 import '../styles/global.css';
 ---
 <!doctype html>
@@ -12,32 +13,125 @@ import '../styles/global.css';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Prisijunkite prie foxDoc" />
+    <meta name="description" content="Prisijunkite prie foxDoc — AI viešųjų pirkimų dokumentų analizė" />
     <title>Prisijungti | foxDoc</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body style="background: #1a1512; color: #ede5df; margin: 0;">
-    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;">
-      <div style="width: 100%; max-width: 28rem;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <a href="/" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; text-decoration: none;">
-            <img src="/favicon.svg" alt="foxDoc" width="32" height="32" />
-            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; color: white;">
+  <body style="margin: 0; overflow-x: hidden;">
+    <div class="auth-layout">
+      <!-- Left: Showcase (hidden on mobile, visible on lg+) -->
+      <div class="auth-showcase">
+        <AuthShowcase />
+      </div>
+
+      <!-- Right: Auth form panel -->
+      <div class="auth-form-panel">
+        <!-- Mobile-only compact banner -->
+        <div class="mobile-banner">
+          <a href="/" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+            <img src="/favicon.svg" alt="foxDoc" width="24" height="24" />
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: white;">
               fox<span style="color: #f59e0b;">Doc</span>
             </span>
           </a>
-          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: white; margin: 0;">
-            Sveiki sugrįžę
-          </h1>
-          <p style="color: #d6d3d1; margin-top: 0.5rem; font-size: 0.875rem;">
-            Prisijunkite arba susikurkite paskyrą
-          </p>
+          <p style="color: #b5a99f; font-size: 0.75rem; margin: 0.25rem 0 0 0;">AI dokumentų analizė</p>
         </div>
 
-        <div style="background: rgba(23,20,17,0.6); border: 1px solid rgba(168,162,158,0.12); border-radius: 1rem; padding: 1.5rem; backdrop-filter: blur(8px);">
-          <AuthForm client:only="react" />
+        <!-- Auth card -->
+        <div class="auth-card-wrapper">
+          <div class="auth-card">
+            <h1 class="auth-heading">Sveiki sugrįžę</h1>
+            <p class="auth-subtext">Prisijunkite arba susikurkite paskyrą</p>
+            <AuthForm client:only="react" />
+          </div>
         </div>
       </div>
     </div>
+
+    <style>
+      .auth-layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Showcase panel — desktop only */
+      .auth-showcase {
+        display: none;
+        width: 55%;
+        flex-shrink: 0;
+      }
+
+      /* Auth form panel */
+      .auth-form-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #1a1512;
+        padding: 2rem 1.5rem;
+        min-height: 100vh;
+      }
+
+      /* Mobile banner */
+      .mobile-banner {
+        text-align: center;
+        padding-bottom: 1.5rem;
+      }
+
+      /* Card wrapper for centering */
+      .auth-card-wrapper {
+        width: 100%;
+        max-width: 26rem;
+      }
+
+      /* Auth card with clear elevation */
+      .auth-card {
+        background: #231c18;
+        border: 1px solid rgba(245, 158, 11, 0.08);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 0 60px rgba(245, 158, 11, 0.04);
+        animation: cardFadeIn 0.4s ease-out;
+      }
+
+      @keyframes cardFadeIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .auth-heading {
+        font-family: 'Space Grotesk', system-ui, sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin: 0 0 0.5rem 0;
+        text-align: center;
+      }
+
+      .auth-subtext {
+        color: #d6d3d1;
+        font-size: 0.875rem;
+        margin: 0 0 1.5rem 0;
+        text-align: center;
+      }
+
+      /* Desktop: show showcase, hide mobile banner */
+      @media (min-width: 1024px) {
+        .auth-showcase {
+          display: block;
+        }
+        .mobile-banner {
+          display: none;
+        }
+        .auth-form-panel {
+          padding: 3rem 2.5rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .auth-card { animation: none; }
+      }
+    </style>
   </body>
 </html>
