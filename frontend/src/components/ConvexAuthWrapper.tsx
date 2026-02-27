@@ -6,9 +6,11 @@
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { convex } from "../lib/convex";
 
+const CONVEX_URL = import.meta.env.PUBLIC_CONVEX_URL || "";
+
 export default function ConvexAuthWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <ConvexAuthProvider client={convex}>
+    <ConvexAuthProvider client={convex} storageNamespace={CONVEX_URL}>
       {children}
     </ConvexAuthProvider>
   );
