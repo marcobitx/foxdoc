@@ -50,7 +50,9 @@ async def get_current_user_id(request: Request) -> str | None:
             algorithms=["RS256"],
             options={"verify_aud": False},
         )
-        return payload.get("sub")
+        # Convex JWT sub format: "userId|sessionId" — extract just the user ID
+        sub = payload.get("sub")
+        return sub.split("|")[0] if sub else None
     except JWTError:
         return None
 
