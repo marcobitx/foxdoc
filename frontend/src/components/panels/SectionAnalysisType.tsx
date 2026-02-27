@@ -57,7 +57,7 @@ export default function SectionAnalysisType() {
                 </p>
                 {type === 'detailed' && (
                   <span className="inline-flex items-center px-1.5 py-[1px] rounded-full text-[7px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 border border-brand-500/20 flex-shrink-0">
-                    Rek.
+                    Rekomenduojama
                   </span>
                 )}
               </div>
