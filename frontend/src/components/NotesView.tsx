@@ -1264,7 +1264,7 @@ export default function NotesView() {
       {!notesLoading && notesList.length > 0 && (
         <>
           {/* ── KPI Strip ──────────────────────────────────────── */}
-          <div className="relative rounded-2xl border border-surface-600/30 bg-surface-800/55 mb-5 overflow-hidden">
+          <div className="relative rounded-2xl border border-surface-600/30 bg-surface-800/55 mb-5">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-brand-500/0 via-brand-500/40 to-brand-500/0" />
             <div className="grid grid-cols-2 lg:grid-cols-5">
               {[
