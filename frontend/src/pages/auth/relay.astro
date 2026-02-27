@@ -1,0 +1,12 @@
+---
+// frontend/src/pages/auth/relay.astro
+// Standalone page that receives one-time auth code and stores tokens
+// Must NOT use ConvexAuthProvider — tokens are written before provider mounts
+// Related: AuthRelay.tsx, authRelay.ts (Convex)
+
+import Layout from '../../layouts/Layout.astro';
+import AuthRelay from '../../components/AuthRelay';
+---
+<Layout title="foxDoc — Autorizacija">
+  <AuthRelay client:only="react" />
+</Layout>
