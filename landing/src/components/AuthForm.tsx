@@ -15,7 +15,7 @@ const CONVEX_URL = import.meta.env.PUBLIC_CONVEX_URL || "";
 type AuthTab = "signIn" | "signUp";
 
 function AuthFormInner() {
-  const { signIn } = useAuthActions();
+  const { signIn, signOut } = useAuthActions();
   const { isAuthenticated } = useConvexAuth();
   const token = useAuthToken();
   const createRelayCode = useMutation(api.authRelay.createRelayCode);
@@ -28,6 +28,18 @@ function AuthFormInner() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  // Track if user just completed a fresh sign-in action (persists through Google OAuth redirect)
+  const [justSignedIn, setJustSignedIn] = useState(() => {
+    try { return sessionStorage.getItem("foxdoc_auth_pending") === "1"; } catch { return false; }
+  });
+  function markSignInPending() {
+    try { sessionStorage.setItem("foxdoc_auth_pending", "1"); } catch {}
+    setJustSignedIn(true);
+  }
+  function clearSignInPending() {
+    try { sessionStorage.removeItem("foxdoc_auth_pending"); } catch {}
+    setJustSignedIn(false);
+  }
 
   async function redirectToApp() {
     if (!token) return;
@@ -44,6 +56,7 @@ function AuthFormInner() {
         refresh_token: refreshToken,
       });
 
+      clearSignInPending();
       window.location.href = `${APP_URL}/auth/relay?code=${code}`;
     } catch (err: any) {
       setError(err.message || "Klaida kuriant nukreipimą");
@@ -51,11 +64,12 @@ function AuthFormInner() {
     }
   }
 
+  // Only auto-redirect if user just completed a fresh sign-in
   useEffect(() => {
-    if (isAuthenticated && token && !redirecting) {
+    if (isAuthenticated && token && justSignedIn && !redirecting) {
       redirectToApp();
     }
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, justSignedIn]);
 
   if (redirecting) {
     return (
@@ -65,15 +79,43 @@ function AuthFormInner() {
     );
   }
 
+  // Already authenticated — show choice instead of auto-redirect
+  if (isAuthenticated && token && !justSignedIn) {
+    return (
+      <div className="w-full max-w-md mx-auto space-y-4">
+        <p className="text-center text-neutral-300 text-sm mb-2">
+          Jūs jau prisijungęs.
+        </p>
+        <button
+          onClick={() => redirectToApp()}
+          className="w-full py-3 px-4 rounded-lg bg-amber-500 text-neutral-900 font-semibold hover:bg-amber-400 transition-colors"
+        >
+          Eiti į aplikaciją
+        </button>
+        <button
+          onClick={async () => {
+            await signOut();
+            clearSignInPending();
+          }}
+          className="w-full py-3 px-4 rounded-lg bg-neutral-800 text-neutral-300 font-medium hover:bg-neutral-700 border border-neutral-700 transition-colors"
+        >
+          Atsijungti ir prisijungti kitu
+        </button>
+      </div>
+    );
+  }
+
   async function handleGoogle() {
     setError(null);
     setLoading(true);
     try {
+      markSignInPending();
       const result = await signIn("google", { redirectTo: "/auth" });
       if (result.redirect) {
         window.location.href = result.redirect.toString();
       }
     } catch (err: any) {
+      clearSignInPending();
       setError(err.message || "Google prisijungimo klaida");
     }
     setLoading(false);
@@ -84,12 +126,14 @@ function AuthFormInner() {
     setError(null);
     setLoading(true);
     try {
+      markSignInPending();
       await signIn("password", {
         email,
         password,
         ...(tab === "signUp" ? { name, flow: "signUp" } : { flow: "signIn" }),
       });
     } catch (err: any) {
+      clearSignInPending();
       setError(
         err.message || (tab === "signUp"
           ? "Registracijos klaida. Galbūt toks el. paštas jau užregistruotas."

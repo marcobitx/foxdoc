@@ -7,6 +7,8 @@ import { useConvexAuth } from "convex/react";
 import ConvexAuthWrapper from "./ConvexAuthWrapper";
 import App from "./App";
 
+const LANDING_URL = import.meta.env.PUBLIC_LANDING_URL || "https://foxdoc.io";
+
 function AuthGate() {
   const { isLoading, isAuthenticated } = useConvexAuth();
 
@@ -20,7 +22,7 @@ function AuthGate() {
 
   if (!isAuthenticated) {
     if (typeof window !== "undefined") {
-      window.location.href = "https://foxdoc.io/auth";
+      window.location.href = `${LANDING_URL}/auth`;
     }
     return (
       <div className="flex items-center justify-center h-screen bg-[#231c18]">

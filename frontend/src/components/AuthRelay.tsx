@@ -61,7 +61,7 @@ export default function AuthRelay() {
           <div className="space-y-3">
             <div className="text-red-400 text-sm">{error}</div>
             <a
-              href="https://foxdoc.io/auth"
+              href={(import.meta.env.PUBLIC_LANDING_URL || "https://foxdoc.io") + "/auth"}
               className="text-brand-400 text-sm underline hover:no-underline"
             >
               Bandyti prisijungti iš naujo

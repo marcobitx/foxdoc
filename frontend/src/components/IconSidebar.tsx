@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { FoxScan, FoxPaw, FoxNote, FoxGear, FoxHelp } from './FoxIcons';
 import { appStore, useStore, resetForNewAnalysis, type AppView } from '../lib/store';
+import { useAuthActions } from '@convex-dev/auth/react';
+import { clearAuthToken } from '../lib/authToken';
 import Tooltip from './Tooltip';
 import AnimatedLogo from './AnimatedLogo';
 
@@ -223,6 +225,7 @@ const PROFILE_MENU = [
 ] as const;
 
 function ProfileSection({ expanded, onNavigate }: { expanded: boolean; onNavigate: (v: AppView) => void }) {
+  const { signOut } = useAuthActions();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -283,7 +286,11 @@ function ProfileSection({ expanded, onNavigate }: { expanded: boolean; onNavigat
       {/* Divider + sign out */}
       <div className="border-t border-surface-800/60 py-1.5">
         <button
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false);
+            clearAuthToken();
+            window.location.href = (import.meta.env.PUBLIC_LANDING_URL || "https://foxdoc.io") + "/auth";
+          }}
           className="flex items-center gap-2.5 w-full px-3 py-2 text-left text-surface-400 hover:text-red-400 hover:bg-surface-800/60 transition-colors duration-150"
         >
           <LogOut className="w-3.5 h-3.5" />
