@@ -17,6 +17,7 @@ export default function AuthRelay() {
     async function exchangeCode() {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
+      const returnUrl = params.get("returnUrl");
 
       if (!code) {
         setStatus("error");
@@ -36,8 +37,15 @@ export default function AuthRelay() {
 
         setStatus("success");
 
+        const LANDING_URL = import.meta.env.PUBLIC_LANDING_URL || "https://foxdoc.io";
+
         setTimeout(() => {
-          window.location.href = "/";
+          // Redirect back to landing returnUrl if provided (only relative paths for security)
+          if (returnUrl && returnUrl.startsWith("/")) {
+            window.location.href = `${LANDING_URL}${returnUrl}`;
+          } else {
+            window.location.href = "/";
+          }
         }, 500);
       } catch (err: any) {
         setStatus("error");

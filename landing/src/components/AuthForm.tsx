@@ -41,6 +41,19 @@ function AuthFormInner() {
     setJustSignedIn(false);
   }
 
+  // Read returnUrl from query params and persist in sessionStorage (survives Google OAuth redirect)
+  const [returnUrl] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlParam = params.get("returnUrl");
+      if (urlParam && urlParam.startsWith("/")) {
+        sessionStorage.setItem("foxdoc_return_url", urlParam);
+        return urlParam;
+      }
+      return sessionStorage.getItem("foxdoc_return_url") || null;
+    } catch { return null; }
+  });
+
   async function redirectToApp() {
     if (!token) return;
 
@@ -57,7 +70,11 @@ function AuthFormInner() {
       });
 
       clearSignInPending();
-      window.location.href = `${APP_URL}/auth/relay?code=${code}`;
+      try { sessionStorage.removeItem("foxdoc_return_url"); } catch {}
+      const relayUrl = returnUrl
+        ? `${APP_URL}/auth/relay?code=${code}&returnUrl=${encodeURIComponent(returnUrl)}`
+        : `${APP_URL}/auth/relay?code=${code}`;
+      window.location.href = relayUrl;
     } catch (err: any) {
       setError(err.message || "Klaida kuriant nukreipimą");
       setRedirecting(false);

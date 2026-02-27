@@ -1,6 +1,10 @@
 ---
 // src/components/MobileNav.astro
 // Hamburger button + slide-in drawer for mobile navigation
+interface Props {
+  authHref?: string;
+}
+const { authHref = '/auth' } = Astro.props;
 ---
 <!-- Hamburger button (mobile only) -->
 <button id="menu-btn"
@@ -60,8 +64,8 @@
 
   <!-- Drawer footer CTAs -->
   <div class="p-4 flex flex-col gap-3" style="border-top: 1px solid rgba(168,162,158,0.10);">
-    <a href="/auth" class="btn-secondary w-full text-sm text-center">Prisijungti</a>
-    <a href="/auth" class="btn-primary w-full text-sm text-center">Išbandyti nemokamai</a>
+    <a href={authHref} class="btn-secondary w-full text-sm text-center">Prisijungti</a>
+    <a href={authHref} class="btn-primary w-full text-sm text-center">Išbandyti nemokamai</a>
   </div>
 </div>
 
