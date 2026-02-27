@@ -98,7 +98,7 @@ class ConvexDB:
 
         async with self._lock:
             aid = self._new_id()
-            self._table("analyses")[aid] = {
+            record: dict[str, Any] = {
                 "_id": aid,
                 "_creationTime": self._now_iso(),
                 "status": "pending",
@@ -110,6 +110,9 @@ class ConvexDB:
                 "events_json": [],
                 "error": None,
             }
+            if user_id:
+                record["user_id"] = user_id
+            self._table("analyses")[aid] = record
             return aid
 
     async def update_analysis(self, analysis_id: str, **kwargs: Any) -> None:
@@ -850,7 +853,7 @@ class ConvexDB:
         async with self._lock:
             nid = self._new_id()
             now = self._now_iso()
-            self._table("notes")[nid] = {
+            record: dict[str, Any] = {
                 "_id": nid,
                 "_creationTime": now,
                 "title": title,
@@ -864,6 +867,9 @@ class ConvexDB:
                 "user_id": user_id,
                 "updated_at": int(datetime.now(timezone.utc).timestamp() * 1000),
             }
+            if user_id:
+                record["user_id"] = user_id
+            self._table("notes")[nid] = record
             return nid
 
     async def update_note(self, note_id: str, **kwargs: Any) -> None:

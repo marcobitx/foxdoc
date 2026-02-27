@@ -245,14 +245,14 @@ export default function App() {
 
           {/* ── Decorative divider between main & right panel ──────── */}
           <div className="hidden lg:block relative w-[20px] flex-shrink-0" aria-hidden="true">
-            {/* Horizontal line — extends left across full main content area, at very top */}
-            <div className="absolute top-0 right-[9px] h-[1px] bg-surface-400/35" style={{ left: '-2000px' }} />
-            {/* Vertical line — from top down */}
-            <div className="absolute top-0 right-[9px] w-[1px] bottom-[24px] bg-surface-400/35" />
+            {/* Horizontal line — full width: left edge to right edge */}
+            <div className="absolute top-0 h-[1px] bg-surface-400/35" style={{ left: '-2000px', right: '-2000px' }} />
+            {/* Vertical line — full height: top to bottom */}
+            <div className="absolute top-0 right-[9px] w-[1px] bottom-0 bg-surface-400/35" />
             {/* Dot — top junction */}
             <div className="absolute top-0 right-[9px] -translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
             {/* Dot — bottom */}
-            <div className="absolute bottom-[24px] right-[9px] translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
+            <div className="absolute bottom-0 right-[9px] translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
           </div>
 
           {/* ── Right — Tools Panel (320px, desktop only) ─────────── */}

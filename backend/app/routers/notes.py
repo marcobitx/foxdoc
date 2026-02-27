@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_optional_user_id
 from app.convex_client import ConvexDB, get_db
+from app.middleware.auth import require_auth
 from app.models.schemas import (
     NoteBulkAction,
     NoteBulkStatusUpdate,
@@ -27,6 +28,7 @@ router = APIRouter(prefix="/api/notes", tags=["notes"])
 async def list_notes(
     limit: int = 100,
     offset: int = 0,
+    user_id: str = Depends(require_auth),
     db: ConvexDB = Depends(get_db),
     user_id: str | None = Depends(get_optional_user_id),
 ):
@@ -37,10 +39,16 @@ async def list_notes(
 
 
 @router.get("/{note_id}")
-async def get_note(note_id: str, db: ConvexDB = Depends(get_db)):
-    """Get a single note by ID."""
+async def get_note(
+    note_id: str,
+    user_id: str = Depends(require_auth),
+    db: ConvexDB = Depends(get_db),
+):
+    """Get a single note by ID (must belong to user)."""
     note = await db.get_note(note_id)
     if note is None:
+        raise HTTPException(status_code=404, detail="Note not found")
+    if note.get("user_id") and note["user_id"] != user_id:
         raise HTTPException(status_code=404, detail="Note not found")
     return note
 
@@ -70,11 +78,14 @@ async def create_note(
 async def update_note(
     note_id: str,
     body: NoteUpdate,
+    user_id: str = Depends(require_auth),
     db: ConvexDB = Depends(get_db),
 ):
-    """Partial update on a note."""
+    """Partial update on a note (must belong to user)."""
     existing = await db.get_note(note_id)
     if existing is None:
+        raise HTTPException(status_code=404, detail="Note not found")
+    if existing.get("user_id") and existing["user_id"] != user_id:
         raise HTTPException(status_code=404, detail="Note not found")
 
     # Use model_fields_set to distinguish "not sent" from "explicitly set to null"
@@ -85,15 +96,27 @@ async def update_note(
 
 
 @router.delete("/{note_id}")
-async def delete_note(note_id: str, db: ConvexDB = Depends(get_db)):
-    """Delete a single note."""
+async def delete_note(
+    note_id: str,
+    user_id: str = Depends(require_auth),
+    db: ConvexDB = Depends(get_db),
+):
+    """Delete a single note (must belong to user)."""
+    existing = await db.get_note(note_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Note not found")
+    if existing.get("user_id") and existing["user_id"] != user_id:
+        raise HTTPException(status_code=404, detail="Note not found")
+
     await db.delete_note(note_id)
     return {"ok": True}
 
 
 @router.post("/bulk/delete")
 async def bulk_delete_notes(
-    body: NoteBulkAction, db: ConvexDB = Depends(get_db)
+    body: NoteBulkAction,
+    user_id: str = Depends(require_auth),
+    db: ConvexDB = Depends(get_db),
 ):
     """Delete multiple notes at once."""
     await db.bulk_delete_notes(body.ids)
@@ -102,7 +125,9 @@ async def bulk_delete_notes(
 
 @router.post("/bulk/status")
 async def bulk_update_status(
-    body: NoteBulkStatusUpdate, db: ConvexDB = Depends(get_db)
+    body: NoteBulkStatusUpdate,
+    user_id: str = Depends(require_auth),
+    db: ConvexDB = Depends(get_db),
 ):
     """Change status on multiple notes."""
     await db.bulk_update_notes_status(body.ids, body.status)

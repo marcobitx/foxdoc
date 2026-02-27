@@ -90,6 +90,7 @@ export default defineSchema({
     color: v.optional(v.string()),  // "default"|"amber"|"emerald"|"blue"|"red"|"purple"
     pinned: v.boolean(),
     analysis_id: v.optional(v.id("analyses")),
+    user_id: v.optional(v.id("users")),  // optional for backward compat
     updated_at: v.number(),      // epoch ms
   })
     .index("by_status", ["status"])
