@@ -13,6 +13,8 @@ import ResultsPanel from './panels/ResultsPanel';
 import TipsPanel from './panels/TipsPanel';
 import NotesPanel from './panels/NotesPanel';
 import SectionModelSelector from './panels/SectionModelSelector';
+import SectionAnalysisType from './panels/SectionAnalysisType';
+import SectionThinking from './panels/SectionThinking';
 
 interface Props {
   currentView: AppView;
@@ -183,6 +185,14 @@ export default function RightPanel({ currentView, analysisId }: Props) {
               {currentView === 'upload' && <UploadPanel />}
               {currentView === 'analyzing' && <AnalyzingPanel />}
               {currentView === 'results' && analysisId && <ResultsPanel analysisId={analysisId} />}
+            </div>
+
+            <div className="enterprise-card overflow-hidden">
+              <SectionAnalysisType />
+            </div>
+
+            <div className="enterprise-card overflow-hidden">
+              <SectionThinking />
             </div>
 
             <div className="enterprise-card overflow-hidden">

@@ -69,8 +69,15 @@ export default function UploadPanel() {
     appStore.setState({ uploading: true });
     setError(null);
     try {
-      const selectedModelId = appStore.getState().selectedModel?.id;
-      const result = await createAnalysis(files, selectedModelId);
+      const s = appStore.getState();
+      const selectedModelId = s.selectedModel?.id;
+      const result = await createAnalysis(
+        files,
+        selectedModelId,
+        s.selectedAnalysisType,
+        s.selectedAnalysisType === 'custom' ? s.customAnalysisInstructions : undefined,
+        s.selectedThinking,
+      );
       startAnalysisStream(result.id);
       appStore.setState({
         view: 'analyzing',

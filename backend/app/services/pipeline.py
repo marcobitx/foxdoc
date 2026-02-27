@@ -91,12 +91,18 @@ class AnalysisPipeline:
         llm: LLMClient,
         model: str,
         api_key: str = "",
+        analysis_type: str = "detailed",
+        custom_instructions: str = "",
+        thinking_override: str = "",
     ):
         self.analysis_id = analysis_id
         self.db = db
         self.llm = llm
         self.model = model
         self._api_key = api_key
+        self.analysis_type = analysis_type
+        self.custom_instructions = custom_instructions
+        self.thinking_override = thinking_override
         self.metrics = PipelineMetrics(model_used=model)
         self._event_index = 0
         self._stream_queue = create_stream(analysis_id)
@@ -194,6 +200,9 @@ class AnalysisPipeline:
                 on_started=self._on_extraction_started_sync,
                 on_completed=self._on_extraction_completed_sync,
                 on_thinking=extraction_thinking,
+                analysis_type=self.analysis_type,
+                custom_instructions=self.custom_instructions,
+                thinking_override=self.thinking_override,
             )
             await self._push_thinking_done()
 
@@ -210,6 +219,9 @@ class AnalysisPipeline:
                 extractions, self.llm, self.model,
                 context_length=context_length,
                 on_thinking=aggregation_thinking,
+                analysis_type=self.analysis_type,
+                custom_instructions=self.custom_instructions,
+                thinking_override=self.thinking_override,
             )
             await self._push_thinking_done()
             self.metrics.tokens_aggregation_input = agg_usage.get("input_tokens", 0)

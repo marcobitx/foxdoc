@@ -68,12 +68,15 @@ export interface ModelInfo {
 
 // ── Analysis endpoints ───────────────────────────────────────────────────────
 
-export async function createAnalysis(files: File[], model?: string): Promise<{ id: string }> {
+export async function createAnalysis(files: File[], model?: string, analysisType?: string, customInstructions?: string, thinking?: string): Promise<{ id: string }> {
   const form = new FormData();
   for (const f of files) {
     form.append('files', f);
   }
   if (model) form.append('model', model);
+  if (analysisType) form.append('analysis_type', analysisType);
+  if (customInstructions) form.append('custom_instructions', customInstructions);
+  if (thinking) form.append('thinking', thinking);
   const res = await fetch(`${BASE}/analyze`, { method: 'POST', headers: { ...authHeaders() }, body: form });
   if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
   return res.json();

@@ -162,6 +162,9 @@ def _build_detail(record: dict, documents: list[dict]) -> AnalysisDetail:
 async def create_analysis(
     files: list[UploadFile],
     model: str = Form("anthropic/claude-sonnet-4"),
+    analysis_type: str = Form("detailed"),
+    custom_instructions: str = Form(""),
+    thinking: str = Form(""),
     user_id: str = Depends(require_auth),
     db: ConvexDB = Depends(get_db),
     settings: AppSettings = Depends(get_settings),
@@ -247,6 +250,9 @@ async def create_analysis(
                     llm=llm,
                     model=model,
                     api_key=api_key,
+                    analysis_type=analysis_type,
+                    custom_instructions=custom_instructions,
+                    thinking_override=thinking,
                 )
                 await pipeline.run(upload_paths)
             finally:

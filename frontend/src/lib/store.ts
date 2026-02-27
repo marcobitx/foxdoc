@@ -109,6 +109,10 @@ export interface AppState {
   rightPanelOpen: boolean;
   selectedModel: any | null;
   modelPanelOpen: boolean;
+  analysisTypePanelOpen: boolean;
+  selectedAnalysisType: string;
+  customAnalysisInstructions: string;
+  selectedThinking: string;
   filesPanelOpen: boolean;
   sourcesPanelOpen: boolean;
   analysisStatus: string | null;
@@ -174,6 +178,10 @@ export const appStore = createStore<AppState>({
   rightPanelOpen: false,
   selectedModel: null,
   modelPanelOpen: false,
+  analysisTypePanelOpen: false,
+  selectedAnalysisType: 'detailed',
+  customAnalysisInstructions: '',
+  selectedThinking: 'low',
   filesPanelOpen: false,
   sourcesPanelOpen: false,
   helpPanelOpen: false,
