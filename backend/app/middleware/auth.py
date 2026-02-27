@@ -3,10 +3,14 @@
 # Validates Bearer tokens against Convex JWKS endpoint
 # Related: main.py, config.py
 
+import logging
+
 import httpx
 from jose import jwt, JWTError
 from fastapi import Request, HTTPException
 from app.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 _jwks_cache: dict | None = None
 
@@ -18,7 +22,9 @@ async def get_jwks() -> dict:
         return _jwks_cache
 
     settings = get_settings()
-    jwks_url = f"{settings.convex_url}/.well-known/jwks.json"
+    # JWKS is served from .convex.site, not .convex.cloud
+    base_url = settings.convex_url.replace(".convex.cloud", ".convex.site")
+    jwks_url = f"{base_url}/.well-known/jwks.json"
     async with httpx.AsyncClient() as client:
         response = await client.get(jwks_url)
         response.raise_for_status()
@@ -53,7 +59,8 @@ async def get_current_user_id(request: Request) -> str | None:
         # Convex JWT sub format: "userId|sessionId" — extract just the user ID
         sub = payload.get("sub")
         return sub.split("|")[0] if sub else None
-    except JWTError:
+    except (JWTError, Exception) as e:
+        logger.warning("JWT validation failed: %s", e)
         return None
 
 
