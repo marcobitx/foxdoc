@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CTA Background Variants</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d0a08; color: #fff; font-family: system-ui, sans-serif; padding: 2rem; }
+    h1 { color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.5rem; }
+    p { color: #b5a99f; font-size: 0.875rem; margin-bottom: 2rem; }
+
+    .grid { display: flex; flex-direction: column; gap: 3rem; }
+
+    .variant { border: 1px solid rgba(245,158,11,0.2); border-radius: 1rem; overflow: hidden; }
+    .label {
+      padding: 0.75rem 1.25rem;
+      background: rgba(245,158,11,0.06);
+      border-bottom: 1px solid rgba(245,158,11,0.15);
+      font-size: 0.875rem;
+      color: #f59e0b;
+      font-family: monospace;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .label button {
+      background: #f59e0b; color: #1a1512; border: none;
+      padding: 0.35rem 1rem; border-radius: 0.4rem;
+      cursor: pointer; font-size: 0.8rem; font-weight: 600;
+    }
+    .label button:hover { background: #fbbf24; }
+
+    .preview {
+      position: relative;
+      height: 320px;
+      overflow: hidden;
+    }
+    .bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center 30%;
+    }
+    .overlay-dark {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(13,10,8,0.82) 0%, rgba(26,21,18,0.72) 50%, rgba(13,10,8,0.78) 100%);
+    }
+    .overlay-amber {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(234,88,12,0.12) 0%, rgba(245,158,11,0.08) 100%);
+    }
+    .content {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; text-align: center; padding: 2rem;
+    }
+    .content h2 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem; }
+    .content p { color: #b5a99f; font-size: 1rem; margin-bottom: 1.5rem; }
+    .btn {
+      background: #f59e0b; color: #1a1512;
+      padding: 0.875rem 2rem; border-radius: 0.5rem;
+      font-weight: 600; font-size: 1rem; text-decoration: none;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <h1>CTA fono variantai</h1>
+  <p>Pasirink variantą ir spustelėk "Naudoti" — automatiškai atnaujins svetainę.</p>
+
+  <div class="grid" id="variants"></div>
+
+  <script>
+    const variants = [
+      { id: 'A', file: 'cta-bg-a.png', desc: 'Ambient orbs — asimetriški soft glow rutuliai' },
+      { id: 'B', file: 'cta-bg-b.png', desc: 'Aurora arc — horizontalus energijos lankas apačioje' },
+      { id: 'C', file: 'cta-bg-c.png', desc: 'Center spotlight — vienas masyvus glow iš centro' },
+      { id: 'D', file: 'cta-bg-d.png', desc: 'Corner embers — du ember glow kampuose' },
+      { id: 'E', file: 'cta-bg-e.png', desc: 'Diagonal sweep — įstriža aurora banga' },
+      { id: 'F', file: 'cta-bg-f.png', desc: 'Document layers — švytintys dokumentų stūbai' },
+      { id: 'G', file: 'cta-bg-g.png', desc: 'Data grid — amber tinklo struktūra / duomenų žemėlapis' },
+      { id: 'H', file: 'cta-bg-h.png', desc: 'Fox spirit — lapiuko siluetas iš šviesos dalelių' },
+      { id: 'I', file: 'cta-bg-i.png', desc: '★ Dokumentai abiejuose kraštuose, centras tamsus' },
+      { id: 'J', file: 'cta-bg-j.png', desc: '★ Dokumentų pluoštas dešinėje, kairė tamsi' },
+      { id: 'K', file: 'cta-bg-k.png', desc: '★ Dokumentai kairėje + duomenų stulpeliai dešinėje' },
+      { id: 'L', file: 'cta-bg-l.png', desc: '★ Plaukiojantys dokumentai abiejose pusėse' },
+      { id: 'M', file: 'cta-bg-m.png', desc: '3D ★ Izometrinis dokumentų pluoštas dešinėje' },
+      { id: 'N', file: 'cta-bg-n.png', desc: '3D ★ Plaukiojančios dokumentų kortelės perspektyvoje' },
+      { id: 'O', file: 'cta-bg-o.png', desc: '3D ★ Atviras dokumentų aplankas dešinėje' },
+      { id: 'P', file: 'cta-bg-p.png', desc: '3D ★ Sluoksniuotos dokumentų plokštės gylyje' },
+      { id: 'Q', file: 'cta-bg-q.png', desc: '☀ ŠVIESI ★ 3D aplankas dešinėje, kreminė-šilta fonas' },
+      { id: 'R', file: 'cta-bg-r.png', desc: '☀ ŠVIESI ★ Plaukiojantys dokumentai dešinėje, dramblio kaulo fonas' },
+      { id: 'S', file: 'cta-bg-s.png', desc: '☀ ŠVIESI ★ Elegantiškas aplankas dešinėje, pergamentinis fonas' },
+      { id: 'T', file: 'cta-bg-t.png', desc: '☀ O-remake ★ Aplankas toliau dešinėje apačioje, šiltas kremas' },
+      { id: 'U', file: 'cta-bg-u.png', desc: '☀ O-remake ★ Mažas aplankas apatiniame dešiniame kampe' },
+      { id: 'V', file: 'cta-bg-v.png', desc: '☀ O-remake ★ Plaukiojantis aplankas toliau dešinėje' },
+      { id: 'W', file: 'cta-bg-w.png', desc: '🦊 Lapė su dokumentais dešinėje, kreminė fonas' },
+      { id: 'X', file: 'cta-bg-x.png', desc: '🦊 AI lapė su dokumentais ir ikonomis dešinėje' },
+      { id: 'Y', file: 'cta-bg-y.png', desc: '🦊 Dokumentų darbo vieta dešinėje, amber glow' },
+      { id: 'Z1', file: 'cta-bg-z1.png', desc: '🦊 LOGO lapė su dokumentais toliau dešinėje (ref. logo)' },
+      { id: 'Z2', file: 'cta-bg-z2.png', desc: '🦊 LOGO lapė apačioje dešinėje su dokumentais (ref. logo)' },
+      { id: 'Z3', file: 'cta-bg-z3.png', desc: '🦊 LOGO lapė vidutinė dešinėje su dokumentais v2' },
+      { id: 'Z4', file: 'cta-bg-z4.png', desc: '🦊 LOGO lapė su dokumentų spinduliais dešinėje v2' },
+      { id: 'AA', file: 'cta-bg-aa.png', desc: '🦊 SEAMLESS lapė nuo pečių, dešinė, kreminis fonas (be split)' },
+      { id: 'AB', file: 'cta-bg-ab.png', desc: '🦊 SEAMLESS lapė prie stalo su dokumentais, dešinė' },
+      { id: 'AC', file: 'cta-bg-ac.png', desc: '🦊 SEAMLESS lapė AI analitikas, dešinė, dalinis kadras' },
+      { id: 'AD', file: 'cta-bg-ad.png', desc: '🦊 SEAMLESS lapė agentas su dokumentais, kreminis' },
+      { id: 'AE', file: 'cta-bg-ae.png', desc: '🦊 3D AI agentas prie stalo su dokumentais, desineje, zoom out' },
+      { id: 'AF', file: 'cta-bg-af.png', desc: '🦊 3D lapė prie darbo stalo su laptopo dešiniame kampe' },
+      { id: 'AG', file: 'cta-bg-ag.png', desc: '🔍 3D lapė su didinamuoju stiklu virš dokumentų, dalelės skraido' },
+      { id: 'AH', file: 'cta-bg-ah.png', desc: '🌐 3D lapė ore su orbitiniais dokumentų žiedais' },
+      { id: 'AI', file: 'cta-bg-ai.png', desc: '💻 3D lapė prie holografinių ekranų su QA 94/100' },
+      { id: 'AJ', file: 'cta-bg-aj.png', desc: '📊 3D izometrinis dokumentų analizė — duomenys ištraukiami' },
+      { id: 'AK', file: 'cta-bg-ak.png', desc: '🌀 3D dokumentų portalas / vorteksas su lapės agentu' },
+      { id: 'BA', file: 'cta-bg-ba.png', desc: '💼 B2B izometriniai dokumentų korteliai su duomenimis (€124,500, data, CPV)' },
+      { id: 'BB', file: 'cta-bg-bb.png', desc: '💻 B2B nešiojamas kompiuteris su analizės dashboard' },
+      { id: 'BC', file: 'cta-bg-bc.png', desc: '🔄 B2B duomenų srautas per piltuvą — in: dokumentai, out: duomenys' },
+      { id: 'BD', file: 'cta-bg-bd.png', desc: '🖥️ B2B stikliniai holografiniai ekranai virš modernaus stalo' },
+      { id: 'BE', file: 'cta-bg-be.png', desc: '🤖 B2B AI orbas tarp dokumentų ir rezultatų su QA Score 94' },
+      { id: 'CA', file: 'cta-bg-ca.png', desc: '📄 Paprasta: dokumentai → rodyklė → švari ataskaita su 94/100' },
+      { id: 'CB', file: 'cta-bg-cb.png', desc: '🗂️ Biuro stalas: dokumentų krūvelė + spausdinta ataskaita šalia' },
+      { id: 'CC', file: 'cta-bg-cc.png', desc: '📁 Aplankas su puslapiais — iš jų kyla duomenų etiketės' },
+      { id: 'CD', file: 'cta-bg-cd.png', desc: '🔍 Didinamas stiklas virš dokumentų — matosi ištraukti duomenys' },
+      { id: 'CE', file: 'cta-bg-ce.png', desc: '⚡ Prieš/po: chaotiška krūvelė → tvarkinga ataskaita su 94/100' },
+    ];
+
+    const grid = document.getElementById('variants');
+
+    variants.forEach(v => {
+      grid.innerHTML += `
+        <div class="variant">
+          <div class="label">
+            <span>Variant ${v.id} — ${v.desc}</span>
+            <button onclick="choose('${v.file}', '${v.id}')">Naudoti ${v.id}</button>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr;">
+            <!-- Su layeriais -->
+            <div style="position:relative;">
+              <div style="padding:0.4rem 0.75rem; font-size:0.7rem; color:#6d5f55; font-family:monospace; background:rgba(0,0,0,0.4);">su overlayais</div>
+              <div class="preview">
+                <div class="bg" style="background-image: url('/images/${v.file}');"></div>
+                <div class="overlay-dark"></div>
+                <div class="overlay-amber"></div>
+                <div class="content">
+                  <h2>Pradėkite taupyti laiką šiandien</h2>
+                  <p>3 kreditai nemokamai. Nereikia kredito kortelės.</p>
+                  <a href="#" class="btn">Išbandyti nemokamai →</a>
+                </div>
+              </div>
+            </div>
+            <!-- Be layerių -->
+            <div style="position:relative; border-left:1px solid rgba(245,158,11,0.1);">
+              <div style="padding:0.4rem 0.75rem; font-size:0.7rem; color:#6d5f55; font-family:monospace; background:rgba(0,0,0,0.4);">be overlayų (gryna foto)</div>
+              <div class="preview">
+                <div class="bg" style="background-image: url('/images/${v.file}');"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    async function choose(file, id) {
+      const res = await fetch('/api/set-cta-bg', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file })
+      });
+      if (res.ok) {
+        alert(`Variant ${id} pasirinktas! Perkraunamas Astro...`);
+      } else {
+        alert(`Variant ${id} pasirinktas (rankinis atnaujinimas reikalingas).`);
+      }
+    }
+  </script>
+</body>
+</html>
