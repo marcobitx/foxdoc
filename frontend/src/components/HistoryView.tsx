@@ -693,7 +693,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   style={{ animationDelay: `${i * 30}ms` }}
                 >
                   {/* Row checkbox */}
-                  <div className="flex items-center justify-center pl-1">
+                  <div className="flex items-start pt-[3px] justify-center pl-1">
                     <button
                       onClick={(e) => toggleSelect(a.id, e)}
                       className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0
@@ -764,7 +764,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   </div>
 
                   {/* Organization */}
-                  <div className="hidden lg:flex items-center min-w-0 pr-3">
+                  <div className="hidden lg:flex items-start pt-[3px] min-w-0 pr-3">
                     {a.organization_name ? (
                       <span className="flex items-center gap-1.5 text-[12px] text-surface-400 min-w-0">
                         <Building2 className="w-3.5 h-3.5 flex-shrink-0 text-surface-500" />
@@ -776,7 +776,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   </div>
 
                   {/* Deadline */}
-                  <div className="hidden md:flex items-center min-w-0">
+                  <div className="hidden md:flex items-start pt-[3px] min-w-0">
                     {a.submission_deadline ? (
                       <span className="flex items-center gap-1.5 text-[12px] text-surface-400">
                         <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-surface-500" />
@@ -788,7 +788,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   </div>
 
                   {/* Value — hidden on mobile, shown md+ */}
-                  <div className="hidden md:flex items-center justify-end pr-3">
+                  <div className="hidden md:flex items-start pt-[3px] justify-end pr-3">
                     <span className={`text-[13px] font-bold tracking-tight ${
                       a.estimated_value ? 'text-amber-400' : 'text-surface-600'
                     }`}>
@@ -797,7 +797,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   </div>
 
                   {/* Quality score */}
-                  <div className="hidden md:flex items-center justify-center">
+                  <div className="hidden md:flex items-start pt-[5px] justify-center">
                     {a.completeness_score != null ? (() => {
                       const score = Math.round(a.completeness_score * 100);
                       const color = score >= 80 ? 'text-emerald-400' : score >= 50 ? 'text-amber-400' : 'text-red-400';
@@ -816,14 +816,14 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   </div>
 
                   {/* Status */}
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-start pt-[3px] justify-center">
                     <span className={`${status.cls} text-[10px] px-2 py-0.5`}>
                       {status.label}
                     </span>
                   </div>
 
                   {/* Actions */}
-                  <div className="relative flex items-center justify-end gap-1.5">
+                  <div className="relative flex items-start pt-[1px] justify-end gap-1.5">
                     {clickable && (
                       <button
                         onClick={(e) => { e.stopPropagation(); onSelect(a.id); }}
