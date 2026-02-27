@@ -9,6 +9,8 @@ import {
   PanelLeftClose, PanelLeftOpen,
   LogOut, Activity, Bookmark, ChevronUp,
 } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 import { FoxScan, FoxPaw, FoxNote, FoxGear, FoxHelp } from './FoxIcons';
 import { appStore, useStore, resetForNewAnalysis, type AppView } from '../lib/store';
 import { useAuthActions } from '@convex-dev/auth/react';
@@ -226,10 +228,17 @@ const PROFILE_MENU = [
 
 function ProfileSection({ expanded, onNavigate }: { expanded: boolean; onNavigate: (v: AppView) => void }) {
   const { signOut } = useAuthActions();
+  const currentUser = useQuery(api.users.currentUser);
+  const credits = useQuery(api.userCredits.getMyCredits);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [menuPos, setMenuPos] = useState<{ left: number; bottom: number } | null>(null);
+
+  const displayName = currentUser?.name || currentUser?.email?.split('@')[0] || 'Vartotojas';
+  const displayEmail = currentUser?.email || '';
+  const initials = displayName.charAt(0).toUpperCase();
+  const planLabel = credits?.plan === 'pro' ? 'Pro planas' : credits?.plan === 'free' ? 'Nemokamas' : '';
 
   // Calculate fixed position for collapsed dropdown
   useEffect(() => {
@@ -262,8 +271,18 @@ function ProfileSection({ expanded, onNavigate }: { expanded: boolean; onNavigat
     <>
       {/* Menu header */}
       <div className="px-3 pt-3 pb-2 border-b border-surface-800/60">
-        <p className="text-[13px] font-bold text-surface-100 truncate">Marco</p>
-        <p className="text-[11px] text-surface-500 font-medium truncate">marcobitx@gmail.com</p>
+        <p className="text-[13px] font-bold text-surface-100 truncate">{displayName}</p>
+        <p className="text-[11px] text-surface-500 font-medium truncate">{displayEmail}</p>
+        {credits && (
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-[10px] font-semibold text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded">
+              {credits.plan === 'pro' ? 'Pro' : 'Free'}
+            </span>
+            <span className="text-[10px] text-surface-500">
+              {credits.credits_used}/{credits.credits_total} kreditų
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Menu items */}
@@ -346,18 +365,18 @@ function ProfileSection({ expanded, onNavigate }: { expanded: boolean; onNavigat
         >
           {/* Avatar */}
           <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center flex-shrink-0 ring-2 ring-surface-800 shadow-sm">
-            <span className="text-[10px] font-bold text-white leading-none">M</span>
+            <span className="text-[10px] font-bold text-white leading-none">{initials}</span>
           </div>
 
-          {/* Name + email — only when expanded */}
+          {/* Name + plan — only when expanded */}
           <div
             className={clsx(
               'flex-1 min-w-0 text-left overflow-hidden transition-[opacity,max-width] duration-300 ease-out',
               expanded ? 'opacity-100 max-w-[140px]' : 'opacity-0 max-w-0',
             )}
           >
-            <p className="text-[13px] font-semibold text-surface-200 truncate leading-tight">Marco</p>
-            <p className="text-[10px] text-surface-500 truncate leading-tight mt-0.5">Pro planas</p>
+            <p className="text-[13px] font-semibold text-surface-200 truncate leading-tight">{displayName}</p>
+            {planLabel && <p className="text-[10px] text-surface-500 truncate leading-tight mt-0.5">{planLabel}</p>}
           </div>
 
           {/* Chevron — only when expanded */}
