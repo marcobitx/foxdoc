@@ -97,7 +97,7 @@ function AuthFormInner() {
             await signOut();
             clearSignInPending();
           }}
-          className="w-full py-3 px-4 rounded-lg bg-neutral-800 text-neutral-300 font-medium hover:bg-neutral-700 border border-neutral-700 transition-colors"
+          className="w-full py-3 px-4 rounded-lg bg-[#2a2320] text-neutral-300 font-medium hover:bg-[#3e332d] border border-[#3e332d] transition-colors"
         >
           Atsijungti ir prisijungti kitu
         </button>
@@ -145,12 +145,12 @@ function AuthFormInner() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="flex mb-6 bg-neutral-800/50 rounded-lg p-1">
+      <div className="flex mb-6 bg-[#2a2320] rounded-lg p-1">
         <button
           onClick={() => setTab("signIn")}
           className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all ${
             tab === "signIn"
-              ? "bg-neutral-700 text-white shadow-sm"
+              ? "bg-[#3e332d] text-white shadow-sm"
               : "text-neutral-200 hover:text-white"
           }`}
         >
@@ -160,7 +160,7 @@ function AuthFormInner() {
           onClick={() => setTab("signUp")}
           className={`flex-1 py-2.5 text-sm font-medium rounded-md transition-all ${
             tab === "signUp"
-              ? "bg-neutral-700 text-white shadow-sm"
+              ? "bg-[#3e332d] text-white shadow-sm"
               : "text-neutral-200 hover:text-white"
           }`}
         >
@@ -183,9 +183,9 @@ function AuthFormInner() {
       </button>
 
       <div className="flex items-center gap-3 my-6">
-        <div className="flex-1 h-px bg-neutral-700"></div>
+        <div className="flex-1 h-px bg-[#3e332d]"></div>
         <span className="text-xs text-neutral-400 uppercase tracking-wider">arba</span>
-        <div className="flex-1 h-px bg-neutral-700"></div>
+        <div className="flex-1 h-px bg-[#3e332d]"></div>
       </div>
 
       <form onSubmit={handleEmailAuth} className="space-y-4">
@@ -197,7 +197,7 @@ function AuthFormInner() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Jonas Jonaitis"
-              className="w-full px-4 py-3 bg-neutral-800/50 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full px-4 py-3 bg-[#2a2320] border border-[#3e332d] rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
             />
           </div>
         )}
@@ -209,7 +209,7 @@ function AuthFormInner() {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="jonas@organizacija.lt"
-            className="w-full px-4 py-3 bg-neutral-800/50 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full px-4 py-3 bg-[#2a2320] border border-[#3e332d] rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
           />
         </div>
         <div>
@@ -221,7 +221,7 @@ function AuthFormInner() {
             required
             minLength={8}
             placeholder="Mažiausiai 8 simboliai"
-            className="w-full px-4 py-3 bg-neutral-800/50 border border-neutral-700 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full px-4 py-3 bg-[#2a2320] border border-[#3e332d] rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500 transition-colors"
           />
         </div>
 
@@ -234,7 +234,7 @@ function AuthFormInner() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 rounded-lg bg-amber-500 text-neutral-900 font-semibold hover:bg-amber-400 transition-colors disabled:opacity-50"
+          className="w-full py-3 px-4 rounded-lg bg-amber-500 text-neutral-900 font-semibold hover:bg-amber-400 transition-all disabled:opacity-50 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]"
         >
           {loading ? "Palaukite..." : tab === "signIn" ? "Prisijungti" : "Registruotis"}
         </button>
