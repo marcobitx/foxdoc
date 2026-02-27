@@ -28,6 +28,7 @@ import { listAnalyses, deleteAnalysis, listNotes, type AnalysisSummary } from '.
 import CustomSelect from './CustomSelect';
 import ScrollText from './ScrollText';
 import Tooltip from './Tooltip';
+import LineDivider from './LineDivider';
 
 interface Props {
   onSelect: (id: string) => void;
@@ -425,7 +426,8 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
               </div>
 
               {/* Completed */}
-              <div className="relative px-6 py-5 border-l border-surface-700/40 group">
+              <div className="relative px-6 py-5 group">
+                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
                 <div className="flex items-baseline gap-2">
                   <span className="text-[32px] font-extrabold text-white tracking-tighter leading-none">{stats.completed}</span>
                   {stats.failed > 0 && (
@@ -452,7 +454,8 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
               </div>
 
               {/* Total Value */}
-              <div className="relative px-6 py-5 border-l border-surface-700/40 group">
+              <div className="relative px-6 py-5 group">
+                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
                 <span className="text-[32px] font-extrabold text-white tracking-tighter leading-none">
                   {stats.totalValue > 0
                     ? stats.totalValue >= 1_000_000
@@ -472,7 +475,8 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
               </div>
 
               {/* Avg Quality */}
-              <div className="relative px-6 py-5 border-l border-surface-700/40 group">
+              <div className="relative px-6 py-5 group">
+                <LineDivider orientation="vertical" className="absolute left-0 inset-y-2" />
                 <div className="flex items-baseline gap-1">
                   <span className="text-[32px] font-extrabold tracking-tighter leading-none"
                     style={{ color: stats.avgScore >= 0.8 ? '#34d399' : stats.avgScore >= 0.5 ? '#fbbf24' : stats.avgScore > 0 ? '#f87171' : 'white' }}>
