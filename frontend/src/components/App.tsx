@@ -249,9 +249,13 @@ export default function App() {
             <div className="absolute top-0 h-[1px] bg-surface-400/35" style={{ left: '-2000px', right: '-2000px' }} />
             {/* Vertical line — full height: top to bottom */}
             <div className="absolute top-0 right-[9px] w-[1px] bottom-0 bg-surface-400/35" />
-            {/* Dot — top junction */}
+            {/* Dot — horizontal start (left edge) */}
+            <div className="absolute top-0 left-0 -translate-y-1/2 -translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
+            {/* Dot — horizontal end (right edge) */}
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
+            {/* Dot — junction */}
             <div className="absolute top-0 right-[9px] -translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
-            {/* Dot — bottom */}
+            {/* Dot — vertical bottom */}
             <div className="absolute bottom-0 right-[9px] translate-y-1/2 translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
           </div>
 
