@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends
 
 from app.config import AppSettings, get_settings
 from app.convex_client import ConvexDB, get_db
+from app.middleware.auth import get_current_user_id
 from app.models.schemas import SettingsResponse, SettingsUpdate, TokenUsageStats
 
 logger = logging.getLogger(__name__)
@@ -71,7 +72,21 @@ async def update_settings(
 
 
 @router.get("/usage", response_model=TokenUsageStats)
-async def get_usage_stats(db: ConvexDB = Depends(get_db)):
-    """Aggregate token usage across all analyses."""
-    stats = await db.get_token_usage_stats()
+async def get_usage_stats(
+    db: ConvexDB = Depends(get_db),
+    user_id: str | None = Depends(get_current_user_id),
+):
+    """Aggregate token usage for the authenticated user's analyses."""
+    if not user_id:
+        return TokenUsageStats(
+            total_input_tokens=0, total_output_tokens=0, total_tokens=0,
+            total_cost_usd=0.0, total_analyses=0,
+            total_files_processed=0, total_pages_processed=0,
+            by_phase={
+                "extraction": {"input": 0, "output": 0},
+                "aggregation": {"input": 0, "output": 0},
+                "evaluation": {"input": 0, "output": 0},
+            },
+        )
+    stats = await db.get_token_usage_stats(user_id=user_id)
     return TokenUsageStats(**stats)

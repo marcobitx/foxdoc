@@ -743,9 +743,12 @@ class ConvexDB:
                 for r in self._table("saved_reports").values()
             )
 
-    async def get_token_usage_stats(self) -> dict:
-        """Aggregate token usage from all completed analyses."""
-        analyses = await self.list_analyses(limit=1000, offset=0)
+    async def get_token_usage_stats(self, user_id: str | None = None) -> dict:
+        """Aggregate token usage from completed analyses (per-user if user_id given)."""
+        if user_id:
+            analyses = await self.list_analyses_by_user(user_id=user_id, limit=1000, offset=0)
+        else:
+            analyses = await self.list_analyses(limit=1000, offset=0)
         stats = {
             "total_input_tokens": 0,
             "total_output_tokens": 0,
