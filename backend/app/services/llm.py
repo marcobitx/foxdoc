@@ -29,12 +29,14 @@ THINKING_BUDGETS = {
 MAX_RETRIES = 3
 BACKOFF_SECONDS = [2, 4, 8]
 
-MANDATORY_MODELS = {
-    "moonshotai/kimi-k2.5",
-    "z-ai/glm-5",
-    "google/gemini-3-flash-preview",
-    "openai/gpt-oss-120b",
-}
+MANDATORY_MODELS = [
+    "openai/gpt-5.1-codex-mini",
+    "openai/gpt-5.3-codex",
+    "google/gemini-3.1-pro-preview",
+    "anthropic/claude-sonnet-4.6",
+    "openai/gpt-5.2-codex",
+]
+MANDATORY_MODELS_SET = set(MANDATORY_MODELS)
 
 
 OPENROUTER_MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB — above this, use local OCR
@@ -1213,7 +1215,7 @@ class LLMClient:
             supported_params = m.get("supported_parameters", [])
             supports_json = supported_params and "json_schema" in supported_params
             
-            if not supports_json and model_id not in MANDATORY_MODELS:
+            if not supports_json and model_id not in MANDATORY_MODELS_SET:
                 continue
 
             pricing = m.get("pricing", {})
@@ -1238,28 +1240,42 @@ class LLMClient:
         for mid in MANDATORY_MODELS:
             if mid not in existing_ids:
                 name_map = {
-                    "moonshotai/kimi-k2.5": "Kimi 2.5",
-                    "z-ai/glm-5": "GLM-5",
-                    "google/gemini-3-flash-preview": "Gemini 3 Flash",
-                    "openai/gpt-oss-120b": "GPT-OSS 120",
+                    "openai/gpt-5.1-codex-mini": "OpenAI: GPT-5.1-Codex-Mini",
+                    "openai/gpt-5.3-codex": "OpenAI: GPT-5.3-Codex",
+                    "google/gemini-3.1-pro-preview": "Google: Gemini 3.1 Pro Preview",
+                    "anthropic/claude-sonnet-4.6": "Anthropic: Claude Sonnet 4.6",
+                    "openai/gpt-5.2-codex": "OpenAI: GPT-5.2-Codex",
                 }
                 pricing_map = {
-                    "moonshotai/kimi-k2.5": (0.45, 2.25),
-                    "z-ai/glm-5": (0.80, 2.56),
-                    "google/gemini-3-flash-preview": (0.50, 3.00),
-                    "openai/gpt-oss-120b": (0.04, 0.19),
+                    "openai/gpt-5.1-codex-mini": (0.25, 2.00),
+                    "openai/gpt-5.3-codex": (1.75, 14.00),
+                    "google/gemini-3.1-pro-preview": (2.00, 12.00),
+                    "anthropic/claude-sonnet-4.6": (3.00, 15.00),
+                    "openai/gpt-5.2-codex": (1.75, 14.00),
+                }
+                ctx_map = {
+                    "openai/gpt-5.1-codex-mini": 400000,
+                    "openai/gpt-5.3-codex": 400000,
+                    "google/gemini-3.1-pro-preview": 1048576,
+                    "anthropic/claude-sonnet-4.6": 1000000,
+                    "openai/gpt-5.2-codex": 400000,
                 }
                 in_p, out_p = pricing_map.get(mid, (0.0, 0.0))
                 result.append({
                     "id": mid,
                     "name": name_map.get(mid, mid.split("/")[-1]),
-                    "context_length": 128000,
+                    "context_length": ctx_map.get(mid, 128000),
                     "pricing_prompt": in_p,
                     "pricing_completion": out_p,
                 })
 
-        # Sort: Mandatory first, then by name
-        result.sort(key=lambda x: (x["id"] not in MANDATORY_MODELS, x["name"]))
+        # Sort: Mandatory first (in defined order), then rest by name
+        mandatory_order = {mid: i for i, mid in enumerate(MANDATORY_MODELS)}
+        result.sort(key=lambda x: (
+            0 if x["id"] in MANDATORY_MODELS_SET else 1,
+            mandatory_order.get(x["id"], 999),
+            x["name"],
+        ))
 
         logger.debug("Found %d models (including mandatory check)", len(result))
         return result

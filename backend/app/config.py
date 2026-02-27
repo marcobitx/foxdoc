@@ -15,7 +15,7 @@ class AppSettings(BaseSettings):
 
     openrouter_api_key: str = ""
     convex_url: str = ""
-    default_model: str = "anthropic/claude-sonnet-4"
+    default_model: str = "openai/gpt-5.1-codex-mini"
     allowed_origins: str = "http://localhost:4321"
     max_file_size_mb: int = 50
     max_files: int = 20
