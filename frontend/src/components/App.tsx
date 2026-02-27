@@ -244,8 +244,8 @@ export default function App() {
           onNewAnalysis={handleNewAnalysis}
         />
 
-        <div className={clsx('flex-1 flex overflow-hidden min-h-0 relative', (state.view === 'analyzing' || state.view === 'results') && 'scroll-fade')}>
-          <main className="flex-1 overflow-y-auto pb-24 lg:pb-0 scrollbar-thin">
+        <div className="flex-1 flex overflow-hidden min-h-0 relative">
+          <main className={clsx('flex-1 overflow-y-auto pb-24 lg:pb-0 scrollbar-thin relative', (state.view === 'analyzing' || state.view === 'results') && 'scroll-fade')}>
             <div className={clsx(
                 'animate-fade-in',
                 state.view === 'analyzing'
