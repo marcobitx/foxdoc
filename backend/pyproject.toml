@@ -18,6 +18,7 @@ dependencies = [
     "python-dotenv",
     "py7zr",
     "pypdf>=6.0",
+    "python-jose[cryptography]>=3.5.0",
 ]
 
 [project.optional-dependencies]
