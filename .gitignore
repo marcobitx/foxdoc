@@ -34,8 +34,8 @@ pnpm-lock.yaml
 frontend/dist/
 frontend/.astro/
 
-# Convex
-convex/_generated/
+# Convex (generated types committed for Vercel monorepo builds)
+# convex/_generated/
 
 # IDE
 .vscode/
@@ -69,3 +69,7 @@ CLAUDE.md
 # Git worktrees
 .worktrees/
 .playwright-mcp/
+
+.vercel
+
+.vercel
