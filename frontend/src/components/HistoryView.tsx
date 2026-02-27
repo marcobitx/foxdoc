@@ -162,6 +162,27 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
         : 0;
     const totalFiles = analyses.reduce((sum, a) => sum + a.file_count, 0);
 
+    // MoM calculation
+    const now = new Date();
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const thisMonth = analyses.filter((a) => new Date(a.created_at) >= thisMonthStart);
+    const prevMonth = analyses.filter((a) => {
+      const d = new Date(a.created_at);
+      return d >= prevMonthStart && d < thisMonthStart;
+    });
+    const prevCompleted = prevMonth.filter((a) => a.status === 'COMPLETED');
+    const prevValue = prevMonth.reduce((s, a) => s + (a.estimated_value || 0), 0);
+    const prevWithScore = prevMonth.filter((a) => a.completeness_score != null && a.completeness_score > 0);
+    const prevAvg = prevWithScore.length > 0
+      ? prevWithScore.reduce((s, a) => s + (a.completeness_score || 0), 0) / prevWithScore.length
+      : 0;
+
+    const mom = (curr: number, prev: number) => {
+      if (prev === 0) return curr > 0 ? 100 : 0;
+      return Math.round(((curr - prev) / prev) * 100);
+    };
+
     return {
       total: analyses.length,
       completed: completed.length,
@@ -172,6 +193,16 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
         ['PARSING', 'EXTRACTING', 'AGGREGATING', 'EVALUATING', 'PENDING', 'QUEUED'].includes(a.status)
       ).length,
       failed: analyses.filter((a) => a.status === 'FAILED').length,
+      mom: {
+        total: mom(thisMonth.length, prevMonth.length),
+        completed: mom(thisMonth.filter((a) => a.status === 'COMPLETED').length, prevCompleted.length),
+        value: mom(thisMonth.reduce((s, a) => s + (a.estimated_value || 0), 0), prevValue),
+        score: mom(avgScore, prevAvg),
+        prevTotal: prevMonth.length,
+        prevCompleted: prevCompleted.length,
+        prevValue,
+        prevAvg: Math.round(prevAvg * 100),
+      },
     };
   }, [analyses]);
 
@@ -407,6 +438,8 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                 value: stats.total,
                 label: 'Analizės',
                 suffix: stats.inProgress > 0 ? `+${stats.inProgress}` : undefined,
+                mom: stats.mom.total,
+                prev: stats.mom.prevTotal,
                 glow: 'shadow-[0_0_15px_rgba(245,158,11,0.15)]',
                 gradient: 'from-brand-500/50 via-brand-400/20 to-brand-600/50',
                 icon: (
@@ -422,6 +455,8 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
               {
                 value: stats.completed,
                 label: 'Baigtos',
+                mom: stats.mom.completed,
+                prev: stats.mom.prevCompleted,
                 glow: 'shadow-[0_0_15px_rgba(16,185,129,0.15)]',
                 gradient: 'from-emerald-500/50 via-emerald-400/20 to-emerald-600/50',
                 icon: (
@@ -442,6 +477,12 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   : '—',
                 label: 'Bendra vertė',
                 sub: stats.totalValue > 0 ? 'EUR' : undefined,
+                mom: stats.mom.value,
+                prev: stats.mom.prevValue >= 1_000_000
+                  ? `${(stats.mom.prevValue / 1_000_000).toFixed(1)}M`
+                  : stats.mom.prevValue >= 1_000
+                    ? `${(stats.mom.prevValue / 1_000).toFixed(0)}K`
+                    : stats.mom.prevValue,
                 glow: 'shadow-[0_0_15px_rgba(245,158,11,0.12)]',
                 gradient: 'from-amber-500/50 via-yellow-400/20 to-amber-600/50',
                 icon: (
@@ -455,6 +496,8 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                 value: stats.avgScore > 0 ? Math.round(stats.avgScore * 100) : '—',
                 label: 'Vid. kokybė',
                 sub: stats.avgScore > 0 ? '%' : undefined,
+                mom: stats.mom.score,
+                prev: stats.mom.prevAvg > 0 ? `${stats.mom.prevAvg}%` : undefined,
                 glow: 'shadow-[0_0_15px_rgba(139,92,246,0.15)]',
                 gradient: 'from-violet-500/50 via-purple-400/20 to-violet-600/50',
                 icon: (
@@ -476,6 +519,11 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                     <div className="text-surface-500 transition-colors duration-300 group-hover:text-surface-300">
                       {kpi.icon}
                     </div>
+                    {kpi.mom !== 0 && (
+                      <span className={`text-[10px] font-semibold ${kpi.mom > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {kpi.mom > 0 ? '↑' : '↓'} {Math.abs(kpi.mom)}%
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-[26px] font-bold text-white tracking-tight leading-none">
@@ -489,6 +537,11 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   <p className="text-[10px] text-surface-500 font-semibold uppercase tracking-widest mt-1.5">
                     {kpi.label}
                   </p>
+                  {kpi.prev !== undefined && kpi.prev !== 0 && (
+                    <p className="text-[9px] text-surface-600 mt-1">
+                      Praėjęs mėn: <span className="text-surface-400">{kpi.prev}</span>
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
