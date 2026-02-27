@@ -1,0 +1,370 @@
+---
+// landing/src/pages/use-cases.astro
+// Use cases page — 3 audience segments, editorial style with wave transitions
+// Each section has dramatic stat, workflow steps, and scenario cards
+// Related: Layout.astro, WaveDivider.astro
+
+import Layout from '../layouts/Layout.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+---
+
+<Layout title="Naudojimo atvejai — foxDoc">
+
+  <!-- ── HERO ── -->
+  <div style="background: #0d0a08; padding: 6rem 1.5rem 3rem; position: relative; overflow: hidden;">
+    <!-- Grid texture -->
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,158,11,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,0.025) 1px,transparent 1px);background-size:80px 80px;pointer-events:none;"></div>
+
+    <div style="max-width: 72rem; margin: 0 auto; text-align: center; position: relative;">
+      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; letter-spacing: 0.1em; margin: 0 0 1rem;">// naudojimo atvejai</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: clamp(2.25rem, 6vw, 4.25rem); color: #fdf9f7; line-height: 1.08; letter-spacing: -0.02em; margin: 0 0 1.25rem;">
+        Kas naudoja<br/><span style="color: #f59e0b;">foxDoc?</span>
+      </h1>
+      <p style="color: #7a6b61; font-size: 1.0625rem; max-width: 34rem; margin: 0 auto 2.5rem; line-height: 1.7;">
+        Trys skirtingos grupės. Vienas bendras tikslas — sutaupyti valandas, kurias pirkimų dokumentai atima kiekvieną dieną.
+      </p>
+
+      <!-- Audience pills -->
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <a href="#perkanciosios" style="display: inline-flex; align-items: center; gap: 0.625rem; padding: 0.625rem 1.125rem; border-radius: 99px; border: 1px solid rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); color: #f59e0b; text-decoration: none; font-size: 0.8125rem; font-weight: 500; transition: all 0.2s;"
+           onmouseover="this.style.background='rgba(245,158,11,0.12)'" onmouseout="this.style.background='rgba(245,158,11,0.05)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+          Perkančios organizacijos
+        </a>
+        <a href="#tiekejai" style="display: inline-flex; align-items: center; gap: 0.625rem; padding: 0.625rem 1.125rem; border-radius: 99px; border: 1px solid rgba(168,162,158,0.15); background: rgba(168,162,158,0.04); color: #7a6b61; text-decoration: none; font-size: 0.8125rem; font-weight: 500; transition: all 0.2s;"
+           onmouseover="this.style.color='#f59e0b';this.style.borderColor='rgba(245,158,11,0.2)'" onmouseout="this.style.color='#7a6b61';this.style.borderColor='rgba(168,162,158,0.15)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          Tiekėjai ir rangovai
+        </a>
+        <a href="#auditoriai" style="display: inline-flex; align-items: center; gap: 0.625rem; padding: 0.625rem 1.125rem; border-radius: 99px; border: 1px solid rgba(168,162,158,0.15); background: rgba(168,162,158,0.04); color: #7a6b61; text-decoration: none; font-size: 0.8125rem; font-weight: 500; transition: all 0.2s;"
+           onmouseover="this.style.color='#f59e0b';this.style.borderColor='rgba(245,158,11,0.2)'" onmouseout="this.style.color='#7a6b61';this.style.borderColor='rgba(168,162,158,0.15)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Auditoriai ir konsultantai
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- dark → cream -->
+  <WaveDivider from="#0d0a08" to="#fdf7f2" />
+
+  <!-- ══════════════════════════════════════
+       SECTION 1: PERKANČIOS ORGANIZACIJOS
+       (light cream)
+  ══════════════════════════════════════ -->
+  <section id="perkanciosios" style="background: #fdf7f2; padding: 3rem 1.5rem 5rem; position: relative; overflow: hidden;">
+    <!-- Big watermark number -->
+    <div style="position:absolute;top:-1rem;right:-1rem;font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:14rem;line-height:1;color:rgba(234,88,12,0.04);pointer-events:none;user-select:none;">01</div>
+
+    <div style="max-width: 72rem; margin: 0 auto; position: relative;">
+
+      <!-- Section header -->
+      <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 3rem;">
+        <div style="flex-shrink: 0; width: 56px; height: 56px; border-radius: 14px; background: rgba(234,88,12,0.08); border: 1px solid rgba(234,88,12,0.18); display: flex; align-items: center; justify-content: center; margin-top: 0.25rem;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+        </div>
+        <div>
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #d97706; letter-spacing: 0.1em; margin: 0 0 0.375rem;">// 01 · Perkančios organizacijos</p>
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: clamp(1.75rem, 4vw, 2.75rem); color: #1a1512; margin: 0 0 0.625rem; letter-spacing: -0.01em;">Savivaldybės, ministerijos,<br/>viešosios institucijos</h2>
+          <p style="color: #5a4f47; font-size: 1rem; line-height: 1.7; max-width: 46rem; margin: 0;">Gaunate dešimtis pasiūlymų per mėnesį. Kiekvieno rankinė peržiūra užima valandas. foxDoc automatizuoja šį procesą ir leidžia komandai koncentruotis į sprendimus.</p>
+        </div>
+      </div>
+
+      <!-- Dramatic stat: before/after -->
+      <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.5rem; align-items: center; max-width: 44rem; margin: 0 0 3rem; padding: 2rem 2.5rem; background: white; border-radius: 1.25rem; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+        <!-- Before -->
+        <div style="text-align: center;">
+          <p style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #b5a99f; letter-spacing: 0.08em; margin: 0 0 0.5rem;">ANKSČIAU</p>
+          <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 2.25rem; color: #b5a99f; margin: 0; text-decoration: line-through; line-height: 1;">4–6 val.</p>
+          <p style="font-size: 0.75rem; color: #b5a99f; margin: 0.375rem 0 0;">rankinė peržiūra</p>
+        </div>
+        <!-- Arrow -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <!-- After -->
+        <div style="text-align: center;">
+          <p style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #d97706; letter-spacing: 0.08em; margin: 0 0 0.5rem;">SU FOXDOC</p>
+          <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 2.25rem; color: #d97706; margin: 0; line-height: 1;">3 min.</p>
+          <p style="font-size: 0.75rem; color: #7a6b61; margin: 0.375rem 0 0;">AI analizė</p>
+        </div>
+      </div>
+
+      <!-- Workflow steps + Scenarios grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="uc-grid">
+
+        <!-- Left: 3 scenarios as numbered steps -->
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          {[
+            { n: '01', title: 'Pasiūlymų atitikties tikrinimas', desc: 'Įkelkite visus gautus pasiūlymus kaip ZIP — sistema kiekvieną išanalizuoja pagal techninius reikalavimus ir pateikia atitikties santrauką.' },
+            { n: '02', title: 'Techninių reikalavimų santrauka', desc: 'Prieš posėdį suvokite pirkimo sąlygų esmę per 3 minutės — ne 3 valandas. Visos pagrindinės sąlygos struktūrizuotoje ataskaitoje.' },
+            { n: '03', title: 'Dokumentacijos auditas prieš skelbimą', desc: 'QA balas (0–100) parodo, ar visa reikiama informacija yra dokumentuose — prieš pradedant viešą procedūrą.' },
+          ].map(s => (
+            <div class="scenario-card" style="display: flex; gap: 1rem; padding: 1.25rem 1.5rem; border-radius: 1rem; background: white; border: 1px solid rgba(0,0,0,0.07); transition: all 0.25s;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; color: rgba(234,88,12,0.35); flex-shrink: 0; padding-top: 0.125rem;">{s.n}</span>
+              <div>
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #1a1512; margin: 0 0 0.375rem;">{s.title}</h3>
+                <p style="color: #7a6b61; font-size: 0.8125rem; line-height: 1.65; margin: 0;">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Right: Key benefits visual -->
+        <div style="padding: 1.75rem; border-radius: 1.25rem; background: linear-gradient(145deg, rgba(234,88,12,0.06) 0%, rgba(245,158,11,0.04) 100%); border: 1px solid rgba(234,88,12,0.12); display: flex; flex-direction: column; gap: 1.25rem;">
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #d97706; margin: 0; letter-spacing: 0.08em;">// PAGRINDINĖ NAUDA</p>
+
+          {[
+            { icon: '⏱', label: 'Laiko sutaupymas', value: '−85%', sub: 'peržiūros laikas' },
+            { icon: '📋', label: 'Dokumentų kiekis', value: '50+', sub: 'vienu paketu' },
+            { icon: '✓', label: 'QA tikrinimas', value: '0–100', sub: 'išsamumo balas' },
+          ].map(b => (
+            <div style="display: flex; align-items: center; gap: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid rgba(234,88,12,0.08);">
+              <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">{b.icon}</div>
+              <div style="flex: 1;">
+                <p style="font-size: 0.75rem; color: #7a6b61; margin: 0 0 0.125rem;">{b.label}</p>
+                <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.125rem; color: #1a1512; margin: 0; line-height: 1;">{b.value} <span style="font-weight: 400; font-size: 0.75rem; color: #7a6b61;">{b.sub}</span></p>
+              </div>
+            </div>
+          ))}
+
+          <a href="https://app.foxdoc.io" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem; border-radius: 0.625rem; background: #ea580c; color: white; font-weight: 600; font-size: 0.875rem; text-decoration: none; transition: background 0.2s; margin-top: auto;"
+             onmouseover="this.style.background='#dc4d03'" onmouseout="this.style.background='#ea580c'">
+            Pradėti nemokamai
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- cream → dark -->
+  <WaveDivider from="#fdf7f2" to="#0d0a08" flip={true} />
+
+  <!-- ══════════════════════════════════════
+       SECTION 2: TIEKĖJAI IR RANGOVAI
+       (dark)
+  ══════════════════════════════════════ -->
+  <section id="tiekejai" style="background: #0d0a08; padding: 3rem 1.5rem 5rem; position: relative; overflow: hidden;">
+    <div style="position:absolute;top:-1rem;left:-1rem;font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:14rem;line-height:1;color:rgba(245,158,11,0.03);pointer-events:none;user-select:none;">02</div>
+
+    <div style="max-width: 72rem; margin: 0 auto; position: relative;">
+
+      <!-- Section header -->
+      <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 3rem;">
+        <div style="flex-shrink: 0; width: 56px; height: 56px; border-radius: 14px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.18); display: flex; align-items: center; justify-content: center; margin-top: 0.25rem;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </div>
+        <div>
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; letter-spacing: 0.1em; margin: 0 0 0.375rem;">// 02 · Tiekėjai ir rangovai</p>
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: clamp(1.75rem, 4vw, 2.75rem); color: #fdf9f7; margin: 0 0 0.625rem; letter-spacing: -0.01em;">Įmonės, teikiančios pasiūlymus<br/>viešiems pirkimams</h2>
+          <p style="color: #7a6b61; font-size: 1rem; line-height: 1.7; max-width: 46rem; margin: 0;">Norint pateikti konkurencingą pasiūlymą, reikia tiksliai suprasti visas pirkimo sąlygas. Klaida kainuoja diskvalifikaciją. foxDoc tai padaro akimirksniu.</p>
+        </div>
+      </div>
+
+      <!-- Alert stat -->
+      <div style="display: inline-flex; align-items: center; gap: 1.5rem; padding: 1.5rem 2rem; border-radius: 1rem; border: 1px solid rgba(245,158,11,0.2); background: rgba(245,158,11,0.04); margin-bottom: 3rem; max-width: 44rem;">
+        <div style="flex-shrink: 0;">
+          <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 900; font-size: 3.5rem; color: #f59e0b; margin: 0; line-height: 1;">85%</p>
+        </div>
+        <div>
+          <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; color: #fdf9f7; margin: 0 0 0.25rem;">tiekėjų praleidžia svarbius reikalavimus</p>
+          <p style="color: #5a4f47; font-size: 0.8125rem; line-height: 1.5; margin: 0;">rankinės dokumentų peržiūros metu — ir tai kainuoja diskvalifikaciją ar prastesnę pasiūlymą</p>
+        </div>
+      </div>
+
+      <!-- 3 scenarios + risk visual -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="uc-grid">
+
+        <!-- Right: risk radar visual -->
+        <div style="padding: 1.75rem; border-radius: 1.25rem; background: #141210; border: 1px solid rgba(245,158,11,0.12); display: flex; flex-direction: column; gap: 1rem; order: 1;" class="uc-visual">
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; margin: 0; letter-spacing: 0.08em;">// KĄ RANDA FOXDOC</p>
+
+          {[
+            { label: 'CPV kodai ir veiklos sritis', pct: 95 },
+            { label: 'Kvalifikaciniai kriterijai', pct: 88 },
+            { label: 'Terminai ir pristatymo sąlygos', pct: 97 },
+            { label: 'Techniniai reikalavimai', pct: 91 },
+            { label: 'Rizikos faktoriai', pct: 79 },
+          ].map(r => (
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.375rem;">
+                <span style="font-size: 0.8rem; color: #b5a99f;">{r.label}</span>
+                <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b;">{r.pct}%</span>
+              </div>
+              <div style="height: 4px; border-radius: 99px; background: rgba(168,162,158,0.12);">
+                <div style={`height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ea580c, #f59e0b); width: ${r.pct}%; transition: width 1s ease;`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Left: 3 scenarios -->
+        <div style="display: flex; flex-direction: column; gap: 1rem; order: 2;">
+          {[
+            { n: '01', title: 'Pirkimo sąlygų analizė', desc: 'Prieš teikdami pasiūlymą — visi techniniai reikalavimai, terminai, kvalifikaciniai kriterijai ir rizikos faktoriai per 3 minutes.' },
+            { n: '02', title: 'CPV kodų ir vertės identifikavimas', desc: 'Greitai nustatykite ar pirkimas atitinka jūsų veiklos sritį. Sutarties vertė, laikotarpis ir pagrindinės sąlygos iš karto.' },
+            { n: '03', title: 'Konkurentų pasiūlymų lyginimas', desc: 'Po procedūros — analizuokite laimėjusius pasiūlymus ir mokykitės iš rezultatų kitam konkursui.' },
+          ].map(s => (
+            <div class="scenario-card-dark" style="display: flex; gap: 1rem; padding: 1.25rem 1.5rem; border-radius: 1rem; background: #141210; border: 1px solid rgba(168,162,158,0.08); transition: all 0.25s;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; color: rgba(245,158,11,0.3); flex-shrink: 0; padding-top: 0.125rem;">{s.n}</span>
+              <div>
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #fdf9f7; margin: 0 0 0.375rem;">{s.title}</h3>
+                <p style="color: #5a4f47; font-size: 0.8125rem; line-height: 1.65; margin: 0;">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+          <a href="https://app.foxdoc.io" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem; border-radius: 0.625rem; border: 1px solid rgba(245,158,11,0.25); color: #f59e0b; font-weight: 600; font-size: 0.875rem; text-decoration: none; transition: all 0.2s; margin-top: 0.25rem;"
+             onmouseover="this.style.background='rgba(245,158,11,0.08)'" onmouseout="this.style.background='transparent'">
+            Išbandyti nemokamai
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- dark → warm beige -->
+  <WaveDivider from="#0d0a08" to="#f5ede2" />
+
+  <!-- ══════════════════════════════════════
+       SECTION 3: AUDITORIAI IR KONSULTANTAI
+       (warm beige)
+  ══════════════════════════════════════ -->
+  <section id="auditoriai" style="background: #f5ede2; padding: 3rem 1.5rem 5rem; position: relative; overflow: hidden;">
+    <div style="position:absolute;bottom:-1rem;right:-1rem;font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:14rem;line-height:1;color:rgba(234,88,12,0.04);pointer-events:none;user-select:none;">03</div>
+
+    <div style="max-width: 72rem; margin: 0 auto; position: relative;">
+
+      <!-- Section header -->
+      <div style="display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 3rem;">
+        <div style="flex-shrink: 0; width: 56px; height: 56px; border-radius: 14px; background: rgba(234,88,12,0.08); border: 1px solid rgba(234,88,12,0.18); display: flex; align-items: center; justify-content: center; margin-top: 0.25rem;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div>
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #d97706; letter-spacing: 0.1em; margin: 0 0 0.375rem;">// 03 · Auditoriai ir konsultantai</p>
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: clamp(1.75rem, 4vw, 2.75rem); color: #1a1512; margin: 0 0 0.625rem; letter-spacing: -0.01em;">Viešųjų pirkimų audito ir<br/>konsultavimo įmonės</h2>
+          <p style="color: #5a4f47; font-size: 1rem; line-height: 1.7; max-width: 46rem; margin: 0;">Dirbate su dešimtimis pirkimų per mėnesį. Kiekvienas paketas turi būti patikrintas sistemingai. foxDoc leidžia padidinti apimtį nepridedant darbuotojų.</p>
+        </div>
+      </div>
+
+      <!-- Multiplier stat -->
+      <div style="display: flex; gap: 1.5rem; margin-bottom: 3rem; flex-wrap: wrap;">
+        <div style="padding: 1.5rem 2rem; border-radius: 1rem; background: white; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 2px 16px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 1.25rem;">
+          <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 900; font-size: 3.5rem; color: #d97706; margin: 0; line-height: 1;">10×</p>
+          <div>
+            <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #1a1512; margin: 0 0 0.2rem;">Daugiau pirkimų per tą patį laiką</p>
+            <p style="color: #7a6b61; font-size: 0.8125rem; margin: 0;">be papildomų darbuotojų</p>
+          </div>
+        </div>
+        <div style="padding: 1.5rem 2rem; border-radius: 1rem; background: white; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 2px 16px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 1.25rem;">
+          <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 900; font-size: 3.5rem; color: #d97706; margin: 0; line-height: 1;">PDF</p>
+          <div>
+            <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #1a1512; margin: 0 0 0.2rem;">Eksportas auditui</p>
+            <p style="color: #7a6b61; font-size: 0.8125rem; margin: 0;">PDF arba DOCX formatu</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 scenarios + timeline visual -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="uc-grid">
+
+        <!-- Left: 3 scenarios -->
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          {[
+            { n: '01', title: 'Procedūrinių klaidų paieška', desc: 'Sistemingai analizuokite pirkimų dokumentų paketus dėl neatitikčių teisės aktų reikalavimams ir procedūrinių spragų.' },
+            { n: '02', title: 'Atitikties ataskaitos generavimas', desc: 'Eksportuokite struktūrizuotas ataskaitas PDF arba DOCX formatu — tinkamos audito išvadoms ir klientų ataskaitoms.' },
+            { n: '03', title: 'Didelių portfelių peržiūra', desc: 'Team planas leidžia per vieną sesiją išanalizuoti visą institucijos pirkimų archyvą — masinis įkėlimas, automatinė analizė.' },
+          ].map(s => (
+            <div class="scenario-card" style="display: flex; gap: 1rem; padding: 1.25rem 1.5rem; border-radius: 1rem; background: white; border: 1px solid rgba(0,0,0,0.07); transition: all 0.25s;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; color: rgba(234,88,12,0.35); flex-shrink: 0; padding-top: 0.125rem;">{s.n}</span>
+              <div>
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #1a1512; margin: 0 0 0.375rem;">{s.title}</h3>
+                <p style="color: #7a6b61; font-size: 0.8125rem; line-height: 1.65; margin: 0;">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Right: workflow timeline -->
+        <div style="padding: 1.75rem; border-radius: 1.25rem; background: rgba(255,255,255,0.7); border: 1px solid rgba(0,0,0,0.07); backdrop-filter: blur(4px); display: flex; flex-direction: column; gap: 0;">
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #d97706; margin: 0 0 1.25rem; letter-spacing: 0.08em;">// TIPINĖ SAVAITĖ SU FOXDOC</p>
+
+          {[
+            { day: 'Pirmadienis', task: 'Įkelti 8 naujų pirkimų paketus ZIP', time: '10 min', old: '2 val.' },
+            { day: 'Antradienis', task: 'Peržiūrėti 8 sugeneruotas ataskaitas', time: '45 min', old: '8 val.' },
+            { day: 'Trečiadienis', task: 'Eksportuoti 6 kliento ataskaitas', time: '5 min', old: '3 val.' },
+            { day: 'Ketvirtadienis', task: 'Analizuoti 12 papildomų pirkimų', time: '15 min', old: '6 val.' },
+          ].map((d, i) => (
+            <div style={`display: flex; gap: 1rem; align-items: flex-start; padding: 0.875rem 0; ${i < 3 ? 'border-bottom: 1px solid rgba(0,0,0,0.06);' : ''}`}>
+              <div style="flex-shrink: 0; width: 80px;">
+                <p style="font-size: 0.7rem; color: #7a6b61; margin: 0 0 0.125rem; font-family: 'JetBrains Mono', monospace;">{d.day}</p>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <p style="font-size: 0.8125rem; color: #1a1512; font-weight: 500; margin: 0 0 0.25rem;">{d.task}</p>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 0.7rem; color: #b5a99f; text-decoration: line-through;">{d.old}</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  <span style="font-size: 0.75rem; font-weight: 700; color: #d97706; font-family: 'JetBrains Mono', monospace;">{d.time}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <a href="https://app.foxdoc.io" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem; border-radius: 0.625rem; background: #ea580c; color: white; font-weight: 600; font-size: 0.875rem; text-decoration: none; transition: background 0.2s; margin-top: 1rem;"
+             onmouseover="this.style.background='#dc4d03'" onmouseout="this.style.background='#ea580c'">
+            Pradėti nemokamai
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- warm beige → dark -->
+  <WaveDivider from="#f5ede2" to="#0d0a08" flip={true} />
+
+  <!-- ── CTA ── -->
+  <div style="background: #0d0a08; padding: 0 1.5rem 5rem;">
+    <div style="max-width: 72rem; margin: 0 auto; text-align: center; padding: 4rem 2rem; border-radius: 1.25rem; background: linear-gradient(135deg, rgba(234,88,12,0.1) 0%, rgba(245,158,11,0.05) 100%); border: 1px solid rgba(168,162,158,0.12);">
+      <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; letter-spacing: 0.08em; margin: 0 0 0.75rem;">// pradėkite šiandien</p>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: clamp(1.5rem, 3.5vw, 2.5rem); color: #fdf9f7; margin: 0 0 0.75rem; letter-spacing: -0.01em;">
+        Kuri grupė — jūs?
+      </h2>
+      <p style="color: #7a6b61; font-size: 0.9375rem; max-width: 32rem; margin: 0 auto 2.5rem; line-height: 1.7;">3 kreditai nemokamai. Nereikia kredito kortelės. Pirmą ataskaitą gausite per 3 minutes.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="https://app.foxdoc.io"
+           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 2rem; border-radius: 0.625rem; background: #f59e0b; color: #0d0a08; font-weight: 700; text-decoration: none; font-size: 0.9375rem; transition: background 0.2s;"
+           onmouseover="this.style.background='#fbbf24'" onmouseout="this.style.background='#f59e0b'">
+          Išbandyti nemokamai
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="/pricing"
+           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.875rem 2rem; border-radius: 0.625rem; border: 1px solid rgba(168,162,158,0.2); color: #b5a99f; font-weight: 600; text-decoration: none; font-size: 0.9375rem; transition: all 0.2s;"
+           onmouseover="this.style.borderColor='rgba(245,158,11,0.3)';this.style.color='#fdf9f7'" onmouseout="this.style.borderColor='rgba(168,162,158,0.2)';this.style.color='#b5a99f'">
+          Peržiūrėti kainas
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .scenario-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border-color: rgba(234,88,12,0.18) !important;
+      transform: translateY(-1px);
+    }
+    .scenario-card-dark:hover {
+      border-color: rgba(245,158,11,0.15) !important;
+      background: #1a1410 !important;
+    }
+    @media (max-width: 768px) {
+      .uc-grid { grid-template-columns: 1fr !important; }
+      .uc-visual { order: -1 !important; }
+    }
+  </style>
+
+</Layout>

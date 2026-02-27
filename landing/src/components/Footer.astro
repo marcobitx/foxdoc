@@ -1,0 +1,72 @@
+---
+// src/components/Footer.astro
+// Site footer — two-card layout: company card + navigation card
+---
+<footer style="background: #0d0a08; border-top: 1px solid rgba(168,162,158,0.08); margin-top: 0;">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <!-- Company card -->
+      <div class="p-6 rounded-xl" style="background: #1a1512; border: 1px solid rgba(168,162,158,0.10);">
+        <a href="/" class="flex items-center gap-2 mb-4">
+          <img src="/favicon.svg" alt="foxDoc logo" width="24" height="24" />
+          <span class="font-heading font-bold text-white">fox<span style="color: #f59e0b;">Doc</span></span>
+        </a>
+        <p class="text-sm leading-relaxed mb-5" style="color: #b5a99f; max-width: 22rem;">
+          Lietuvos viešųjų pirkimų AI analitikas. Automatizuojame pirkimų dokumentų analizę, sutaupome valandas.
+        </p>
+        <div class="text-xs space-y-1" style="color: #6d5f55; font-family: var(--font-mono);">
+          <p>UAB foxDoc</p>
+          <p>Vilnius, Lietuva</p>
+          <p><a href="mailto:info@foxdoc.io" style="color: #6d5f55; text-decoration: none;" onmouseover="this.style.color='#b5a99f'" onmouseout="this.style.color='#6d5f55'">info@foxdoc.io</a></p>
+        </div>
+      </div>
+
+      <!-- Navigation card -->
+      <div class="p-6 rounded-xl" style="background: #1a1512; border: 1px solid rgba(168,162,158,0.10);">
+        <div class="grid grid-cols-3 gap-6">
+          <!-- Product -->
+          <div>
+            <p class="text-xs font-semibold font-mono mb-3" style="color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em;">Produktas</p>
+            <ul class="flex flex-col gap-2">
+              <li><a href="/features"  class="nav-link text-sm" style="color: #b5a99f;">Funkcijos</a></li>
+              <li><a href="/pricing"   class="nav-link text-sm" style="color: #b5a99f;">Kainodara</a></li>
+              <li><a href="/use-cases" class="nav-link text-sm" style="color: #b5a99f;">Naudojimo atvejai</a></li>
+            </ul>
+          </div>
+          <!-- Support -->
+          <div>
+            <p class="text-xs font-semibold font-mono mb-3" style="color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em;">Pagalba</p>
+            <ul class="flex flex-col gap-2">
+              <li><a href="/docs"  class="nav-link text-sm" style="color: #b5a99f;">Dokumentacija</a></li>
+              <li><a href="/forum" class="nav-link text-sm" style="color: #b5a99f;">Forumas</a></li>
+              <li><a href="/about" class="nav-link text-sm" style="color: #b5a99f;">Apie mus</a></li>
+            </ul>
+          </div>
+          <!-- Legal -->
+          <div>
+            <p class="text-xs font-semibold font-mono mb-3" style="color: #f59e0b; text-transform: uppercase; letter-spacing: 0.05em;">Teisinis</p>
+            <ul class="flex flex-col gap-2">
+              <li><a href="/privacy" class="nav-link text-sm" style="color: #b5a99f;">Privatumo politika</a></li>
+              <li><a href="/terms"   class="nav-link text-sm" style="color: #b5a99f;">Naudojimo sąlygos</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mt-8 pt-6" style="border-top: 1px solid rgba(168,162,158,0.08);">
+      <p class="text-xs font-mono" style="color: #6d5f55;">© 2026 foxDoc. Visos teisės saugomos.</p>
+      <p class="text-xs font-mono" style="color: #6d5f55;">Sukurta Lietuvoje</p>
+    </div>
+
+  </div>
+</footer>
+
+<style>
+  .nav-link { text-decoration: none; transition: color 0.15s; }
+  .nav-link:hover { color: #fdf9f7 !important; }
+</style>

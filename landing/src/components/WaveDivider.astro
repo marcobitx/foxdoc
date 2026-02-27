@@ -1,0 +1,27 @@
+---
+// landing/src/components/WaveDivider.astro
+// Organic SVG wave transition between sections of different background colors
+// Usage: <WaveDivider from="#0d0a08" to="#fdf7f2" />  or flip={true} for mirrored wave
+interface Props {
+  from: string;
+  to: string;
+  flip?: boolean;   // alternate wave shape for visual variety
+  height?: number;  // wave height in px, default 72
+}
+const { from, to, flip = false, height = 72 } = Astro.props;
+
+// Two different wave paths for variety
+const pathA = `M0,${height*0.55} C240,${height*0.1} 480,${height} 720,${height*0.5} C960,0 1200,${height*0.75} 1440,${height*0.4} L1440,${height} L0,${height} Z`;
+const pathB = `M0,${height*0.35} C180,${height*0.8} 540,${height*0.05} 720,${height*0.5} C900,${height*0.95} 1200,${height*0.2} 1440,${height*0.55} L1440,${height} L0,${height} Z`;
+---
+<div style={`background: ${from}; line-height: 0; overflow: hidden; display: block;`}>
+  <svg
+    viewBox={`0 0 1440 ${height}`}
+    fill={to}
+    xmlns="http://www.w3.org/2000/svg"
+    style="display: block; width: 100%; height: auto;"
+    preserveAspectRatio="none"
+    aria-hidden="true">
+    <path d={flip ? pathB : pathA} />
+  </svg>
+</div>

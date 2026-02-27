@@ -1,0 +1,145 @@
+/* src/styles/global.css */
+/* Design system — color tokens, typography, spacing, component base styles */
+/* Used by all pages; imported in index.astro and layouts */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* ── PRIMARY — action color (CTA, active links) ── */
+  --color-primary: #f59e0b;
+  --color-primary-hover: #d97706;
+  --color-primary-subtle: rgba(245, 158, 11, 0.10);
+  --color-primary-glow: rgba(245, 158, 11, 0.25);
+
+  /* ── ACCENT — decorative (gradients, backgrounds) ── */
+  --color-accent: #ea580c;
+  --color-accent-subtle: rgba(234, 88, 12, 0.10);
+
+  /* ── SECTION BACKGROUNDS ── */
+  --bg-deep:    #0d0a08;
+  --bg-base:    #1a1512;
+  --bg-warm:    #1e1a16;
+  --bg-surface: #231c18;
+
+  /* ── SEMANTIC ── */
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+
+  /* ── NEUTRALS ── */
+  --color-neutral-900: #1a1512;
+  --color-neutral-800: #231c18;
+  --color-neutral-700: #2e2520;
+  --color-neutral-600: #3e332d;
+  --color-neutral-400: rgba(255, 255, 255, 0.08);
+  --color-neutral-300: rgba(255, 255, 255, 0.12);
+
+  /* ── TEXT hierarchy ── */
+  --color-text-100: #fdf9f7;
+  --color-text-200: #ede5df;
+  --color-text-300: #b5a99f;
+  --color-text-400: #6d5f55;
+
+  /* ── FONTS ── */
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* ── SHADOWS ── */
+  --shadow-glow: 0 0 24px rgba(245, 158, 11, 0.25);
+  --shadow-glow-sm: 0 0 12px rgba(245, 158, 11, 0.15);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  background-color: #1a1512;
+  color: #ede5df;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.7;
+  margin: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  color: #fdf9f7;
+  margin: 0;
+}
+
+/* ── Fluid typography ── */
+h1 { font-size: clamp(2rem, 5vw, 3.75rem); line-height: 1.15; }
+h2 { font-size: clamp(1.75rem, 4vw, 3rem); line-height: 1.2; }
+h3 { font-size: clamp(1.25rem, 2.5vw, 1.5rem); }
+
+/* ── Button base styles ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f59e0b;
+  color: #1a1512;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary:hover {
+  background: #d97706;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(168, 162, 158, 0.25);
+  color: #ede5df;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-secondary:hover {
+  background: rgba(168,162,158,0.08);
+  border-color: rgba(168,162,158,0.4);
+}
+
+/* ── Scroll reveal animation ── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

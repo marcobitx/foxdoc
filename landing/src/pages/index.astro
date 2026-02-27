@@ -1,0 +1,43 @@
+---
+// src/pages/index.astro
+// Landing page — sections with SVG wave dividers between light/dark transitions
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/sections/Hero.astro';
+import Partners from '../components/sections/Partners.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import UseCases from '../components/sections/UseCases.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import PricingPreview from '../components/sections/PricingPreview';
+import FAQ from '../components/sections/FAQ.astro';
+import FinalCTA from '../components/sections/FinalCTA.astro';
+import ProcessVisual from '../components/sections/ProcessVisual.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+---
+<Layout title="AI Viešųjų Pirkimų Analitikas">
+  <Hero />
+  <Partners />
+  <ProcessVisual />
+
+  <!-- dark → cream -->
+  <WaveDivider from="#0d0a08" to="#fdf7f2" />
+  <HowItWorks />
+  <!-- cream → dark -->
+  <WaveDivider from="#fdf7f2" to="#0d0a08" flip={true} />
+
+  <UseCases />
+
+  <!-- dark → warm beige -->
+  <WaveDivider from="#0d0a08" to="#f5ede2" />
+  <Testimonials />
+  <!-- warm beige → dark -->
+  <WaveDivider from="#f5ede2" to="#0d0a08" flip={true} />
+
+  <PricingPreview client:load />
+  <FinalCTA />
+
+  <!-- dark → cream -->
+  <WaveDivider from="#0d0a08" to="#fdf7f2" />
+  <FAQ />
+  <!-- cream → dark (footer) -->
+  <WaveDivider from="#fdf7f2" to="#0d0a08" flip={true} />
+</Layout>

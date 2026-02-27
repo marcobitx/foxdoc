@@ -1,0 +1,70 @@
+---
+// landing/src/pages/docs/getting-started.astro
+// Getting started guide — step-by-step first analysis walkthrough
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+<DocsLayout title="Greita pradžia" currentPath="/docs/getting-started">
+
+  <h1>Greita pradžia</h1>
+  <p>Pirmą analizę atliksite per 5 minutes. Jokios kortelės, jokios konfigūracijos.</p>
+
+  <div class="callout">
+    <p>Jums reikia: registracijos (el. paštas + slaptažodis) ir viešojo pirkimo dokumento PDF/DOCX/ZIP formatu.</p>
+  </div>
+
+  <h2>1. Sukurkite paskyrą</h2>
+  <p>Eikite į <a href="https://app.foxdoc.io">app.foxdoc.io</a> ir spustelėkite "Registruotis". Įveskite el. paštą ir slaptažodį. Jokios kortelės nereikia.</p>
+  <p>Po registracijos gaunate <strong>3 nemokamus kreditus</strong> — pakanka vienai standartinei analizei.</p>
+
+  <h2>2. Įkelkite dokumentus</h2>
+  <p>Pagrindiniame ekrane spustelėkite "Įkelti dokumentus" arba nutempkite failus į laukelį.</p>
+  <ul>
+    <li>Vienas PDF/DOCX/XLSX — tiesiog įkelkite failą</li>
+    <li>Visas pirkimo paketas — supakuokite į ZIP ir įkelkite archyvą</li>
+    <li>Keli atskiri failai — galima įkelti daugiau nei vieną failą vienu metu</li>
+  </ul>
+  <p>Sistema automatiškai apskaičiuos kreditų kainą ir parodys pranešimą prieš paleidžiant analizę.</p>
+
+  <h2>3. Paleiskite analizę</h2>
+  <p>Patvirtinkite kreditų naudojimą ir spustelėkite "Analizuoti". Analizės eiga rodoma realiuoju laiku:</p>
+  <ul>
+    <li>Dokumentų konvertavimas (Docling)</li>
+    <li>LLM duomenų ištraukimas (lygiagretiai, iki 5 dokumentų)</li>
+    <li>Agregacija ir QA patikrinimas</li>
+  </ul>
+  <p>Tipinė 1–15 dokumentų analizė trunka <strong>1–3 minutes</strong>.</p>
+
+  <h2>4. Peržiūrėkite ataskaitą</h2>
+  <p>Baigus analizę, ataskaita rodoma ekrane. Pagrindinės sekcijos:</p>
+  <ul>
+    <li><strong>Bendri duomenys</strong> — pirkėjas, pirkimo pavadinimas, pirkimo vertė</li>
+    <li><strong>CPV kodai</strong> — klasifikatoriai pagal BVPŽ</li>
+    <li><strong>Techniniai reikalavimai</strong> — ištraukti iš techninės specifikacijos</li>
+    <li><strong>Kvalifikaciniai kriterijai</strong> — tiekėjų reikalavimai</li>
+    <li><strong>Terminai</strong> — pasiūlymų pateikimo, sutarties vykdymo datos</li>
+    <li><strong>QA balas</strong> — ataskatos išsamumo įvertinimas (0–100)</li>
+  </ul>
+
+  <h2>5. Klauskite klausimų</h2>
+  <p>Po analizės galite naudoti pokalbių interfejsą — užduokite klausimus apie dokumentus lietuvių kalba. Pavyzdžiui:</p>
+  <ul>
+    <li>"Kokie minimalūs finansiniai reikalavimai tiekėjui?"</li>
+    <li>"Ar yra galimybė teikti pasiūlymą kaip konsorciumui?"</li>
+    <li>"Koks mokėjimo grafikas numatytas sutartyje?"</li>
+  </ul>
+
+  <h2>6. Eksportuokite (Starter+)</h2>
+  <p>Spustelėkite "Eksportuoti" ir pasirinkite PDF arba DOCX formatą. Eksportas prieinamas Starter ir aukštesniuose planuose.</p>
+
+  <div style="margin-top: 2.5rem; padding: 1.5rem; border-radius: 0.75rem; background: #231c18; border: 1px solid rgba(168,162,158,0.15); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+    <div>
+      <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #fdf9f7; margin: 0 0 0.25rem;">Pasiruošę pradėti?</p>
+      <p style="color: #b5a99f; font-size: 0.875rem; margin: 0;">3 nemokami kreditai, jokios kortelės</p>
+    </div>
+    <a href="https://app.foxdoc.io"
+       style="display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border-radius: 0.5rem; background: #f59e0b; color: #1a1512; font-weight: 600; text-decoration: none; min-height: 44px; white-space: nowrap;">
+      Pradėti nemokamai
+    </a>
+  </div>
+
+</DocsLayout>

@@ -1,0 +1,378 @@
+---
+// landing/src/pages/features.astro
+// Features page — editorial premium layout with wave section transitions
+// Related: Layout.astro, WaveDivider.astro, global.css
+
+import Layout from '../layouts/Layout.astro';
+import WaveDivider from '../components/WaveDivider.astro';
+---
+<Layout title="Funkcijos — foxDoc">
+
+  <!-- ── HERO ── -->
+  <div style="background: #0d0a08; padding: 6rem 1.5rem 3rem; position: relative; overflow: hidden;">
+    <!-- Subtle grid texture -->
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,158,11,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,0.03) 1px,transparent 1px);background-size:64px 64px;pointer-events:none;"></div>
+    <div style="max-width: 72rem; margin: 0 auto; text-align: center; position: relative;">
+      <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; letter-spacing: 0.1em; margin: 0 0 1rem;">// funkcijos</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: clamp(2.25rem, 6vw, 4.5rem); color: #fdf9f7; line-height: 1.05; margin: 0 0 1.25rem; letter-spacing: -0.02em;">
+        Viskas, ko reikia<br/>
+        <span style="color: #f59e0b;">pirkimų analizei</span>
+      </h1>
+      <p style="color: #7a6b61; font-size: 1.0625rem; max-width: 36rem; margin: 0 auto 2.5rem; line-height: 1.7;">
+        foxDoc automatizuoja rankinę dokumentų peržiūrą — nuo failo įkėlimo iki struktūrizuotos ataskaitos per 3 minutes.
+      </p>
+      <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem;">
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 2rem; color: #fdf9f7; line-height: 1;">3 min</span>
+          <span style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #5a4f47; letter-spacing: 0.05em;">IKI ATASKAITOS</span>
+        </div>
+        <div style="width: 1px; background: rgba(168,162,158,0.12); align-self: stretch;"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem;">
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 2rem; color: #fdf9f7; line-height: 1;">50+</span>
+          <span style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #5a4f47; letter-spacing: 0.05em;">DOKUMENTŲ</span>
+        </div>
+        <div style="width: 1px; background: rgba(168,162,158,0.12); align-self: stretch;"></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem;">
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 2rem; color: #fdf9f7; line-height: 1;">−85%</span>
+          <span style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #5a4f47; letter-spacing: 0.05em;">LAIKO SĄNAUDOS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- dark → cream -->
+  <WaveDivider from="#0d0a08" to="#fdf7f2" />
+
+  <!-- ── SECTION 1: Core Workflow (light cream) ── -->
+  <div style="background: #fdf7f2; padding: 3rem 1.5rem 4rem;">
+    <div style="max-width: 72rem; margin: 0 auto;">
+      <div style="margin-bottom: 3rem;">
+        <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #d97706; letter-spacing: 0.1em; margin: 0 0 0.5rem;">// pagrindinis workflow</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.25rem); color: #1a1512; margin: 0; letter-spacing: -0.01em;">Nuo failo iki ataskaitos — 3 žingsniai</h2>
+      </div>
+
+      <!-- Step rows -->
+      <div style="display: flex; flex-direction: column; gap: 0;">
+
+        <!-- Step 01 -->
+        <div class="step-row" style="display: grid; grid-template-columns: auto 1fr auto; gap: 2.5rem; align-items: center; padding: 2.5rem 0; border-bottom: 1px solid rgba(0,0,0,0.07);">
+          <div style="position: relative; flex-shrink: 0;">
+            <div style="position:absolute;top:-12px;left:-8px;font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:5rem;line-height:1;color:rgba(234,88,12,0.07);pointer-events:none;user-select:none;">01</div>
+            <div style="width: 56px; height: 56px; border-radius: 14px; background: rgba(234,88,12,0.08); border: 1px solid rgba(234,88,12,0.18); display: flex; align-items: center; justify-content: center; position: relative;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                <line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.625rem;">
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.25rem; color: #1a1512; margin: 0;">Daugiaformatė analizė</h3>
+              <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.08); padding: 0.2rem 0.7rem; border-radius: 99px;">Dokumentai</span>
+            </div>
+            <p style="color: #5a4f47; font-size: 0.9375rem; line-height: 1.7; margin: 0; max-width: 48rem;">
+              Įkelkite PDF, DOCX, XLSX failus arba ZIP archyvą su visu pirkimo paketu — be papildomų konvertavimų. Sistema automatiškai atpažįsta formatą, išpakuoja ZIP archyvus rekursyviai ir parengia visus dokumentus analizei.
+            </p>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.875rem; flex-wrap: wrap;">
+              {['PDF', 'DOCX', 'XLSX', 'ZIP'].map(fmt => (
+                <span style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; padding: 0.2rem 0.6rem; border-radius: 4px; background: rgba(0,0,0,0.04); color: #7a6b61; border: 1px solid rgba(0,0,0,0.07);">{fmt}</span>
+              ))}
+            </div>
+          </div>
+          <div class="metric-panel" style="flex-shrink: 0; padding: 1.25rem 1.5rem; border-radius: 1rem; background: #fff; border: 1px solid rgba(0,0,0,0.07); text-align: center; min-width: 8rem; box-shadow: 0 2px 12px rgba(0,0,0,0.05);">
+            <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 2rem; color: #d97706; margin: 0; line-height: 1;">50+</p>
+            <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #7a6b61; margin: 0.3rem 0 0; letter-spacing: 0.04em;">dokumentų</p>
+            <p style="font-size: 0.65rem; color: #b5a99f; margin: 0.15rem 0 0;">vienu paketu</p>
+          </div>
+        </div>
+
+        <!-- Step 02 -->
+        <div class="step-row" style="display: grid; grid-template-columns: auto 1fr auto; gap: 2.5rem; align-items: center; padding: 2.5rem 0; border-bottom: 1px solid rgba(0,0,0,0.07);">
+          <div style="position: relative; flex-shrink: 0;">
+            <div style="position:absolute;top:-12px;left:-8px;font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:5rem;line-height:1;color:rgba(234,88,12,0.07);pointer-events:none;user-select:none;">02</div>
+            <div style="width: 56px; height: 56px; border-radius: 14px; background: rgba(234,88,12,0.08); border: 1px solid rgba(234,88,12,0.18); display: flex; align-items: center; justify-content: center; position: relative;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="10" rx="2"/>
+                <circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 15h.01M16 15h.01"/>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.625rem;">
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.25rem; color: #1a1512; margin: 0;">LLM-powered duomenų ištraukimas</h3>
+              <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.08); padding: 0.2rem 0.7rem; border-radius: 99px;">AI</span>
+            </div>
+            <p style="color: #5a4f47; font-size: 0.9375rem; line-height: 1.7; margin: 0; max-width: 48rem;">
+              Claude Sonnet 4 analizuoja kiekvieną dokumentą atskirai ir ištraukia CPV kodus, sutarties vertes, terminus, kvalifikacinius kriterijus, techninius reikalavimus ir bet kokius kitus esminius duomenis. Lygiagreti analizė — iki 5 dokumentų vienu metu.
+            </p>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.875rem; flex-wrap: wrap;">
+              {['CPV kodai', 'Sutarties vertė', 'Terminai', 'Krit. reikalavimai'].map(tag => (
+                <span style="font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 4px; background: rgba(0,0,0,0.04); color: #7a6b61; border: 1px solid rgba(0,0,0,0.07);">{tag}</span>
+              ))}
+            </div>
+          </div>
+          <div class="metric-panel" style="flex-shrink: 0; padding: 1.25rem 1.5rem; border-radius: 1rem; background: #fff; border: 1px solid rgba(0,0,0,0.07); text-align: center; min-width: 8rem; box-shadow: 0 2px 12px rgba(0,0,0,0.05);">
+            <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.25rem; color: #d97706; margin: 0; line-height: 1.2;">Claude<br/>Sonnet 4</p>
+            <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #7a6b61; margin: 0.3rem 0 0; letter-spacing: 0.04em;">LLM variklis</p>
+          </div>
+        </div>
+
+        <!-- Step 03 -->
+        <div class="step-row" style="display: grid; grid-template-columns: auto 1fr auto; gap: 2.5rem; align-items: center; padding: 2.5rem 0;">
+          <div style="position: relative; flex-shrink: 0;">
+            <div style="position:absolute;top:-12px;left:-8px;font-family:'Space Grotesk',sans-serif;font-weight:900;font-size:5rem;line-height:1;color:rgba(234,88,12,0.07);pointer-events:none;user-select:none;">03</div>
+            <div style="width: 56px; height: 56px; border-radius: 14px; background: rgba(234,88,12,0.08); border: 1px solid rgba(234,88,12,0.18); display: flex; align-items: center; justify-content: center; position: relative;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.625rem;">
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.25rem; color: #1a1512; margin: 0;">Struktūrizuota ataskaita + QA</h3>
+              <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.08); padding: 0.2rem 0.7rem; border-radius: 99px;">Ataskaita</span>
+            </div>
+            <p style="color: #5a4f47; font-size: 0.9375rem; line-height: 1.7; margin: 0; max-width: 48rem;">
+              Visi surinkti duomenys sujungiami į aiškią struktūrizuotą ataskaitą su sekcijomis ir lentelėmis. QA balas (0–100) automatiškai įvertina ataskaitos išsamumą — žemesnis balas signalizuoja neišsamią dokumentaciją dar prieš teikiant pasiūlymą.
+            </p>
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.875rem; flex-wrap: wrap;">
+              {['QA balas 0–100', 'Eksportas PDF/DOCX', 'Chat Q&A'].map(tag => (
+                <span style="font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 4px; background: rgba(0,0,0,0.04); color: #7a6b61; border: 1px solid rgba(0,0,0,0.07);">{tag}</span>
+              ))}
+            </div>
+          </div>
+          <div class="metric-panel" style="flex-shrink: 0; padding: 1.25rem 1.5rem; border-radius: 1rem; background: #fff; border: 1px solid rgba(0,0,0,0.07); text-align: center; min-width: 8rem; box-shadow: 0 2px 12px rgba(0,0,0,0.05);">
+            <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 2rem; color: #d97706; margin: 0; line-height: 1;">3 min</p>
+            <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #7a6b61; margin: 0.3rem 0 0; letter-spacing: 0.04em;">nuo failo</p>
+            <p style="font-size: 0.65rem; color: #b5a99f; margin: 0.15rem 0 0;">iki ataskaitos</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- cream → dark -->
+  <WaveDivider from="#fdf7f2" to="#1a1410" flip={true} />
+
+  <!-- ── SECTION 2: Quality & Communication (warm dark) ── -->
+  <div style="background: #1a1410; padding: 3rem 1.5rem 4rem;">
+    <div style="max-width: 72rem; margin: 0 auto;">
+      <div style="margin-bottom: 2.5rem;">
+        <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; letter-spacing: 0.1em; margin: 0 0 0.5rem;">// kokybė ir komunikacija</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.25rem); color: #fdf9f7; margin: 0; letter-spacing: -0.01em;">Analizė, kuri dirba už jus</h2>
+      </div>
+
+      <!-- Hero QA card -->
+      <div class="quality-card" style="padding: 2rem 2.5rem; border-radius: 1.25rem; border: 1px solid rgba(245,158,11,0.18); background: linear-gradient(135deg, #1f160a 0%, #1a1410 100%); margin-bottom: 1rem; display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 240px;">
+          <div style="display: flex; align-items: center; gap: 0.875rem; margin-bottom: 0.875rem;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.18); display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div>
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1875rem; color: #fdf9f7; margin: 0;">QA kokybės balas</h3>
+              <span style="font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b;">Kokybė</span>
+            </div>
+          </div>
+          <p style="color: #b5a99f; font-size: 0.9375rem; line-height: 1.7; margin: 0;">
+            Automatinis ataskaitos išsamumo tikrinimas — AI įvertina, ar visi svarbūs duomenys ištraukti. Balas nuo 0 iki 100 rodo ataskaitos kokybę: žemesnis balas perspėja apie neišsamią dokumentaciją dar prieš teikiant pasiūlymą.
+          </p>
+        </div>
+        <!-- Score gauge visual -->
+        <div style="flex-shrink: 0; text-align: center;">
+          <div style="position: relative; width: 100px; height: 100px; margin: 0 auto 0.5rem;">
+            <svg width="100" height="100" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(245,158,11,0.08)" stroke-width="8"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#f59e0b" stroke-width="8" stroke-linecap="round"
+                      stroke-dasharray="220" stroke-dashoffset="55" transform="rotate(-90 50 50)" style="opacity:0.85;"/>
+            </svg>
+            <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 1.5rem; color: #fdf9f7; line-height: 1;">94</span>
+              <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #7a6b61;">/ 100</span>
+            </div>
+          </div>
+          <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #5a4f47; margin: 0;">TIPINIS BALAS</p>
+        </div>
+      </div>
+
+      <!-- 3-column grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+
+        <div class="quality-card" style="padding: 1.625rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.1); background: #141210; display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.12); display: flex; align-items: center; justify-content: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.1); padding: 0.2rem 0.6rem; border-radius: 99px;">Chat</span>
+          </div>
+          <div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; color: #fdf9f7; margin: 0 0 0.4rem;">Pokalbių analizė</h3>
+            <p style="color: #7a6b61; font-size: 0.8125rem; line-height: 1.65; margin: 0;">Po analizės užduokite papildomus klausimus apie dokumentus. AI atsako remdamasis išanalizuota medžiaga.</p>
+          </div>
+          <div style="padding: 0.4rem 0.75rem; border-radius: 0.5rem; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.1); align-self: flex-start;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #f59e0b; font-weight: 600;">Neribota</span>
+          </div>
+        </div>
+
+        <div class="quality-card" style="padding: 1.625rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.1); background: #141210; display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.12); display: flex; align-items: center; justify-content: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.1); padding: 0.2rem 0.6rem; border-radius: 99px;">Pro+</span>
+          </div>
+          <div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; color: #fdf9f7; margin: 0 0 0.4rem;">PDF ir DOCX eksportas</h3>
+            <p style="color: #7a6b61; font-size: 0.8125rem; line-height: 1.65; margin: 0;">Eksportuokite ataskaitas į PDF arba DOCX — tinkama struktūra kolegoms ir audito tikslams.</p>
+          </div>
+          <div style="padding: 0.4rem 0.75rem; border-radius: 0.5rem; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.1); align-self: flex-start;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #f59e0b; font-weight: 600;">Pro+</span>
+          </div>
+        </div>
+
+        <div class="quality-card" style="padding: 1.625rem; border-radius: 1rem; border: 1px solid rgba(168,162,158,0.1); background: #141210; display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.12); display: flex; align-items: center; justify-content: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.1); padding: 0.2rem 0.6rem; border-radius: 99px;">Greitis</span>
+          </div>
+          <div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1rem; color: #fdf9f7; margin: 0 0 0.4rem;">Lygiagreti apdorojimas</h3>
+            <p style="color: #7a6b61; font-size: 0.8125rem; line-height: 1.65; margin: 0;">Iki 5 dokumentų analizuojami vienu metu. Didelius ZIP paketus apdorojame sparčiai — 50 dok. ~3 min.</p>
+          </div>
+          <div style="padding: 0.4rem 0.75rem; border-radius: 0.5rem; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.1); align-self: flex-start;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #f59e0b; font-weight: 600;">5× lygiagrečiai</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- dark → darkest (same palette, very subtle) -->
+  <div style="height: 1px; background: rgba(168,162,158,0.06);"></div>
+
+  <!-- ── SECTION 3: Platform / Enterprise (darkest) ── -->
+  <div style="background: #0d0a08; padding: 3rem 1.5rem 4rem;">
+    <div style="max-width: 72rem; margin: 0 auto;">
+      <div style="margin-bottom: 2.5rem;">
+        <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; letter-spacing: 0.1em; margin: 0 0 0.5rem;">// techninė platforma</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.25rem); color: #fdf9f7; margin: 0 0 0.5rem; letter-spacing: -0.01em;">Saugumas, greitis ir integracija</h2>
+        <p style="color: #5a4f47; font-size: 0.875rem; margin: 0;">Techninės galimybės, kurios veikia fone — kad galėtumėte koncentruotis į analizę</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; background: rgba(168,162,158,0.08); border-radius: 1rem; overflow: hidden; border: 1px solid rgba(168,162,158,0.08);">
+
+        <div class="platform-item" style="padding: 1.75rem; background: #0d0a08; position: relative;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.12); display: flex; align-items: center; justify-content: center;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              </svg>
+            </div>
+            <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.1); padding: 0.2rem 0.6rem; border-radius: 99px;">ZIP</span>
+          </div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #fdf9f7; margin: 0 0 0.5rem;">ZIP archyvų palaikymas</h3>
+          <p style="color: #5a4f47; font-size: 0.8125rem; line-height: 1.65; margin: 0;">Įkelkite visą pirkimo paketą kaip ZIP — automatiškai išpakuojama ir analizuojama rekursyviai.</p>
+        </div>
+
+        <div class="platform-item" style="padding: 1.75rem; background: #0d0a08; position: relative;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.12); display: flex; align-items: center; justify-content: center;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #ea580c; background: rgba(234,88,12,0.1); padding: 0.2rem 0.6rem; border-radius: 99px;">Saugumas</span>
+          </div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #fdf9f7; margin: 0 0 0.5rem;">HTTPS + GDPR</h3>
+          <p style="color: #5a4f47; font-size: 0.8125rem; line-height: 1.65; margin: 0;">HTTPS šifravimas visiems failams. Po analizės failai automatiškai ištrinami. Enterprise: GDPR DPA ir audito žurnalai.</p>
+        </div>
+
+        <div class="platform-item pro-item" style="padding: 1.75rem; background: #0d0a08; position: relative; border-left: 2px solid rgba(245,158,11,0.2);">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: center; justify-content: center;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0M4.93 19.07a10 10 0 0 0 14.14 0"/>
+              </svg>
+            </div>
+            <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; background: rgba(245,158,11,0.12); padding: 0.2rem 0.6rem; border-radius: 99px;">Pro+</span>
+          </div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #fdf9f7; margin: 0 0 0.5rem;">Modelio pasirinkimas</h3>
+          <p style="color: #5a4f47; font-size: 0.8125rem; line-height: 1.65; margin: 0;">Pro+ planuose rinktis LLM modelį — greičio, kainos ir tikslumo balansas pagal jūsų poreikius.</p>
+        </div>
+
+        <div class="platform-item pro-item" style="padding: 1.75rem; background: #0d0a08; position: relative; border-left: 2px solid rgba(245,158,11,0.2);">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: center; justify-content: center;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+            </div>
+            <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; background: rgba(245,158,11,0.12); padding: 0.2rem 0.6rem; border-radius: 99px;">Team+</span>
+          </div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #fdf9f7; margin: 0 0 0.5rem;">REST API prieiga</h3>
+          <p style="color: #5a4f47; font-size: 0.8125rem; line-height: 1.65; margin: 0;">Integruokite foxDoc į savo sistemas. Automatizuokite pirkimų stebėseną ir ataskaitos generavimą.</p>
+        </div>
+
+        <div class="platform-item pro-item" style="padding: 1.75rem; background: #0d0a08; position: relative; border-left: 2px solid rgba(245,158,11,0.2);">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: center; justify-content: center;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+              </svg>
+            </div>
+            <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: #f59e0b; background: rgba(245,158,11,0.12); padding: 0.2rem 0.6rem; border-radius: 99px;">Team+</span>
+          </div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.9375rem; color: #fdf9f7; margin: 0 0 0.5rem;">Pasirinktiniai promptai</h3>
+          <p style="color: #5a4f47; font-size: 0.8125rem; line-height: 1.65; margin: 0;">Pritaikykite analizės šabloną — papildomi laukai ar specifinės sritys pagal organizacijos poreikį.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div style="background: #0d0a08; padding: 0 1.5rem 5rem;">
+    <div style="max-width: 72rem; margin: 0 auto; padding: 3.5rem 3rem; border-radius: 1.25rem; border: 1px solid rgba(180,130,60,0.3); position: relative; overflow: hidden;">
+      <!-- Background photo -->
+      <div style="position: absolute; inset: 0; border-radius: 1.25rem; background-image: url('/images/cta-bg-r.png'); background-size: cover; background-position: right center; background-repeat: no-repeat;"></div>
+      <!-- Content left-aligned, max half width -->
+      <div style="position: relative; z-index: 10; max-width: 32rem;">
+        <p style="font-size: 0.7rem; font-family: 'JetBrains Mono', monospace; color: #b45309; letter-spacing: 0.08em; margin: 0 0 0.75rem;">// pradėkite šiandien</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.25rem); color: #1a1512; margin: 0 0 0.75rem; letter-spacing: -0.01em;">Išbandykite nemokamai</h2>
+        <p style="color: #4a3f38; margin: 0 0 2rem; font-size: 0.9375rem;">3 kreditai, nereikalinga kortelė — pradėkite dabar ir gaukite pirmą ataskaitą per 3 minutes.</p>
+        <a href="https://app.foxdoc.io"
+           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.75rem; border-radius: 0.625rem; background: #f59e0b; color: #0d0a08; font-weight: 700; text-decoration: none; font-size: 0.9375rem; transition: background 0.2s;"
+           onmouseover="this.style.background='#fbbf24'"
+           onmouseout="this.style.background='#f59e0b'">
+          Pradėti nemokamai
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .quality-card:hover { border-color: rgba(245,158,11,0.22) !important; }
+    .platform-item { transition: background 0.2s; }
+    .platform-item:hover { background: rgba(245,158,11,0.02) !important; }
+    .step-row .metric-panel { transition: box-shadow 0.2s, border-color 0.2s; }
+    .step-row:hover .metric-panel { box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-color: rgba(234,88,12,0.2) !important; }
+    @media (max-width: 640px) {
+      .step-row { grid-template-columns: auto 1fr !important; }
+      .metric-panel { display: none !important; }
+    }
+  </style>
+</Layout>

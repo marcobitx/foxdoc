@@ -1,0 +1,157 @@
+---
+// landing/src/components/sections/Testimonials.astro
+// Two vertical auto-scrolling marquee strips — one down, one up — with more testimonial cards
+// Light warm beige section. Related: index.astro
+
+const all = [
+  {
+    name: 'Rūta Kazlauskienė',
+    role: 'Viešųjų pirkimų specialistė',
+    org: 'Vilniaus miesto savivaldybė',
+    initials: 'RK',
+    avatar: '/images/avatar-rk.png',
+    text: 'foxDoc sutaupė mums daugiau nei 3 valandas per kiekvieną didesnį pirkimą. Ataskaita tiksli ir visada randa tai, ką praleistume rankinės peržiūros metu.',
+    stars: 5,
+  },
+  {
+    name: 'Tomas Petraitis',
+    role: 'Direktorius',
+    org: 'UAB Baltic Procurement Solutions',
+    initials: 'TP',
+    avatar: '/images/avatar-tp.png',
+    text: 'Kaip konsultantas dirbu su dešimtimis pirkimų paketų per mėnesį. foxDoc tapo neatsiejama darbo dalimi — QA kokybės balas ypač vertingas.',
+    stars: 5,
+  },
+  {
+    name: 'Ieva Stankevičiūtė',
+    role: 'Tiekimo vadybininkė',
+    org: 'UAB TechnoGroup',
+    initials: 'IS',
+    avatar: '/images/avatar-is.png',
+    text: 'Prieš foxDoc praleidavome dieną analizuodami pirkimo dokumentus. Dabar tai atlieka AI per 3 minutes. Rekomenduoju visiems tiekėjams.',
+    stars: 5,
+  },
+  {
+    name: 'Mindaugas Žukauskas',
+    role: 'Pirkimų skyriaus vadovas',
+    org: 'Kauno miesto savivaldybė',
+    initials: 'MŽ',
+    avatar: '/images/avatar-mz.png',
+    text: 'ZIP archyvų palaikymas — tikras proveržis. Įkeliame visą pirkimo paketą ir per kelias minutes turime pilną analizę. Sutaupome iki 80% laiko.',
+    stars: 5,
+  },
+  {
+    name: 'Eglė Navickienė',
+    role: 'Vyriausioji teisininkė',
+    org: 'UAB Statybos Lyderiai',
+    initials: 'EN',
+    avatar: '/images/avatar-en.png',
+    text: 'QA balas perspėja apie neišsamią dokumentaciją dar prieš teikiant pasiūlymą. Tai apsaugojo mus nuo kelių brangiai kainojusių klaidų.',
+    stars: 5,
+  },
+  {
+    name: 'Darius Pocius',
+    role: 'Finansų kontrolierius',
+    org: 'VĮ Lietuvos paštas',
+    initials: 'DP',
+    avatar: '/images/avatar-dp.png',
+    text: 'Naudojame foxDoc kiekvieno pirkimo vertinimui. Tai leido padidinti analizuojamų pirkimų skaičių 3 kartus be papildomų darbuotojų.',
+    stars: 5,
+  },
+  {
+    name: 'Kristina Balčiūnienė',
+    role: 'Audito vadybininkė',
+    org: 'UAB Audit Partners LT',
+    initials: 'KB',
+    avatar: '/images/avatar-kb.png',
+    text: 'Eksportas į DOCX leidžia greitai pritaikyti ataskaitą klientui. Profesionali išvaizda ir tikslūs duomenys — idealus įrankis konsultantams.',
+    stars: 5,
+  },
+  {
+    name: 'Algirdas Matulis',
+    role: 'IT projektų vadovas',
+    org: 'VšĮ Centrinė perkančioji organizacija',
+    initials: 'AM',
+    avatar: '/images/avatar-am.png',
+    text: 'API integracija leido automatizuoti pirkimų stebėjimą. Dabar sistema pati praneša apie naujus pirkimus ir jų analizę gauname automatiškai.',
+    stars: 5,
+  },
+];
+
+// Split into two strips
+const strip1 = all.slice(0, 4);
+const strip2 = all.slice(4, 8);
+---
+
+<section class="py-16 sm:py-24 px-4 sm:px-6" style="background: #f5ede2;">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="text-center mb-12">
+      <p class="text-xs sm:text-sm font-mono mb-3" style="color: #d97706;">// atsiliepimai</p>
+      <h2 class="font-heading font-bold" style="color: #1a1512;">Ką sako mūsų vartotojai</h2>
+      <p class="text-sm mt-2" style="color: #7a6b61;">Pirkimų specialistai, tiekėjai ir auditoriai apie foxDoc</p>
+    </div>
+
+    <!-- Two-column vertical marquee -->
+    <div class="marquee-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; overflow: hidden; height: 520px; mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);">
+
+      <!-- Strip 1: scrolls DOWN -->
+      <div class="marquee-track down" style="display: flex; flex-direction: column; gap: 1rem; animation: scrollDown 24s linear infinite;">
+        {[...strip1, ...strip1].map(t => (
+          <div style="padding: 1.25rem 1.5rem; border-radius: 1.125rem; border: 1px solid rgba(0,0,0,0.07); background: #fffaf5; box-shadow: 0 1px 8px rgba(0,0,0,0.04); flex-shrink: 0;">
+            <div style="display: flex; gap: 0.25rem; margin-bottom: 0.625rem;">
+              {[1,2,3,4,5].map(() => <span style="color: #f59e0b; font-size: 0.75rem;">★</span>)}
+            </div>
+            <p style="font-size: 0.875rem; line-height: 1.65; color: #3a3330; margin: 0 0 0.875rem; font-style: italic;">&ldquo;{t.text}&rdquo;</p>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <img src={t.avatar} alt={t.name} style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" />
+              <div>
+                <p style="font-size: 0.8125rem; font-weight: 600; color: #1a1512; margin: 0;">{t.name}</p>
+                <p style="font-size: 0.7rem; color: #7a6b61; margin: 0;">{t.role}, {t.org}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Strip 2: scrolls UP -->
+      <div class="marquee-track up" style="display: flex; flex-direction: column; gap: 1rem; animation: scrollUp 28s linear infinite;">
+        {[...strip2, ...strip2].map(t => (
+          <div style="padding: 1.25rem 1.5rem; border-radius: 1.125rem; border: 1px solid rgba(0,0,0,0.07); background: rgba(255,255,255,0.68); backdrop-filter: blur(4px); box-shadow: 0 1px 8px rgba(0,0,0,0.03); flex-shrink: 0;">
+            <div style="display: flex; gap: 0.25rem; margin-bottom: 0.625rem;">
+              {[1,2,3,4,5].map(() => <span style="color: #f59e0b; font-size: 0.75rem;">★</span>)}
+            </div>
+            <p style="font-size: 0.875rem; line-height: 1.65; color: #3a3330; margin: 0 0 0.875rem; font-style: italic;">&ldquo;{t.text}&rdquo;</p>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <img src={t.avatar} alt={t.name} style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" />
+              <div>
+                <p style="font-size: 0.8125rem; font-weight: 600; color: #1a1512; margin: 0;">{t.name}</p>
+                <p style="font-size: 0.7rem; color: #7a6b61; margin: 0;">{t.role}, {t.org}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  @keyframes scrollDown {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+  @keyframes scrollUp {
+    0%   { transform: translateY(-50%); }
+    100% { transform: translateY(0); }
+  }
+  .marquee-track:hover { animation-play-state: paused; }
+
+  @media (max-width: 640px) {
+    .marquee-wrapper { grid-template-columns: 1fr !important; }
+    .marquee-track.up { display: none !important; }
+    .marquee-wrapper { height: 480px !important; }
+  }
+</style>
