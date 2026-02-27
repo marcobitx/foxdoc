@@ -43,10 +43,12 @@ async def get_current_user_id(request: Request) -> str:
     token = auth_header[7:]
     payload = _decode_jwt_payload(token)
 
-    user_id = payload.get("sub")
-    if not user_id:
+    sub = payload.get("sub")
+    if not sub:
         raise HTTPException(status_code=401, detail="Invalid auth token: no subject")
 
+    # Convex JWT sub format: "userId|sessionId" — extract just the user ID
+    user_id = sub.split("|")[0]
     return user_id
 
 
@@ -59,6 +61,8 @@ async def get_optional_user_id(request: Request) -> str | None:
     try:
         token = auth_header[7:]
         payload = _decode_jwt_payload(token)
-        return payload.get("sub")
+        sub = payload.get("sub")
+        # Convex JWT sub format: "userId|sessionId" — extract just the user ID
+        return sub.split("|")[0] if sub else None
     except HTTPException:
         return None
