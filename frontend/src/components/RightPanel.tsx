@@ -55,18 +55,18 @@ export default function RightPanel({ currentView, analysisId }: Props) {
           : 'w-[320px]',
       )}
     >
-      {/* Double L-shaped divider — two parallel lines, horizontal from left then curving down with r=4 */}
-      <div className="absolute top-0 left-0 w-[8px] h-full pointer-events-none" aria-hidden="true">
-        {/* Outer L: horizontal top + rounded corner + vertical */}
-        <div className="absolute top-0 left-0 w-full h-[5px]">
-          <div className="absolute top-0 left-0 right-[4px] h-[1px] bg-surface-600/25" />
-          <div className="absolute top-0 right-0 w-[5px] h-[5px] border-b border-r border-surface-600/25 rounded-br" style={{ borderRadius: '0 0 4px 0' }} />
-        </div>
-        <div className="absolute top-[5px] right-0 w-[1px] bottom-0 bg-surface-600/25" />
-        {/* Inner L: 3px gap inward */}
-        <div className="absolute top-[3px] left-0 w-[calc(100%-7px)] h-[1px] bg-surface-600/25" />
-        <div className="absolute top-[3px] left-[calc(100%-7px)] w-[4px] h-[4px] border-b border-r border-surface-600/25" style={{ borderRadius: '0 0 4px 0' }} />
-        <div className="absolute top-[7px] right-[3px] w-[1px] bottom-0 bg-surface-600/25" />
+      {/* Decorative cross divider — horizontal + vertical lines with dots */}
+      <div className="absolute inset-0 pointer-events-none z-10" aria-hidden="true">
+        {/* Horizontal line — from left edge to 12px right, at y=50% of top area */}
+        <div className="absolute top-[20px] left-0 w-[10px] h-[1px] bg-surface-500/30" />
+        {/* Vertical line — from junction down to near bottom */}
+        <div className="absolute top-[20px] left-0 w-[1px] bottom-[20px] bg-surface-500/30" />
+        {/* Dot — start of horizontal line */}
+        <div className="absolute top-[20px] left-0 -translate-y-1/2 w-[4px] h-[4px] rounded-full bg-surface-500/40" />
+        {/* Dot — end of horizontal line / junction */}
+        <div className="absolute top-[20px] left-[10px] -translate-y-1/2 -translate-x-1/2 w-[4px] h-[4px] rounded-full bg-surface-500/40" />
+        {/* Dot — bottom end of vertical line */}
+        <div className="absolute bottom-[20px] left-0 -translate-x-[calc(50%-0.5px)] w-[4px] h-[4px] rounded-full bg-surface-500/40" />
       </div>
       {/* Tips views — collapsible, identical pattern to IconSidebar */}
       {isTipsView && (
