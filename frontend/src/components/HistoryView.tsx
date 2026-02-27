@@ -657,9 +657,9 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
             {/* Table header */}
             <div className="grid gap-0 px-3 sm:px-5 py-3 border-b border-surface-700/40
                             text-[11px] text-surface-500 font-bold uppercase tracking-widest
-                            grid-cols-[32px_1fr_auto_36px]
-                            md:grid-cols-[36px_1fr_100px_100px_90px_120px]
-                            lg:grid-cols-[36px_1fr_150px_100px_100px_90px_140px]">
+                            grid-cols-[44px_1fr_auto_36px]
+                            md:grid-cols-[48px_1fr_100px_100px_90px_120px]
+                            lg:grid-cols-[48px_1fr_150px_100px_100px_90px_140px]">
               {/* Select all checkbox */}
               <div className="flex items-center justify-center">
                 <Tooltip content="Pažymėti visus" side="bottom">
@@ -726,9 +726,9 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
                   key={a.id}
                   onClick={() => clickable && onSelect(a.id)}
                   className={`grid gap-0 px-3 sm:px-5 py-3.5 w-full text-left
-                             grid-cols-[32px_1fr_auto_36px]
-                             md:grid-cols-[36px_1fr_100px_100px_90px_120px]
-                             lg:grid-cols-[36px_1fr_150px_100px_100px_90px_140px]
+                             grid-cols-[44px_1fr_auto_36px]
+                             md:grid-cols-[48px_1fr_100px_100px_90px_120px]
+                             lg:grid-cols-[48px_1fr_150px_100px_100px_90px_140px]
                              border-b border-surface-700/20 last:border-b-0 group
                              transition-all duration-200
                              hover:bg-surface-800/50 animate-stagger

@@ -71,5 +71,4 @@ CLAUDE.md
 .playwright-mcp/
 
 .vercel
-
-.vercel
+.claude/settings.local.json

@@ -23,7 +23,7 @@ import {
   Info,
 } from 'lucide-react';
 import { getAnalysis, exportAnalysis, type Analysis } from '../lib/api';
-import { appStore } from '../lib/store';
+import { appStore, useStore } from '../lib/store';
 
 interface Props {
   analysisId: string;
@@ -35,6 +35,15 @@ export default function ResultsView({ analysisId, onBack }: Props) {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState<string | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
+
+  // Sync with store when ResultsPanel polling updates cachedAnalysis (e.g. QA score)
+  const storeState = useStore(appStore);
+  useEffect(() => {
+    const cached = storeState.cachedAnalysis;
+    if (cached && cached.id === analysisId && cached.data) {
+      setAnalysis(cached.data);
+    }
+  }, [storeState.cachedAnalysis, analysisId]);
 
   useEffect(() => {
     // Use cached analysis if ID matches
