@@ -55,19 +55,6 @@ export default function RightPanel({ currentView, analysisId }: Props) {
           : 'w-[320px]',
       )}
     >
-      {/* Decorative L-divider — horizontal + vertical lines joined with dots */}
-      <div className="absolute inset-0 pointer-events-none z-10" aria-hidden="true">
-        {/* Horizontal line — from dot to junction */}
-        <div className="absolute top-[20px] left-[2px] w-[10px] h-[1px] bg-surface-400/40" />
-        {/* Vertical line — from junction down to bottom dot */}
-        <div className="absolute top-[20px] left-[12px] w-[1px] bottom-[20px] bg-surface-400/40" style={{ transform: 'translateX(-0.5px)' }} />
-        {/* Dot — start of horizontal */}
-        <div className="absolute top-[20px] left-0 -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
-        {/* Dot — junction where lines meet */}
-        <div className="absolute top-[20px] left-[12px] -translate-y-1/2 -translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
-        {/* Dot — bottom of vertical */}
-        <div className="absolute bottom-[20px] left-[12px] translate-y-1/2 -translate-x-1/2 w-[5px] h-[5px] rounded-full bg-surface-400/50" />
-      </div>
       {/* Tips views — collapsible, identical pattern to IconSidebar */}
       {isTipsView && (
         <>
