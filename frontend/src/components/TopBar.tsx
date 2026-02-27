@@ -6,6 +6,7 @@
 import { AlertTriangle, X, ChevronRight, Home, XCircle, Plus } from 'lucide-react';
 import { appStore, useStore, type AppView } from '../lib/store';
 import Tooltip from './Tooltip';
+import UserMenu from './UserMenu';
 
 interface Props {
   currentView: AppView;
@@ -185,6 +186,7 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
               </button>
             </Tooltip>
           )}
+          <UserMenu />
         </div>
       </div>
 
