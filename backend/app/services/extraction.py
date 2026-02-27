@@ -10,6 +10,7 @@ from typing import Awaitable, Callable, Optional
 
 from app.models.schemas import ExtractionResult
 from app.prompts.extraction import EXTRACTION_SYSTEM, EXTRACTION_USER
+from app.prompts.analysis_types import get_extraction_prompts, get_thinking_level
 from app.prompts.extraction_ocr import EXTRACTION_OCR_USER
 from app.services.llm import OPENROUTER_MAX_FILE_SIZE, LLMClient, build_multimodal_content
 from app.services.parser import ParsedDocument
@@ -152,9 +153,15 @@ async def _extract_single(
     model: str,
     on_thinking: Callable[[str], Awaitable[None]] | None = None,
     use_streaming: bool = True,
+    analysis_type: str = "detailed",
+    custom_instructions: str = "",
+    thinking_override: str = "",
 ) -> tuple[ExtractionResult, dict]:
     """Extract structured data from a single document/chunk via LLM call."""
-    user_prompt = EXTRACTION_USER.format(
+    system_prompt, user_template = get_extraction_prompts(analysis_type, custom_instructions)
+    thinking = get_thinking_level(analysis_type, thinking_override)
+
+    user_prompt = user_template.format(
         filename=doc.filename,
         document_type=doc.doc_type.value,
         page_count=doc.page_count,
@@ -163,21 +170,21 @@ async def _extract_single(
 
     if use_streaming:
         result, usage = await llm.complete_structured_streaming(
-            system=EXTRACTION_SYSTEM,
+            system=system_prompt,
             user=user_prompt,
             response_schema=ExtractionResult,
             model=model,
-            thinking="low",
+            thinking=thinking,
             max_tokens=32000,
             on_thinking=on_thinking,
         )
     else:
         result, usage = await llm.complete_structured(
-            system=EXTRACTION_SYSTEM,
+            system=system_prompt,
             user=user_prompt,
             response_schema=ExtractionResult,
             model=model,
-            thinking="low",
+            thinking=thinking,
             max_tokens=32000,
         )
     return result, usage  # type: ignore[return-value]
@@ -257,6 +264,9 @@ async def extract_document(
     model: str,
     context_length: int = 200_000,
     on_thinking: Callable[[str], Awaitable[None]] | None = None,
+    analysis_type: str = "detailed",
+    custom_instructions: str = "",
+    thinking_override: str = "",
 ) -> tuple[ExtractionResult, dict]:
     """
     Extract structured data from a single parsed document.
@@ -305,7 +315,7 @@ async def extract_document(
             )
             # Single chunk — direct extraction with retry fallback
             try:
-                result, usage = await _extract_single(doc, llm, model, on_thinking=on_thinking)
+                result, usage = await _extract_single(doc, llm, model, on_thinking=on_thinking, analysis_type=analysis_type, custom_instructions=custom_instructions, thinking_override=thinking_override)
             except Exception as streaming_exc:
                 logger.warning(
                     "Streaming extraction failed for %s, retrying non-streaming: %s",
@@ -313,7 +323,7 @@ async def extract_document(
                 )
                 await asyncio.sleep(2)
                 result, usage = await _extract_single(
-                    doc, llm, model, on_thinking=on_thinking, use_streaming=False,
+                    doc, llm, model, on_thinking=on_thinking, use_streaming=False, analysis_type=analysis_type, custom_instructions=custom_instructions,
                 )
             logger.info(
                 "Extraction complete for %s: in=%d out=%d tokens",
@@ -344,7 +354,7 @@ async def extract_document(
                     is_scanned=False,  # chunks contain text
                 )
                 try:
-                    return await _extract_single(chunk_doc, llm, model, on_thinking=on_thinking)
+                    return await _extract_single(chunk_doc, llm, model, on_thinking=on_thinking, analysis_type=analysis_type, custom_instructions=custom_instructions, thinking_override=thinking_override)
                 except Exception as streaming_exc:
                     logger.warning(
                         "Streaming extraction failed for %s chunk %d, retrying non-streaming: %s",
@@ -352,7 +362,7 @@ async def extract_document(
                     )
                     await asyncio.sleep(2)
                     return await _extract_single(
-                        chunk_doc, llm, model, on_thinking=on_thinking, use_streaming=False,
+                        chunk_doc, llm, model, on_thinking=on_thinking, use_streaming=False, analysis_type=analysis_type, custom_instructions=custom_instructions,
                     )
 
         chunk_results = await asyncio.gather(
@@ -394,6 +404,9 @@ async def extract_all(
     on_completed: Optional[Callable[[int, str, dict], None]] = None,
     on_error: Optional[Callable[[int, str, str], None]] = None,
     on_thinking: Callable[[str], Awaitable[None]] | None = None,
+    analysis_type: str = "detailed",
+    custom_instructions: str = "",
+    thinking_override: str = "",
 ) -> list[tuple[ParsedDocument, ExtractionResult, dict]]:
     """
     Parallel extraction with concurrency limit.
@@ -436,7 +449,10 @@ async def extract_all(
             if on_started:
                 on_started(index, doc.filename)
             try:
-                result, usage = await extract_document(doc, llm, model, context_length=context_length, on_thinking=on_thinking)
+                result, usage = await extract_document(
+                    doc, llm, model, context_length=context_length, on_thinking=on_thinking,
+                    analysis_type=analysis_type, custom_instructions=custom_instructions, thinking_override=thinking_override,
+                )
 
                 # Check if extract_document already handled the error internally
                 has_failure_note = any(

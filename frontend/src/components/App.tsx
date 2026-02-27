@@ -18,6 +18,7 @@ import HistoryView from './HistoryView';
 import SettingsView from './SettingsView';
 import NotesView from './NotesView';
 import ModelPanel from './ModelPanel';
+import AnalysisTypePanel from './AnalysisTypePanel';
 import FilesPanel from './FilesPanel';
 import SourcesPanel from './SourcesPanel';
 import HelpPanel from './HelpPanel';
@@ -184,6 +185,7 @@ export default function App() {
         const s = appStore.getState();
         if (s.activeNoteId) appStore.setState({ activeNoteId: null });
         else if (s.helpPanelOpen) appStore.setState({ helpPanelOpen: false });
+        else if (s.analysisTypePanelOpen) appStore.setState({ analysisTypePanelOpen: false });
         else if (s.modelPanelOpen) appStore.setState({ modelPanelOpen: false });
         else if (s.filesPanelOpen) appStore.setState({ filesPanelOpen: false });
         else if (s.sourcesPanelOpen) appStore.setState({ sourcesPanelOpen: false });
@@ -211,6 +213,7 @@ export default function App() {
     <div className="relative z-10 flex h-screen overflow-hidden">
       {/* ── Overlays ─────────────────────────────────────────── */}
       <ModelPanel />
+      <AnalysisTypePanel />
       <FilesPanel />
       <SourcesPanel />
       <HelpPanel />

@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Awaitable, Callable
 
 from app.models.schemas import AggregatedReport, SourceDocument
 from app.prompts.aggregation import AGGREGATION_SYSTEM, AGGREGATION_USER
+from app.prompts.analysis_types import get_aggregation_prompts, get_thinking_level
 from app.services.extraction import calculate_max_chars
 
 if TYPE_CHECKING:
@@ -56,6 +57,9 @@ async def aggregate_results(
     model: str,
     context_length: int = 200_000,
     on_thinking: Callable[[str], Awaitable[None]] | None = None,
+    analysis_type: str = "detailed",
+    custom_instructions: str = "",
+    thinking_override: str = "",
 ) -> tuple[AggregatedReport, dict]:
     """
     Merge N extraction results into 1 aggregated report.
@@ -96,8 +100,12 @@ async def aggregate_results(
 
     per_doc_results = "\n\n".join(per_doc_blocks)
 
+    # Get analysis-type-specific prompts
+    agg_system, agg_user_template = get_aggregation_prompts(analysis_type, custom_instructions)
+    thinking = get_thinking_level(analysis_type, thinking_override)
+
     # Format user prompt
-    user_prompt = AGGREGATION_USER.format(
+    user_prompt = agg_user_template.format(
         doc_count=len(extractions),
         per_doc_results=per_doc_results,
     )
@@ -124,7 +132,7 @@ async def aggregate_results(
             per_doc_blocks.append(block)
 
         per_doc_results = "\n\n".join(per_doc_blocks)
-        user_prompt = AGGREGATION_USER.format(
+        user_prompt = agg_user_template.format(
             doc_count=len(extractions),
             per_doc_results=per_doc_results,
         )
@@ -138,11 +146,11 @@ async def aggregate_results(
 
     # Call LLM with streaming thinking
     report, usage = await llm.complete_structured_streaming(
-        system=AGGREGATION_SYSTEM,
+        system=agg_system,
         user=user_prompt,
         response_schema=AggregatedReport,
         model=model,
-        thinking="low",
+        thinking=thinking,
         on_thinking=on_thinking,
     )
 
