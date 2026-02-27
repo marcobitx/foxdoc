@@ -91,6 +91,8 @@ module.exports = {
         'float-slow': 'float 5s ease-in-out infinite',
         'pulse-slow': 'pulse 4s ease-in-out infinite',
         'bounce-subtle': 'bounceSubtle 2s ease-in-out infinite',
+        'slide-left': 'slideLeft 0.3s ease-out forwards',
+        'slide-right': 'slideRight 0.3s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -133,6 +135,14 @@ module.exports = {
         bounceSubtle: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-4px)' },
+        },
+        slideLeft: {
+          from: { opacity: '0.5', transform: 'translateX(20px)' },
+          to: { opacity: '1', transform: 'translateX(0)' },
+        },
+        slideRight: {
+          from: { opacity: '0.5', transform: 'translateX(-20px)' },
+          to: { opacity: '1', transform: 'translateX(0)' },
         },
       },
       transitionTimingFunction: {

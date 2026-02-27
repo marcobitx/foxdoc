@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
-import { FoxScan, FoxPaw, FoxNote, FoxGear, FoxHelp } from './FoxIcons';
+import { FoxScan, FoxPaw, FoxCalendar, FoxNote, FoxGear, FoxHelp } from './FoxIcons';
 import { appStore, useStore, resetForNewAnalysis, type AppView } from '../lib/store';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { clearAuthToken } from '../lib/authToken';
@@ -26,6 +26,7 @@ interface Props {
 const MAIN_NAV: { view: AppView; icon: any; label: string }[] = [
   { view: 'upload', icon: FoxScan, label: 'Nauja analizė' },
   { view: 'history', icon: FoxPaw, label: 'Istorija' },
+  { view: 'calendar', icon: FoxCalendar, label: 'Kalendorius' },
   { view: 'notes', icon: FoxNote, label: 'Užrašai' },
 ];
 

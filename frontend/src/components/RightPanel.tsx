@@ -40,7 +40,7 @@ export default function RightPanel({ currentView, analysisId }: Props) {
   const { tipsPanelOpen, rightPanelOpen } = useStore(appStore);
 
   const isNotesView = currentView === 'notes';
-  const isTipsView = currentView === 'history' || currentView === 'settings';
+  const isTipsView = currentView === 'history' || currentView === 'calendar' || currentView === 'settings';
   const expanded = isTipsView ? tipsPanelOpen : isNotesView ? rightPanelOpen : true;
   const toggle = () => {
     if (isTipsView) appStore.setState({ tipsPanelOpen: !tipsPanelOpen });

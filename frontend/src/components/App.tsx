@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { Plus, Clock, Settings } from 'lucide-react';
+import { Plus, Clock, CalendarDays, Settings } from 'lucide-react';
 import { appStore, useStore, stopAnalysisStream, resetForNewAnalysis, createNote, setNotesFilter, type AppView } from '../lib/store';
 import { cancelAnalysis } from '../lib/api';
 import IconSidebar from './IconSidebar';
@@ -15,6 +15,7 @@ import UploadView from './UploadView';
 import AnalyzingView from './AnalyzingView';
 import ResultsView from './ResultsView';
 import HistoryView from './HistoryView';
+import CalendarView from './CalendarView';
 import SettingsView from './SettingsView';
 import NotesView from './NotesView';
 import ModelPanel from './ModelPanel';
@@ -35,6 +36,7 @@ function getActiveNav(view: AppView): AppView {
 const MOBILE_NAV: { view: AppView; icon: any; label: string }[] = [
   { view: 'upload', icon: Plus, label: 'Nauja' },
   { view: 'history', icon: Clock, label: 'Istorija' },
+  { view: 'calendar', icon: CalendarDays, label: 'Kalendorius' },
   { view: 'settings', icon: Settings, label: 'Nustatymai' },
 ];
 
@@ -114,6 +116,13 @@ export default function App() {
             }}
           />
         );
+      case 'calendar':
+        return (
+          <CalendarView
+            onSelect={(id) => navigate('results', id)}
+            onNew={handleNewAnalysis}
+          />
+        );
       case 'settings':
         return <SettingsView />;
       case 'notes':
@@ -169,6 +178,9 @@ export default function App() {
       } else if (e.altKey && e.key.toLowerCase() === 'h') {
         e.preventDefault();
         navigate('history');
+      } else if (e.altKey && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        navigate('calendar');
       } else if (e.altKey && e.key.toLowerCase() === 'u') {
         e.preventDefault();
         navigate('notes');

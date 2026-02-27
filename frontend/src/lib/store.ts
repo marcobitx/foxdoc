@@ -51,7 +51,7 @@ export function useStore<T>(store: ReturnType<typeof createStore<T>>): T {
   return snapshot;
 }
 
-export type AppView = 'upload' | 'analyzing' | 'results' | 'history' | 'settings' | 'notes';
+export type AppView = 'upload' | 'analyzing' | 'results' | 'history' | 'calendar' | 'settings' | 'notes';
 
 export interface ParsedDocInfo {
   filename: string;
