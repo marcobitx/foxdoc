@@ -4,7 +4,7 @@
 // Related: api.ts, store.ts, modelStorage.ts
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { X, Cpu, AlertCircle, Loader2, Search, Plus, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
+import { X, Cpu, AlertCircle, Loader2, Search, Plus, ChevronDown, ChevronUp, Trash2, Star } from 'lucide-react';
 import { appStore, useStore, initModelStore, storeSetCustomModels, storeSetHiddenIds } from '../lib/store';
 import { getModels, searchAllModels, type ModelInfo } from '../lib/api';
 import { buildVisibleModels, loadCustomModels, loadHiddenIds } from '../lib/modelStorage';
@@ -255,6 +255,7 @@ export default function ModelPanel() {
                                             key={model.id}
                                             model={model}
                                             isSelected={state.selectedModel?.id === model.id}
+                                            isDefault={state.defaultModelId === model.id}
                                             onSelect={selectModel}
                                             onRemove={removeModel}
                                         />
@@ -371,9 +372,10 @@ export default function ModelPanel() {
     );
 }
 
-function ModelCard({ model, isSelected, onSelect, onRemove }: {
+function ModelCard({ model, isSelected, isDefault, onSelect, onRemove }: {
     model: ModelInfo;
     isSelected: boolean;
+    isDefault: boolean;
     onSelect: (m: ModelInfo) => void;
     onRemove: (e: React.MouseEvent, id: string) => void;
 }) {
@@ -422,7 +424,14 @@ function ModelCard({ model, isSelected, onSelect, onRemove }: {
                 </div>
             </div>
 
-            <div className="flex items-center flex-shrink-0">
+            <div className="flex items-center gap-1 flex-shrink-0">
+                {isDefault && (
+                    <Tooltip content="Numatytasis modelis" side="top">
+                        <div className="p-1">
+                            <Star className="w-3.5 h-3.5 text-brand-400 fill-current" />
+                        </div>
+                    </Tooltip>
+                )}
                 <Tooltip content="Pašalinti modelį" side="left">
                     <div
                         onClick={(e) => onRemove(e, model.id)}

@@ -108,6 +108,7 @@ export interface AppState {
   uploading: boolean;
   rightPanelOpen: boolean;
   selectedModel: any | null;
+  defaultModelId: string | null;
   modelPanelOpen: boolean;
   analysisTypePanelOpen: boolean;
   selectedAnalysisType: string;
@@ -177,6 +178,7 @@ export const appStore = createStore<AppState>({
   uploading: false,
   rightPanelOpen: false,
   selectedModel: null,
+  defaultModelId: null,
   modelPanelOpen: false,
   analysisTypePanelOpen: false,
   selectedAnalysisType: 'detailed',

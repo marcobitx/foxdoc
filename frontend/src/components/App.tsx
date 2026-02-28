@@ -211,6 +211,7 @@ export default function App() {
         try {
           const settings = await getSettings();
           if (settings.default_model) {
+            appStore.setState({ defaultModelId: settings.default_model });
             const match = visible.find((m: any) => m.id === settings.default_model)
               ?? models.find((m: any) => m.id === settings.default_model);
             if (match) defaultModel = match;

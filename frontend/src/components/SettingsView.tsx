@@ -42,7 +42,7 @@ export default function SettingsView() {
         setSettings(s);
         setUsage(u);
         setSelectedModel(s.default_model);
-        appStore.setState({ cachedModels: m });
+        appStore.setState({ cachedModels: m, defaultModelId: s.default_model });
       } catch (e) {
         console.error(e);
       } finally {
@@ -60,6 +60,7 @@ export default function SettingsView() {
       if (Object.keys(update).length) {
         const result = await updateSettings(update);
         setSettings(result);
+        appStore.setState({ defaultModelId: result.default_model });
         setSaved(true);
         setTimeout(() => setSaved(false), 2500);
       }
@@ -76,6 +77,7 @@ export default function SettingsView() {
       const result = await updateSettings({ default_model: modelId });
       setSettings(result);
       setSelectedModel(modelId);
+      appStore.setState({ defaultModelId: modelId });
     } catch (e) {
       console.error(e);
     } finally {
