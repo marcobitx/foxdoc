@@ -211,7 +211,17 @@ export default function SettingsView() {
       </section>
 
       {/* ── Section 3: Token Usage ─────────────────────────────────── */}
-      {usage && usage.total_analyses > 0 && (
+      {(() => {
+        const u = usage ?? {
+          total_tokens: 0, total_cost_usd: 0, total_analyses: 0,
+          total_files_processed: 0, total_pages_processed: 0,
+          by_phase: {
+            extraction: { input: 0, output: 0 },
+            aggregation: { input: 0, output: 0 },
+            evaluation: { input: 0, output: 0 },
+          },
+        };
+        return (
         <section className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-4 rounded-full bg-emerald-500" />
@@ -227,25 +237,25 @@ export default function SettingsView() {
               <StatCell
                 icon={Hash}
                 label="Viso tokenų"
-                value={formatTokens(usage.total_tokens)}
+                value={formatTokens(u.total_tokens)}
                 tooltip="Bendras sunaudotų tokenų skaičius"
               />
               <StatCell
                 icon={DollarSign}
                 label="Apytikslė kaina"
-                value={`$${usage.total_cost_usd.toFixed(4)}`}
+                value={`$${u.total_cost_usd.toFixed(4)}`}
                 tooltip="Apytikslė bendra kaina pagal modelio kainas"
               />
               <StatCell
                 icon={Layers}
                 label="Analizės"
-                value={String(usage.total_analyses)}
+                value={String(u.total_analyses)}
                 tooltip="Atliktų analizių skaičius"
               />
               <StatCell
                 icon={FileText}
                 label="Failai / Puslapiai"
-                value={`${usage.total_files_processed} / ${usage.total_pages_processed}`}
+                value={`${u.total_files_processed} / ${u.total_pages_processed}`}
                 tooltip="Apdorotų failų ir puslapių skaičius"
               />
             </div>
@@ -255,25 +265,26 @@ export default function SettingsView() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <PhaseCard
               label="Ekstrahavimas"
-              input={usage.by_phase.extraction.input}
-              output={usage.by_phase.extraction.output}
-              totalTokens={usage.total_tokens}
+              input={u.by_phase.extraction.input}
+              output={u.by_phase.extraction.output}
+              totalTokens={u.total_tokens}
             />
             <PhaseCard
               label="Agregavimas"
-              input={usage.by_phase.aggregation.input}
-              output={usage.by_phase.aggregation.output}
-              totalTokens={usage.total_tokens}
+              input={u.by_phase.aggregation.input}
+              output={u.by_phase.aggregation.output}
+              totalTokens={u.total_tokens}
             />
             <PhaseCard
               label="Vertinimas"
-              input={usage.by_phase.evaluation.input}
-              output={usage.by_phase.evaluation.output}
-              totalTokens={usage.total_tokens}
+              input={u.by_phase.evaluation.input}
+              output={u.by_phase.evaluation.output}
+              totalTokens={u.total_tokens}
             />
           </div>
         </section>
-      )}
+        );
+      })()}
 
       {/* ── Section: System Limits ──────────────────────────────── */}
       <section className="mb-8">
