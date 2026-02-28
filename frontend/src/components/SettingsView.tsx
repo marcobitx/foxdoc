@@ -41,8 +41,13 @@ export default function SettingsView() {
         const [s, m, u] = await Promise.all([getSettings(), getModels(), getUsageStats()]);
         setSettings(s);
         setUsage(u);
-        setSelectedModel(s.default_model);
         appStore.setState({ cachedModels: m, defaultModelId: s.default_model });
+
+        // Set dropdown value — use saved default, fall back to first visible model
+        const visible = buildVisibleModels(m, storeState.myCustomModels, new Set(storeState.myHiddenIds));
+        const defaultId = s.default_model;
+        const hasMatch = defaultId && visible.some((v: ModelInfo) => v.id === defaultId);
+        setSelectedModel(hasMatch ? defaultId : (visible[0]?.id ?? ''));
       } catch (e) {
         console.error(e);
       } finally {
