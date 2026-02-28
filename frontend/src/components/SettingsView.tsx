@@ -21,7 +21,6 @@ import { clsx } from 'clsx';
 export default function SettingsView() {
   const storeState = useStore(appStore);
   const [settings, setSettings] = useState<Settings | null>(null);
-  const [apiModels, setApiModels] = useState<ModelInfo[]>([]);
   const [usage, setUsage] = useState<TokenUsageStats | null>(null);
   const [selectedModel, setSelectedModel] = useState('');
   const [loading, setLoading] = useState(true);
@@ -29,10 +28,10 @@ export default function SettingsView() {
   const [saved, setSaved] = useState(false);
   const [savingDefault, setSavingDefault] = useState<string | null>(null);
 
-  // Model list from store — reactive, synced with ModelPanel
+  // Model list from store — reactive, synced with ModelPanel (single source of truth)
+  const apiModels: ModelInfo[] = storeState.cachedModels ?? [];
   const customModels: ModelInfo[] = storeState.myCustomModels;
   const hiddenIds = new Set<string>(storeState.myHiddenIds);
-  // myModels = same list as ModelPanel (API filtered by hidden + custom)
   const myModels = buildVisibleModels(apiModels, customModels, hiddenIds);
 
   useEffect(() => {
@@ -41,7 +40,6 @@ export default function SettingsView() {
       try {
         const [s, m, u] = await Promise.all([getSettings(), getModels(), getUsageStats()]);
         setSettings(s);
-        setApiModels(m);
         setUsage(u);
         setSelectedModel(s.default_model);
         appStore.setState({ cachedModels: m });
