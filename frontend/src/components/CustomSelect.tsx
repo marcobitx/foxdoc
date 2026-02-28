@@ -28,12 +28,12 @@ export default function CustomSelect({ value, onChange, options, className = '' 
 
   const startOpen = useCallback(() => {
     clearTimeout(closeTimer.current);
-    openTimer.current = setTimeout(() => setOpen(true), 80);
+    openTimer.current = setTimeout(() => setOpen(true), 0);
   }, []);
 
   const startClose = useCallback(() => {
     clearTimeout(openTimer.current);
-    closeTimer.current = setTimeout(() => setOpen(false), 180);
+    closeTimer.current = setTimeout(() => setOpen(false), 100);
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
