@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from 'react';
 import {
-  Save, Cpu, Loader2, CheckCircle2,
+  Cpu, Loader2,
   Zap, HardDrive, FileText, Users, Clock,
   ExternalLink, ChevronRight, ArrowUpRight, ArrowDownRight,
   DollarSign, Hash, Layers, Star,
@@ -13,8 +13,7 @@ import {
 import { getSettings, updateSettings, getModels, getUsageStats, type Settings, type ModelInfo, type TokenUsageStats } from '../lib/api';
 import { buildVisibleModels } from '../lib/modelStorage';
 import { appStore, useStore, initModelStore } from '../lib/store';
-import { ProviderLogo } from './ProviderLogos';
-import CustomSelect from './CustomSelect';
+import { ProviderLogo, getProvider, PROVIDER_COLORS } from './ProviderLogos';
 import Tooltip from './Tooltip';
 import { clsx } from 'clsx';
 
@@ -23,10 +22,7 @@ export default function SettingsView() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [apiModels, setApiModels] = useState<ModelInfo[]>([]);
   const [usage, setUsage] = useState<TokenUsageStats | null>(null);
-  const [selectedModel, setSelectedModel] = useState('');
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [savingDefault, setSavingDefault] = useState<string | null>(null);
 
   // Model list from store — reactive, synced with ModelPanel
@@ -34,6 +30,9 @@ export default function SettingsView() {
   const hiddenIds = new Set<string>(storeState.myHiddenIds);
   // myModels = same list as ModelPanel (API filtered by hidden + custom)
   const myModels = buildVisibleModels(apiModels, customModels, hiddenIds);
+
+  // The currently selected default model's info
+  const defaultModelInfo = myModels.find((m) => m.id === settings?.default_model);
 
   useEffect(() => {
     initModelStore();
@@ -43,7 +42,6 @@ export default function SettingsView() {
         setSettings(s);
         setApiModels(m);
         setUsage(u);
-        setSelectedModel(s.default_model);
         appStore.setState({ cachedModels: m });
       } catch (e) {
         console.error(e);
@@ -53,41 +51,19 @@ export default function SettingsView() {
     })();
   }, []);
 
-  const handleSave = async () => {
-    setSaving(true);
-    setSaved(false);
-    try {
-      const update: any = {};
-      if (selectedModel && selectedModel !== settings?.default_model) update.default_model = selectedModel;
-      if (Object.keys(update).length) {
-        const result = await updateSettings(update);
-        setSettings(result);
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2500);
-      }
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Set a model as default immediately (from the model list)
+  // Set a model as default immediately (click on star)
   const setAsDefault = async (modelId: string) => {
     if (modelId === settings?.default_model) return;
     setSavingDefault(modelId);
     try {
       const result = await updateSettings({ default_model: modelId });
       setSettings(result);
-      setSelectedModel(modelId);
     } catch (e) {
       console.error(e);
     } finally {
       setSavingDefault(null);
     }
   };
-
-
-  const hasChanges = selectedModel && selectedModel !== settings?.default_model;
-  const selectedModelInfo = myModels.find((m) => m.id === selectedModel);
 
   if (loading) {
     return (
@@ -109,111 +85,154 @@ export default function SettingsView() {
 
       {/* ── Section: Model Configuration ─────────────────────────── */}
       <section className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-1 h-4 rounded-full bg-brand-500" />
-          <h2 className="text-[13px] font-bold text-surface-400 uppercase tracking-widest">
-            Modelio konfigūracija
-          </h2>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-4 rounded-full bg-brand-500" />
+            <h2 className="text-[13px] font-bold text-surface-400 uppercase tracking-widest">
+              Numatytasis modelis
+            </h2>
+          </div>
+          <button
+            onClick={() => appStore.setState({ modelPanelOpen: true })}
+            className="text-[11px] font-semibold text-brand-500 hover:text-brand-400 transition-colors flex items-center gap-1"
+          >
+            Tvarkyti modelius
+            <ChevronRight className="w-3 h-3" />
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Model Selector — 2/3 width */}
-          <div className="lg:col-span-2 enterprise-card p-5">
-            <div className="flex items-start gap-3 mb-4">
-              <Cpu className="w-4.5 h-4.5 text-brand-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="text-[14px] font-bold text-surface-100 tracking-tight">
-                  Numatytasis modelis
-                </h3>
-                <p className="text-[11px] text-surface-500 mt-0.5 font-medium">
-                  Naudojamas dokumentų analizei ir pokalbio atsakymams
-                </p>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4">
+          {/* Model list — mirrors ModelPanel */}
+          <div className="grid gap-2 content-start">
+            {myModels.map((model) => {
+              const isDefault = settings?.default_model === model.id;
+              const isSaving = savingDefault === model.id;
+              const provider = getProvider(model.id);
+              const brandColor = PROVIDER_COLORS[provider] || '#8d8076';
+
+              return (
+                <button
+                  key={model.id}
+                  onClick={() => setAsDefault(model.id)}
+                  className={clsx(
+                    'group relative flex items-center gap-3 pr-3.5 pl-4 py-2.5 rounded-[10px] border transition-all duration-200 overflow-hidden text-left',
+                    isDefault
+                      ? 'bg-surface-800/60 border-brand-500/40'
+                      : 'bg-surface-800/50 border-surface-600/30 hover:border-surface-500/50 hover:bg-surface-700/60',
+                  )}
+                >
+                  {/* Left accent bar */}
+                  <div
+                    className={clsx(
+                      'absolute left-0 top-0 bottom-0 w-[3px] rounded-l-[10px] transition-all duration-200',
+                      isDefault ? 'opacity-100' : 'opacity-0',
+                    )}
+                    style={{ backgroundColor: brandColor }}
+                  />
+
+                  <ProviderLogo modelId={model.id} size={20} />
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-bold text-white truncate">{model.name}</p>
+                  </div>
+
+                  <div className="flex items-center gap-4 flex-shrink-0">
+                    <div className="flex flex-col items-end">
+                      <span className="text-[8px] uppercase tracking-tighter text-surface-500 font-bold">Ctx</span>
+                      <span className="text-[10px] font-mono text-surface-300">{Math.round(model.context_length / 1000)}k</span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[8px] uppercase tracking-tighter text-surface-500 font-bold leading-none mb-0.5">In / 1M</span>
+                      <span className="text-[10px] font-mono text-surface-300">${model.pricing_prompt.toFixed(2)}</span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[8px] uppercase tracking-tighter text-surface-500 font-bold leading-none mb-0.5">Out / 1M</span>
+                      <span className="text-[10px] font-mono text-surface-300">${model.pricing_completion.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {/* Default indicator / set as default */}
+                  <div className="flex-shrink-0">
+                    {isSaving ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-400" />
+                    ) : (
+                      <Star className={clsx(
+                        'w-3.5 h-3.5 transition-all duration-200',
+                        isDefault
+                          ? 'text-brand-400 fill-current'
+                          : 'text-surface-600 opacity-0 group-hover:opacity-100',
+                      )} />
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+
+            {myModels.length === 0 && (
+              <div className="enterprise-card p-6 text-center">
+                <p className="text-[12px] text-surface-500 mb-2">Nėra modelių sąraše</p>
+                <button
+                  onClick={() => appStore.setState({ modelPanelOpen: true })}
+                  className="text-[11px] font-semibold text-brand-500 hover:text-brand-400 transition-colors"
+                >
+                  Pridėti modelį
+                </button>
               </div>
-            </div>
-
-            {myModels.length > 0 ? (
-              <CustomSelect
-                value={selectedModel}
-                onChange={setSelectedModel}
-                options={myModels.map((m) => ({
-                  value: m.id,
-                  label: `${m.name} (${(m.context_length / 1000).toFixed(0)}k ctx)`,
-                }))}
-                className="text-[13px]"
-              />
-            ) : (
-              <input
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                placeholder="anthropic/claude-sonnet-4"
-                className="input-field w-full text-[13px] font-mono"
-              />
             )}
-
-            {/* Currently active indicator */}
-            <div className="flex items-center gap-2 mt-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-400" />
-              <span className="text-[11px] font-medium text-surface-500">
-                Aktyvus: <span className="text-brand-400 font-mono">{settings?.default_model ? settings.default_model.split('/').pop() : '—'}</span>
-              </span>
-            </div>
           </div>
 
-          {/* Model Info Card — 1/3 width */}
-          <div className="enterprise-card p-5 flex flex-col justify-between">
+          {/* Model Info Card — right side */}
+          <div className="enterprise-card p-5 flex flex-col justify-between h-fit">
             <div>
               <h4 className="text-[12px] font-bold text-surface-400 uppercase tracking-widest mb-3">
                 Modelio informacija
               </h4>
 
-              {selectedModelInfo ? (
+              {defaultModelInfo ? (
                 <div className="space-y-3">
-                  <Tooltip content="Maksimalus teksto kiekis, kurį modelis gali apdoroti vienu metu" side="left">
-                    <InfoRow
-                      icon={Zap}
-                      label="Konteksto langas"
-                      value={`${(selectedModelInfo.context_length / 1000).toFixed(0)}k tokenų`}
-                    />
-                  </Tooltip>
-                  <Tooltip content="Kaina už 1 mln. įvesties tokenų" side="left">
-                    <InfoRow
-                      icon={FileText}
-                      label="Įvesties kaina"
-                      value={`$${selectedModelInfo.pricing_prompt.toFixed(2)} / 1M`}
-                    />
-                  </Tooltip>
-                  <Tooltip content="Kaina už 1 mln. išvesties tokenų" side="left">
-                    <InfoRow
-                      icon={ChevronRight}
-                      label="Išvesties kaina"
-                      value={`$${selectedModelInfo.pricing_completion.toFixed(2)} / 1M`}
-                    />
-                  </Tooltip>
+                  <InfoRow
+                    icon={Cpu}
+                    label="Modelis"
+                    value={defaultModelInfo.name}
+                  />
+                  <InfoRow
+                    icon={Zap}
+                    label="Konteksto langas"
+                    value={`${(defaultModelInfo.context_length / 1000).toFixed(0)}k tokenų`}
+                  />
+                  <InfoRow
+                    icon={FileText}
+                    label="Įvesties kaina"
+                    value={`$${defaultModelInfo.pricing_prompt.toFixed(2)} / 1M`}
+                  />
+                  <InfoRow
+                    icon={ChevronRight}
+                    label="Išvesties kaina"
+                    value={`$${defaultModelInfo.pricing_completion.toFixed(2)} / 1M`}
+                  />
                 </div>
               ) : (
                 <p className="text-[12px] text-surface-500">
-                  Pasirinkite modelį, kad pamatytumėte informaciją
+                  Pasirinkite numatytąjį modelį
                 </p>
               )}
             </div>
 
-            <Tooltip content="Atidaryti OpenRouter modelių sąrašą" side="left">
-              <a
-                href="https://openrouter.ai/models"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 flex items-center gap-1.5 text-[11px] font-medium text-brand-500 hover:text-brand-400 transition-colors"
-              >
-                Visi modeliai
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </Tooltip>
+            <a
+              href="https://openrouter.ai/models"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 flex items-center gap-1.5 text-[11px] font-medium text-brand-500 hover:text-brand-400 transition-colors"
+            >
+              Visi modeliai
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
         </div>
       </section>
 
-      {/* ── Section 3: Token Usage ─────────────────────────────────── */}
-      {usage && usage.total_analyses > 0 && (
+      {/* ── Section: Token Usage ─────────────────────────────────── */}
+      {usage && (
         <section className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-4 rounded-full bg-emerald-500" />
@@ -316,35 +335,6 @@ export default function SettingsView() {
           </div>
         </div>
       </section>
-
-      {/* ── Save Button ────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] text-surface-600 font-medium">
-          {hasChanges ? 'Yra neišsaugotų pakeitimų' : 'Visi pakeitimai išsaugoti'}
-        </p>
-        <button
-          onClick={handleSave}
-          disabled={saving || !hasChanges}
-          className="btn-professional"
-        >
-          {saving ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Saugoma...
-            </>
-          ) : saved ? (
-            <>
-              <CheckCircle2 className="w-4 h-4" />
-              Išsaugota
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4" />
-              Išsaugoti
-            </>
-          )}
-        </button>
-      </div>
     </div>
   );
 }
@@ -358,7 +348,7 @@ function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value
         <Icon className="w-3.5 h-3.5 text-surface-500" />
         <span className="text-[12px] text-surface-400">{label}</span>
       </div>
-      <span className="text-[12px] font-mono font-medium text-surface-200">{value}</span>
+      <span className="text-[12px] font-mono font-medium text-surface-200 truncate ml-2 text-right">{value}</span>
     </div>
   );
 }
