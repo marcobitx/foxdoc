@@ -172,10 +172,6 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
 
   const logEndRef = useRef<HTMLDivElement>(null);
   const thinkingRef = useRef<HTMLDivElement>(null);
-  const fadeRef = useRef<HTMLDivElement>(null);
-  const [showTopFade, setShowTopFade] = useState(false);
-  const [showBottomFade, setShowBottomFade] = useState(false);
-
   // Auto-scroll active step's event log
   useEffect(() => {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -239,25 +235,6 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
       // Stream manager handles cleanup — nothing extra needed
     }
   }, [error, reviewMode]);
-
-  // Top & bottom fade on page scroll
-  useEffect(() => {
-    let scrollParent = fadeRef.current?.parentElement;
-    while (scrollParent) {
-      const ov = getComputedStyle(scrollParent).overflowY;
-      if (ov === 'auto' || ov === 'scroll') break;
-      scrollParent = scrollParent.parentElement;
-    }
-    if (!scrollParent) return;
-    const sp = scrollParent;
-    const update = () => {
-      setShowTopFade(sp.scrollTop > 30);
-      setShowBottomFade(sp.scrollHeight - sp.scrollTop - sp.clientHeight > 30);
-    };
-    update();
-    sp.addEventListener('scroll', update, { passive: true });
-    return () => sp.removeEventListener('scroll', update);
-  }, []);
 
   // Derive step states from hoisted STEP_DEFS
   const activeIdx = getStepIndex(currentStatus);
@@ -354,13 +331,6 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
 
   return (
     <div className="animate-fade-in-up" role="status" aria-label="Analizės progresas">
-      {/* Sticky top fade — content dissolves when scrolled up */}
-      <div
-        ref={fadeRef}
-        className={`sticky top-0 h-20 -mb-20 z-20 pointer-events-none transition-opacity duration-300 ${showTopFade ? 'opacity-100' : 'opacity-0'}`}
-        style={{ background: 'linear-gradient(to bottom, #342a24 0%, transparent 100%)' }}
-        aria-hidden="true"
-      />
       {/* Review mode header */}
       {reviewMode && (
         <div className="flex items-center justify-between mb-4 px-1">
@@ -718,12 +688,6 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
         return null;
       })}
       </div>
-      {/* Sticky bottom fade — content dissolves at the bottom */}
-      <div
-        className={`sticky bottom-0 h-20 -mt-20 z-20 pointer-events-none transition-opacity duration-300 ${showBottomFade ? 'opacity-100' : 'opacity-0'}`}
-        style={{ background: 'linear-gradient(to top, #342a24 0%, transparent 100%)' }}
-        aria-hidden="true"
-      />
     </div>
   );
 }

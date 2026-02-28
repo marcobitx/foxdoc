@@ -198,32 +198,7 @@
     display: none;
   }
 
-  /* ── Scroll Fade — top & bottom fade-out overlay ──────── */
-
-  .scroll-fade {
-    position: relative;
-  }
-
-  .scroll-fade::before,
-  .scroll-fade::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 48px;
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  .scroll-fade::before {
-    top: 0;
-    background: linear-gradient(to bottom, #342a24, transparent);
-  }
-
-  .scroll-fade::after {
-    bottom: 0;
-    background: linear-gradient(to top, #342a24, transparent);
-  }
+  /* scroll-fade now handled by MainScrollArea component in App.tsx */
 
   .scrollbar-thin {
     scrollbar-width: thin;

@@ -3,7 +3,7 @@
 // Entry point for the React island; mounted client-only in index.astro
 // Related: store.ts, IconSidebar.tsx, RightPanel.tsx, TopBar.tsx
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { Plus, Clock, CalendarDays, Settings, StickyNote } from 'lucide-react';
 import { appStore, useStore, stopAnalysisStream, resetForNewAnalysis, createNote, setNotesFilter, type AppView } from '../lib/store';
@@ -40,6 +40,64 @@ const MOBILE_NAV: { view: AppView; icon: any; label: string }[] = [
   { view: 'calendar', icon: CalendarDays, label: 'Kalend.' },
   { view: 'settings', icon: Settings, label: 'Nust.' },
 ];
+
+/** Scroll-aware main content area with dynamic top/bottom fade */
+function MainScrollArea({ view, children }: { view: string; children: React.ReactNode }) {
+  const scrollRef = useRef<HTMLElement>(null);
+  const [showTopFade, setShowTopFade] = useState(false);
+  const [showBottomFade, setShowBottomFade] = useState(false);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    function onScroll() {
+      if (!el) return;
+      const top = el.scrollTop;
+      const bottom = el.scrollHeight - el.clientHeight - el.scrollTop;
+      setShowTopFade(top > 8);
+      setShowBottomFade(bottom > 8);
+    }
+
+    onScroll(); // initial check
+    el.addEventListener('scroll', onScroll, { passive: true });
+    const ro = new ResizeObserver(onScroll);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      ro.disconnect();
+    };
+  }, [view]);
+
+  return (
+    <div className="flex-1 relative overflow-hidden">
+      {/* Top fade — appears when scrolled down */}
+      <div
+        className={clsx(
+          'absolute top-0 left-0 right-0 h-10 z-10 pointer-events-none transition-opacity duration-200',
+          showTopFade ? 'opacity-100' : 'opacity-0',
+        )}
+        style={{ background: 'linear-gradient(to bottom, #342a24, transparent)' }}
+        aria-hidden="true"
+      />
+      <main
+        ref={scrollRef}
+        className="h-full overflow-y-auto pb-24 lg:pb-0 scrollbar-thin"
+      >
+        {children}
+      </main>
+      {/* Bottom fade — appears when more content below */}
+      <div
+        className={clsx(
+          'absolute bottom-0 left-0 right-0 h-10 z-10 pointer-events-none transition-opacity duration-200',
+          showBottomFade ? 'opacity-100' : 'opacity-0',
+        )}
+        style={{ background: 'linear-gradient(to top, #342a24, transparent)' }}
+        aria-hidden="true"
+      />
+    </div>
+  );
+}
 
 export default function App() {
   const state = useStore(appStore);
@@ -246,7 +304,7 @@ export default function App() {
         />
 
         <div className="flex-1 flex overflow-hidden min-h-0 relative">
-          <main className={clsx('flex-1 overflow-y-auto pb-24 lg:pb-0 scrollbar-thin relative', (state.view === 'analyzing' || state.view === 'results') && 'scroll-fade')}>
+          <MainScrollArea view={state.view}>
             <div className={clsx(
                 'animate-fade-in',
                 state.view === 'analyzing'
@@ -257,7 +315,7 @@ export default function App() {
                 {renderView()}
               </ErrorBoundary>
             </div>
-          </main>
+          </MainScrollArea>
 
           {/* ── Decorative divider between main & right panel ──────── */}
           <div className="hidden lg:block relative w-[20px] flex-shrink-0" aria-hidden="true">
