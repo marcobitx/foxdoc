@@ -76,7 +76,7 @@ export default function RightPanel({ currentView, analysisId }: Props) {
     >
       {/* Toggle button — fixed position anchored to right edge, never moves */}
       {collapsible && (
-        <Tooltip content={expanded ? (isTipsView ? 'Uždaryti patarimus' : 'Uždaryti užrašus') : (isTipsView ? 'Atidaryti patarimus' : 'Atidaryti užrašus')} side="left">
+        <Tooltip content={expanded ? (isTipsView ? 'Uždaryti patarimus' : 'Uždaryti užrašus') : (isTipsView ? 'Atidaryti patarimus' : 'Atidaryti užrašus')} side="top">
           <button
             onClick={() => setExpanded(!expanded)}
             aria-label={expanded ? 'Uždaryti' : 'Atidaryti'}
