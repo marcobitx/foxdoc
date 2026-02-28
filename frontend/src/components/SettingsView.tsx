@@ -264,7 +264,7 @@ export default function SettingsView() {
           {/* Phase breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <PhaseCard
-              label="Ekstrahavimas"
+              label="Ištraukimas"
               input={u.by_phase.extraction.input}
               output={u.by_phase.extraction.output}
               totalTokens={u.total_tokens}
