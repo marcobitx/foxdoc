@@ -523,7 +523,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
           </div>
 
           {/* ── Filters Row 1: Search + Dropdowns ────────────────── */}
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
             {/* Search */}
             <div className="relative flex-shrink-0">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-surface-500" />
@@ -554,7 +554,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
               value={procTypeFilter}
               onChange={setProcTypeFilter}
               options={procTypeOptions}
-              className="text-[13px] min-w-[140px]"
+              className="text-[13px] min-w-[120px] hidden sm:block"
             />
 
             {/* Project filter */}
@@ -562,7 +562,7 @@ export default function HistoryView({ onSelect, onNew, onViewNotes }: Props) {
               value={projectFilter}
               onChange={setProjectFilter}
               options={projectOptions}
-              className="text-[13px] min-w-[150px]"
+              className="text-[13px] min-w-[120px] hidden md:block"
             />
           </div>
 

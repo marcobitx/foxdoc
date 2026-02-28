@@ -324,7 +324,7 @@ function NoteListRow({
       onClick={onOpen}
       className={clsx(
         'grid gap-0 px-4 py-3 w-full text-left border-b border-surface-700/20 last:border-b-0 group',
-        'grid-cols-[28px_minmax(120px,280px)_minmax(120px,1fr)_130px_120px_80px_80px] cursor-pointer',
+        'grid-cols-[28px_1fr_80px_80px] sm:grid-cols-[28px_minmax(120px,280px)_minmax(120px,1fr)_130px_120px_80px_80px] cursor-pointer',
         'transition-all duration-200 hover:bg-surface-800/50',
         isSelected && 'bg-brand-500/5 border-l-2 border-l-brand-500/40',
       )}
@@ -368,7 +368,7 @@ function NoteListRow({
       </div>
 
       {/* Project */}
-      <div className="flex items-center min-w-0">
+      <div className="hidden sm:flex items-center min-w-0">
         {projectTitle ? (
           <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-400 border border-brand-500/15 truncate max-w-full">
             <Briefcase className="w-2.5 h-2.5 flex-shrink-0" />
@@ -380,7 +380,7 @@ function NoteListRow({
       </div>
 
       {/* Priority */}
-      <div className="flex items-center gap-1.5">
+      <div className="hidden sm:flex items-center gap-1.5">
         <div className={clsx('w-2 h-2 rounded-full', priorityMeta.dot)} />
         <span className="text-[11px] text-surface-400 font-medium">{priorityMeta.label}</span>
       </div>
@@ -394,7 +394,7 @@ function NoteListRow({
       </div>
 
       {/* Date */}
-      <div className="flex items-center text-[11px] text-surface-500 font-medium">
+      <div className="hidden sm:flex items-center text-[11px] text-surface-500 font-medium">
         {timeAgo(note.updatedAt)}
       </div>
 
@@ -1263,7 +1263,7 @@ export default function NotesView() {
       {!notesLoading && notesList.length > 0 && (
         <>
           {/* ── KPI Cards ─────────────────────────────────────── */}
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-5">
             {[
               {
                 val: stats.total, label: 'Viso',
@@ -1520,17 +1520,17 @@ export default function NotesView() {
           {notesViewMode === 'list' && filteredNotes.length > 0 && (
             <div className="enterprise-card overflow-hidden">
               {/* Header */}
-              <div className="grid gap-0 px-4 py-2.5 border-b border-surface-700/40 text-[11px] text-surface-500 font-bold uppercase tracking-widest grid-cols-[28px_minmax(120px,280px)_minmax(120px,1fr)_130px_120px_80px_80px]">
+              <div className="grid gap-0 px-4 py-2.5 border-b border-surface-700/40 text-[11px] text-surface-500 font-bold uppercase tracking-widest grid-cols-[28px_1fr_80px_80px] sm:grid-cols-[28px_minmax(120px,280px)_minmax(120px,1fr)_130px_120px_80px_80px]">
                 <span />
                 <button onClick={() => setNotesSort('title')} className="flex items-center gap-1 text-left hover:text-surface-300 transition-colors">
                   Pavadinimas <SortIcon field="title" />
                 </button>
-                <span>Projektas</span>
-                <button onClick={() => setNotesSort('priority')} className="flex items-center gap-1 hover:text-surface-300 transition-colors">
+                <span className="hidden sm:inline">Projektas</span>
+                <button onClick={() => setNotesSort('priority')} className="hidden sm:flex items-center gap-1 hover:text-surface-300 transition-colors">
                   Prioritetas <SortIcon field="priority" />
                 </button>
                 <span>Statusas</span>
-                <button onClick={() => setNotesSort('updated_at')} className="flex items-center gap-1 hover:text-surface-300 transition-colors">
+                <button onClick={() => setNotesSort('updated_at')} className="hidden sm:flex items-center gap-1 hover:text-surface-300 transition-colors">
                   Data <SortIcon field="updated_at" />
                 </button>
                 <span />

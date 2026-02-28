@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect } from 'react';
 import { clsx } from 'clsx';
-import { Plus, Clock, CalendarDays, Settings } from 'lucide-react';
+import { Plus, Clock, CalendarDays, Settings, StickyNote } from 'lucide-react';
 import { appStore, useStore, stopAnalysisStream, resetForNewAnalysis, createNote, setNotesFilter, type AppView } from '../lib/store';
 import { cancelAnalysis } from '../lib/api';
 import IconSidebar from './IconSidebar';
@@ -36,6 +36,7 @@ function getActiveNav(view: AppView): AppView {
 const MOBILE_NAV: { view: AppView; icon: any; label: string }[] = [
   { view: 'upload', icon: Plus, label: 'Nauja' },
   { view: 'history', icon: Clock, label: 'Istorija' },
+  { view: 'notes', icon: StickyNote, label: 'Užrašai' },
   { view: 'calendar', icon: CalendarDays, label: 'Kalend.' },
   { view: 'settings', icon: Settings, label: 'Nust.' },
 ];
@@ -284,7 +285,7 @@ export default function App() {
               key={view}
               onClick={() => view === 'upload' ? handleNewAnalysis() : navigate(view)}
               className={clsx(
-                'flex flex-col items-center gap-1.5 px-6 py-2 rounded-xl transition-all duration-200',
+                'flex flex-col items-center gap-1.5 px-3 py-2 rounded-xl transition-all duration-200',
                 active
                   ? 'text-brand-400 bg-brand-500/5'
                   : 'text-surface-500 hover:text-surface-300',

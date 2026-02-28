@@ -381,9 +381,9 @@ export default function CalendarView({ onSelect, onNew }: Props) {
           </div>
 
           {/* ── Calendar Controls ──────────────────────────────── */}
-          <div className="flex items-center justify-between mb-4 gap-2">
+          <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
             {/* Left: Navigation */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <Tooltip content="Ankstesnis" side="bottom">
                 <button
                   onClick={goPrev}
@@ -393,7 +393,7 @@ export default function CalendarView({ onSelect, onNew }: Props) {
                 </button>
               </Tooltip>
 
-              <h2 className="text-[16px] md:text-[18px] font-bold text-white tracking-tight min-w-[200px] text-center">
+              <h2 className="text-[14px] sm:text-[16px] md:text-[18px] font-bold text-white tracking-tight min-w-[140px] sm:min-w-[200px] text-center">
                 {headerLabel}
               </h2>
 
@@ -419,7 +419,7 @@ export default function CalendarView({ onSelect, onNew }: Props) {
             </div>
 
             {/* Right: View toggle + filters */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               {/* Status filter */}
               <CustomSelect
                 value={statusFilter}
@@ -430,7 +430,7 @@ export default function CalendarView({ onSelect, onNew }: Props) {
                   { value: 'FAILED', label: 'Su klaidomis' },
                   { value: 'PENDING', label: 'Laukiančios' },
                 ]}
-                className="text-[13px] min-w-[140px]"
+                className="text-[13px] min-w-[110px] sm:min-w-[140px]"
               />
 
               {/* View toggle */}
