@@ -3,10 +3,17 @@
 // Always visible at the top of the main content area
 // Related: App.tsx, store.ts
 
-import { AlertTriangle, X, ChevronRight, Home, XCircle, Plus } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { AlertTriangle, X, ChevronRight, Home, XCircle, Plus, LogOut } from 'lucide-react';
+import { clsx } from 'clsx';
+import { useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 import { appStore, useStore, type AppView } from '../lib/store';
+import { useAuthActions } from '@convex-dev/auth/react';
+import { clearAuthToken } from '../lib/authToken';
 import Tooltip from './Tooltip';
 import LineDivider from './LineDivider';
+import { FoxGear } from './FoxIcons';
 
 interface Props {
   currentView: AppView;
@@ -160,7 +167,7 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
           </div>
         )}
 
-        {/* Right — actions */}
+        {/* Right — actions + mobile profile */}
         <div className="flex items-center gap-4">
           {status && !['COMPLETED', 'FAILED', 'CANCELED'].includes(status) && !error && onCancel && (
             <Tooltip content="Nutraukti vykdomą analizę" side="bottom">
@@ -188,6 +195,7 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
               </button>
             </Tooltip>
           )}
+          <MobileProfileButton onNavigate={onNavigate} />
         </div>
       </div>
 
@@ -205,5 +213,103 @@ export default function TopBar({ currentView, error, onDismissError, onNavigate,
         </div>
       )}
     </header>
+  );
+}
+
+/* ── Mobile Profile Avatar + Dropdown (visible < lg only) ──────────────── */
+
+function MobileProfileButton({ onNavigate }: { onNavigate: (v: AppView) => void }) {
+  const currentUser = useQuery(api.users.currentUser);
+  const credits = useQuery(api.userCredits.getMyCredits);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const displayName = currentUser?.name || currentUser?.email?.split('@')[0] || 'Vartotojas';
+  const displayEmail = currentUser?.email || '';
+  const initials = displayName.charAt(0).toUpperCase();
+
+  // Close on click outside
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative lg:hidden">
+      {/* Avatar trigger */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center ring-2 ring-surface-800 shadow-sm"
+        aria-label="Profilis"
+      >
+        <span className="text-[11px] font-bold text-white leading-none">{initials}</span>
+      </button>
+
+      {/* Dropdown */}
+      <div
+        className={clsx(
+          'absolute right-0 top-full mt-2 w-[220px] z-50 rounded-xl overflow-hidden',
+          'bg-surface-900 border border-surface-700/50 shadow-xl shadow-black/30',
+          'transition-all duration-200 ease-out',
+          open
+            ? 'opacity-100 translate-y-0 pointer-events-auto'
+            : 'opacity-0 -translate-y-2 pointer-events-none',
+        )}
+      >
+        {/* Header */}
+        <div className="px-4 pt-3.5 pb-2.5 border-b border-surface-800/60">
+          <p className="text-[13px] font-bold text-surface-100 truncate">{displayName}</p>
+          <p className="text-[11px] text-surface-500 font-medium truncate mt-0.5">{displayEmail}</p>
+          {credits && (
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-[10px] font-semibold text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded">
+                {credits.plan === 'pro' ? 'Pro' : 'Free'}
+              </span>
+              <span className="text-[10px] text-surface-500">
+                {credits.credits_used}/{credits.credits_total} kreditų
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Menu items */}
+        <div className="py-1.5">
+          <button
+            onClick={() => { setOpen(false); onNavigate('settings'); }}
+            className="flex items-center gap-2.5 w-full px-4 py-2.5 text-left text-surface-300 hover:text-surface-100 hover:bg-surface-800/60 transition-colors duration-150"
+          >
+            <FoxGear className="w-3.5 h-3.5 text-surface-500" />
+            <span className="text-[12px] font-medium">Nustatymai</span>
+          </button>
+        </div>
+
+        {/* Sign out */}
+        <div className="border-t border-surface-800/60 py-1.5">
+          <button
+            onClick={() => {
+              setOpen(false);
+              clearAuthToken();
+              window.location.href = (import.meta.env.PUBLIC_LANDING_URL || 'https://foxdoc.io') + '/auth';
+            }}
+            className="flex items-center gap-2.5 w-full px-4 py-2.5 text-left text-surface-400 hover:text-red-400 hover:bg-surface-800/60 transition-colors duration-150"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="text-[12px] font-medium">Atsijungti</span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
