@@ -77,8 +77,9 @@ export default function Tooltip({ content, side = 'top', align = 'center', child
         break;
     }
 
-    // Clamp to viewport
-    x = Math.max(4, Math.min(x, window.innerWidth - tooltip.width - 4));
+    // Clamp to viewport — for end-aligned, ensure tooltip right edge doesn't exceed trigger right edge
+    const maxRight = align === 'end' ? trigger.right : window.innerWidth - 4;
+    x = Math.max(4, Math.min(x, maxRight - tooltip.width));
     y = Math.max(4, Math.min(y, window.innerHeight - tooltip.height - 4));
 
     setPos({ x, y });
