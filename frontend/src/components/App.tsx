@@ -71,10 +71,10 @@ function MainScrollArea({ view, children }: { view: string; children: React.Reac
 
   return (
     <div className="flex-1 relative overflow-hidden">
-      {/* Top fade — appears when scrolled down */}
+      {/* Top fade — starts below the horizontal divider (top-[4px]) so divider stays visible */}
       <div
         className={clsx(
-          'absolute top-0 left-0 right-0 h-10 z-10 pointer-events-none transition-opacity duration-200',
+          'absolute top-[4px] left-0 right-0 h-8 z-10 pointer-events-none transition-opacity duration-200',
           showTopFade ? 'opacity-100' : 'opacity-0',
         )}
         style={{ background: 'linear-gradient(to bottom, #342a24, transparent)' }}
@@ -82,14 +82,14 @@ function MainScrollArea({ view, children }: { view: string; children: React.Reac
       />
       <main
         ref={scrollRef}
-        className="h-full overflow-y-auto pb-24 lg:pb-0 scrollbar-thin"
+        className="absolute inset-x-0 top-[4px] bottom-[4px] overflow-y-auto pb-24 lg:pb-0 scrollbar-thin"
       >
         {children}
       </main>
-      {/* Bottom fade — appears when more content below */}
+      {/* Bottom fade — ends above the bottom dot (bottom-[4px]) so divider stays visible */}
       <div
         className={clsx(
-          'absolute bottom-0 left-0 right-0 h-10 z-10 pointer-events-none transition-opacity duration-200',
+          'absolute bottom-[4px] left-0 right-0 h-8 z-10 pointer-events-none transition-opacity duration-200',
           showBottomFade ? 'opacity-100' : 'opacity-0',
         )}
         style={{ background: 'linear-gradient(to top, #342a24, transparent)' }}
