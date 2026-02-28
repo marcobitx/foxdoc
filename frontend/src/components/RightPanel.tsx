@@ -76,33 +76,35 @@ export default function RightPanel({ currentView, analysisId }: Props) {
     >
       {/* Toggle button — fixed position anchored to right edge, never moves */}
       {collapsible && (
-        <Tooltip content={expanded ? (isTipsView ? 'Uždaryti patarimus' : 'Uždaryti užrašus') : (isTipsView ? 'Atidaryti patarimus' : 'Atidaryti užrašus')} side="top">
-          <button
-            onClick={() => setExpanded(!expanded)}
-            aria-label={expanded ? 'Uždaryti' : 'Atidaryti'}
-            className={clsx(
-              'absolute right-3 top-3 z-20 p-1.5 rounded-lg transition-all duration-200',
-              expanded
-                ? 'bg-surface-800/80 text-surface-300 hover:text-surface-100 hover:bg-surface-700/80'
-                : 'text-surface-500 hover:text-surface-200 hover:bg-surface-800/50',
-            )}
-          >
-            <div className="relative w-[18px] h-[18px] overflow-hidden">
-              <PanelRightClose
-                className={clsx(
-                  'w-[18px] h-[18px] absolute inset-0 transition-opacity duration-200',
-                  expanded ? 'opacity-100' : 'opacity-0',
-                )}
-              />
-              <PanelRightOpen
-                className={clsx(
-                  'w-[18px] h-[18px] absolute inset-0 transition-opacity duration-200',
-                  expanded ? 'opacity-0' : 'opacity-100',
-                )}
-              />
-            </div>
-          </button>
-        </Tooltip>
+        <div className="absolute right-3 top-3 z-20">
+          <Tooltip content={expanded ? (isTipsView ? 'Uždaryti patarimus' : 'Uždaryti užrašus') : (isTipsView ? 'Atidaryti patarimus' : 'Atidaryti užrašus')} side="top">
+            <button
+              onClick={() => setExpanded(!expanded)}
+              aria-label={expanded ? 'Uždaryti' : 'Atidaryti'}
+              className={clsx(
+                'p-1.5 rounded-lg transition-all duration-200',
+                expanded
+                  ? 'bg-surface-800/80 text-surface-300 hover:text-surface-100 hover:bg-surface-700/80'
+                  : 'text-surface-500 hover:text-surface-200 hover:bg-surface-800/50',
+              )}
+            >
+              <div className="relative w-[18px] h-[18px] overflow-hidden">
+                <PanelRightClose
+                  className={clsx(
+                    'w-[18px] h-[18px] absolute inset-0 transition-opacity duration-200',
+                    expanded ? 'opacity-100' : 'opacity-0',
+                  )}
+                />
+                <PanelRightOpen
+                  className={clsx(
+                    'w-[18px] h-[18px] absolute inset-0 transition-opacity duration-200',
+                    expanded ? 'opacity-0' : 'opacity-100',
+                  )}
+                />
+              </div>
+            </button>
+          </Tooltip>
+        </div>
       )}
 
       {/* Tips views — collapsible */}
