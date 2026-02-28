@@ -5,7 +5,7 @@
 
 import { useCallback, useRef } from 'react';
 import { clsx } from 'clsx';
-import { ChevronLeft, ChevronRight, BookMarked } from 'lucide-react';
+import { PanelRightClose, PanelRightOpen, BookMarked } from 'lucide-react';
 import { appStore, useStore, type AppView } from '../lib/store';
 import Tooltip from './Tooltip';
 import UploadPanel from './panels/UploadPanel';
@@ -87,10 +87,20 @@ export default function RightPanel({ currentView, analysisId }: Props) {
                 : 'text-surface-500 hover:text-surface-200 hover:bg-surface-800/50',
             )}
           >
-            {expanded
-              ? <ChevronRight className="w-[18px] h-[18px]" />
-              : <ChevronLeft className="w-[18px] h-[18px]" />
-            }
+            <div className="relative w-[18px] h-[18px] overflow-hidden">
+              <PanelRightClose
+                className={clsx(
+                  'w-[18px] h-[18px] absolute inset-0 transition-opacity duration-200',
+                  expanded ? 'opacity-100' : 'opacity-0',
+                )}
+              />
+              <PanelRightOpen
+                className={clsx(
+                  'w-[18px] h-[18px] absolute inset-0 transition-opacity duration-200',
+                  expanded ? 'opacity-0' : 'opacity-100',
+                )}
+              />
+            </div>
           </button>
         </Tooltip>
       )}
