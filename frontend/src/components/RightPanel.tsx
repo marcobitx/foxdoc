@@ -57,36 +57,37 @@ export default function RightPanel({ currentView, analysisId }: Props) {
           : 'w-[320px]',
       )}
     >
-      {/* Tips views — collapsible, identical pattern to IconSidebar */}
+      {/* Toggle button — fixed position anchored to right edge, never moves with sidebar */}
+      {(isTipsView || isNotesView) && (
+        <Tooltip content={expanded ? (isTipsView ? 'Uždaryti patarimus' : 'Uždaryti užrašus') : (isTipsView ? 'Atidaryti patarimus' : 'Atidaryti užrašus')} side="left">
+          <button
+            onClick={toggle}
+            aria-label={expanded ? 'Uždaryti' : 'Atidaryti'}
+            className="absolute right-3 top-3 z-20 p-1.5 rounded-lg text-surface-500 hover:text-surface-200 hover:bg-surface-800/50 transition-all duration-200"
+          >
+            <div className="relative w-[18px] h-[18px] overflow-hidden">
+              <PanelRightClose
+                className={clsx(
+                  'w-[18px] h-[18px] absolute inset-0 transition-all duration-300',
+                  expanded ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90',
+                )}
+              />
+              <PanelRightOpen
+                className={clsx(
+                  'w-[18px] h-[18px] absolute inset-0 transition-all duration-300',
+                  expanded ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0',
+                )}
+              />
+            </div>
+          </button>
+        </Tooltip>
+      )}
+
+      {/* Tips views — collapsible */}
       {isTipsView && (
         <>
-          {/* Toggle row — mirrors IconSidebar's controls row exactly */}
-          <div className="flex items-center h-10 flex-shrink-0 mt-2 mb-1 px-3 transition-all duration-300">
-            {/* Toggle button — pinned to right edge (anchored), identical to IconSidebar button on left */}
-            <Tooltip content={expanded ? 'Uždaryti patarimus' : 'Atidaryti patarimus'} side="left">
-            <button
-              onClick={toggle}
-              aria-label={expanded ? 'Uždaryti patarimus' : 'Atidaryti patarimus'}
-              className="p-1.5 rounded-lg text-surface-500 hover:text-surface-200 hover:bg-surface-800/50 transition-all duration-200 flex-shrink-0 order-last ml-auto"
-            >
-              <div className="relative w-[18px] h-[18px] overflow-hidden">
-                <PanelRightClose
-                  className={clsx(
-                    'w-[18px] h-[18px] absolute inset-0 transition-all duration-300',
-                    expanded ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90',
-                  )}
-                />
-                <PanelRightOpen
-                  className={clsx(
-                    'w-[18px] h-[18px] absolute inset-0 transition-all duration-300',
-                    expanded ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0',
-                  )}
-                />
-              </div>
-            </button>
-            </Tooltip>
-
-            {/* Fading label — mirrors IconSidebar's ml-auto profile button */}
+          {/* Header label row */}
+          <div className="flex items-center h-10 flex-shrink-0 mt-2 mb-1 px-3">
             <div
               className={clsx(
                 'overflow-hidden transition-[opacity,max-width] duration-300 ease-out',
@@ -118,34 +119,11 @@ export default function RightPanel({ currentView, analysisId }: Props) {
         </>
       )}
 
-      {/* Notes view — collapsible, identical pattern to tips/history sidebar */}
+      {/* Notes view — collapsible */}
       {isNotesView && (
         <>
-          {/* Toggle row — mirrors history sidebar toggle exactly */}
-          <div className="flex items-center h-10 flex-shrink-0 mt-2 mb-1 px-3 transition-all duration-300">
-            <Tooltip content={expanded ? 'Uždaryti užrašus' : 'Atidaryti užrašus'} side="left">
-            <button
-              onClick={toggle}
-              aria-label={expanded ? 'Uždaryti užrašus' : 'Atidaryti užrašus'}
-              className="p-1.5 rounded-lg text-surface-500 hover:text-surface-200 hover:bg-surface-800/50 transition-all duration-200 flex-shrink-0 order-last ml-auto"
-            >
-              <div className="relative w-[18px] h-[18px] overflow-hidden">
-                <PanelRightClose
-                  className={clsx(
-                    'w-[18px] h-[18px] absolute inset-0 transition-all duration-300',
-                    expanded ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90',
-                  )}
-                />
-                <PanelRightOpen
-                  className={clsx(
-                    'w-[18px] h-[18px] absolute inset-0 transition-all duration-300',
-                    expanded ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0',
-                  )}
-                />
-              </div>
-            </button>
-            </Tooltip>
-
+          {/* Header label row */}
+          <div className="flex items-center h-10 flex-shrink-0 mt-2 mb-1 px-3">
             <div
               className={clsx(
                 'overflow-hidden transition-[opacity,max-width] duration-300 ease-out',
