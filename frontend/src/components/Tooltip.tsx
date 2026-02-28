@@ -10,6 +10,8 @@ import { clsx } from 'clsx';
 interface TooltipProps {
   content: string;
   side?: 'top' | 'right' | 'bottom' | 'left';
+  /** Horizontal alignment when side is top/bottom */
+  align?: 'center' | 'start' | 'end';
   children: React.ReactNode;
   className?: string;
   /** Disable tooltip (e.g. when parent label is visible) */
@@ -18,7 +20,7 @@ interface TooltipProps {
 
 const GAP = 8; // px gap between trigger and tooltip
 
-export default function Tooltip({ content, side = 'top', children, className, disabled }: TooltipProps) {
+export default function Tooltip({ content, side = 'top', align = 'center', children, className, disabled }: TooltipProps) {
   const [visible, setVisible] = useState(false);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -50,13 +52,19 @@ export default function Tooltip({ content, side = 'top', children, className, di
     let x = 0;
     let y = 0;
 
+    function alignX() {
+      if (align === 'start') return trigger.left;
+      if (align === 'end') return trigger.right - tooltip.width;
+      return trigger.left + trigger.width / 2 - tooltip.width / 2;
+    }
+
     switch (side) {
       case 'top':
-        x = trigger.left + trigger.width / 2 - tooltip.width / 2;
+        x = alignX();
         y = trigger.top - tooltip.height - GAP;
         break;
       case 'bottom':
-        x = trigger.left + trigger.width / 2 - tooltip.width / 2;
+        x = alignX();
         y = trigger.bottom + GAP;
         break;
       case 'left':
@@ -115,8 +123,14 @@ export default function Tooltip({ content, side = 'top', children, className, di
           <div
             className={clsx(
               'absolute w-2 h-2 bg-surface-800 border-surface-600/50 rotate-45',
-              side === 'top' && 'top-full left-1/2 -translate-x-1/2 -mt-1 border-r border-b',
-              side === 'bottom' && 'bottom-full left-1/2 -translate-x-1/2 -mb-1 border-l border-t',
+              side === 'top' && '-mt-1 border-r border-b top-full',
+              side === 'top' && align === 'center' && 'left-1/2 -translate-x-1/2',
+              side === 'top' && align === 'start' && 'left-3',
+              side === 'top' && align === 'end' && 'right-3',
+              side === 'bottom' && '-mb-1 border-l border-t bottom-full',
+              side === 'bottom' && align === 'center' && 'left-1/2 -translate-x-1/2',
+              side === 'bottom' && align === 'start' && 'left-3',
+              side === 'bottom' && align === 'end' && 'right-3',
               side === 'left' && 'left-full top-1/2 -translate-y-1/2 -ml-1 border-t border-r',
               side === 'right' && 'right-full top-1/2 -translate-y-1/2 -mr-1 border-b border-l',
             )}
