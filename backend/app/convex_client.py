@@ -90,7 +90,10 @@ class ConvexDB:
                 args: dict[str, Any] = {"model": model, "status": "pending"}
                 if user_id:
                     args["user_id"] = user_id
-                result = self._client.mutation("analyses:create", args)
+                result = self._client.mutation(
+                    "analyses:create",
+                    args,
+                )
                 return str(result)
             except Exception as e:
                 logger.error("Convex create_analysis failed: %s", e)
@@ -103,7 +106,6 @@ class ConvexDB:
                 "_creationTime": self._now_iso(),
                 "status": "pending",
                 "model": model,
-                "user_id": user_id,
                 "report_json": None,
                 "qa_json": None,
                 "metrics_json": None,
@@ -743,12 +745,9 @@ class ConvexDB:
                 for r in self._table("saved_reports").values()
             )
 
-    async def get_token_usage_stats(self, user_id: str | None = None) -> dict:
-        """Aggregate token usage from completed analyses (per-user if user_id given)."""
-        if user_id:
-            analyses = await self.list_analyses_by_user(user_id=user_id, limit=1000, offset=0)
-        else:
-            analyses = await self.list_analyses(limit=1000, offset=0)
+    async def get_token_usage_stats(self) -> dict:
+        """Aggregate token usage from all completed analyses."""
+        analyses = await self.list_analyses(limit=1000, offset=0)
         stats = {
             "total_input_tokens": 0,
             "total_output_tokens": 0,
@@ -828,7 +827,7 @@ class ConvexDB:
         color: Optional[str] = "default",
         pinned: bool = False,
         analysis_id: Optional[str] = None,
-        user_id: str | None = None,
+        user_id: Optional[str] = None,
     ) -> str:
         """Create a new note. Returns note ID."""
         if self.is_convex:
@@ -845,7 +844,7 @@ class ConvexDB:
                     args["color"] = color
                 if analysis_id is not None:
                     args["analysis_id"] = analysis_id
-                if user_id:
+                if user_id is not None:
                     args["user_id"] = user_id
                 result = self._client.mutation("notes:create", args)
                 return str(result)
@@ -867,7 +866,6 @@ class ConvexDB:
                 "color": color,
                 "pinned": pinned,
                 "analysis_id": analysis_id,
-                "user_id": user_id,
                 "updated_at": int(datetime.now(timezone.utc).timestamp() * 1000),
             }
             if user_id:

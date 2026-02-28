@@ -473,13 +473,11 @@ async def get_document_content(
 async def list_analyses(
     limit: int = Query(20, le=100),
     offset: int = Query(0, ge=0),
+    user_id: str = Depends(require_auth),
     db: ConvexDB = Depends(get_db),
-    user_id: str | None = Depends(get_current_user_id),
 ):
-    """List past analyses, most recent first. Requires valid user for results."""
-    if not user_id:
-        return []
-    records = await db.list_analyses_by_user(user_id=user_id, limit=limit, offset=offset)
+    """List past analyses, most recent first (filtered by user)."""
+    records = await db.list_analyses_by_user(user_id, limit=limit, offset=offset)
 
     summaries = []
     for record in records:

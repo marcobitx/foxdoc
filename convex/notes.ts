@@ -8,7 +8,6 @@ import { v } from "convex/values";
 
 export const create = mutation({
   args: {
-    user_id: v.optional(v.id("users")),
     title: v.string(),
     content: v.string(),
     status: v.string(),
@@ -22,7 +21,6 @@ export const create = mutation({
   handler: async (ctx, args) => {
     const now = Date.now();
     const insertArgs: any = {
-      user_id: args.user_id,
       title: args.title,
       content: args.content,
       status: args.status,
@@ -207,23 +205,6 @@ export const allTags = query({
     }
     const tagCounts: Record<string, number> = {};
     for (const note of notes) {
-      for (const tag of note.tags) {
-        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-      }
-    }
-    return tagCounts;
-  },
-});
-
-export const allTagsByUser = query({
-  args: { user_id: v.id("users") },
-  handler: async (ctx, args) => {
-    const all = await ctx.db
-      .query("notes")
-      .withIndex("by_user", (q) => q.eq("user_id", args.user_id))
-      .collect();
-    const tagCounts: Record<string, number> = {};
-    for (const note of all) {
       for (const tag of note.tags) {
         tagCounts[tag] = (tagCounts[tag] || 0) + 1;
       }

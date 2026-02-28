@@ -10,7 +10,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.convex_client import ConvexDB, get_db
-from app.middleware.auth import get_current_user_id, require_auth
+from app.middleware.auth import require_auth
 from app.models.schemas import (
     NoteBulkAction,
     NoteBulkStatusUpdate,
@@ -27,13 +27,11 @@ router = APIRouter(prefix="/api/notes", tags=["notes"])
 async def list_notes(
     limit: int = 100,
     offset: int = 0,
-    user_id: str | None = Depends(get_current_user_id),
+    user_id: str = Depends(require_auth),
     db: ConvexDB = Depends(get_db),
 ):
-    """List notes for authenticated user (newest first). Returns empty if no auth."""
-    if not user_id:
-        return []
-    return await db.list_notes_by_user(user_id=user_id, limit=limit, offset=offset)
+    """List notes for the authenticated user (newest first)."""
+    return await db.list_notes_by_user(user_id, limit=limit, offset=offset)
 
 
 @router.get("/{note_id}")
