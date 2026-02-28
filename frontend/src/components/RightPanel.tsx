@@ -3,8 +3,9 @@
 // Pure orchestrator — all panel logic lives in panels/ directory
 // Related: App.tsx, panels/
 
+import { useCallback, useRef } from 'react';
 import { clsx } from 'clsx';
-import { PanelRightClose, PanelRightOpen, BookMarked } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookMarked } from 'lucide-react';
 import { appStore, useStore, type AppView } from '../lib/store';
 import Tooltip from './Tooltip';
 import UploadPanel from './panels/UploadPanel';
@@ -42,43 +43,54 @@ export default function RightPanel({ currentView, analysisId }: Props) {
   const isNotesView = currentView === 'notes';
   const isTipsView = currentView === 'history' || currentView === 'calendar' || currentView === 'settings';
   const expanded = isTipsView ? tipsPanelOpen : isNotesView ? rightPanelOpen : true;
-  const toggle = () => {
-    if (isTipsView) appStore.setState({ tipsPanelOpen: !tipsPanelOpen });
-    else if (isNotesView) appStore.setState({ rightPanelOpen: !rightPanelOpen });
-  };
+  const collapsible = isTipsView || isNotesView;
+
+  const setExpanded = useCallback((val: boolean) => {
+    if (isTipsView) appStore.setState({ tipsPanelOpen: val });
+    else if (isNotesView) appStore.setState({ rightPanelOpen: val });
+  }, [isTipsView, isNotesView]);
+
+  // Hover open/close timers — instant open, 100ms close delay (same as dropdowns)
+  const openTimer = useRef<ReturnType<typeof setTimeout>>();
+  const closeTimer = useRef<ReturnType<typeof setTimeout>>();
+  const startOpen = useCallback(() => {
+    clearTimeout(closeTimer.current);
+    openTimer.current = setTimeout(() => setExpanded(true), 0);
+  }, [setExpanded]);
+  const startClose = useCallback(() => {
+    clearTimeout(openTimer.current);
+    closeTimer.current = setTimeout(() => setExpanded(false), 100);
+  }, [setExpanded]);
 
   return (
     <aside
+      onMouseEnter={collapsible ? startOpen : undefined}
+      onMouseLeave={collapsible ? startClose : undefined}
       className={clsx(
         'hidden lg:flex flex-col h-full bg-transparent flex-shrink-0 overflow-hidden relative',
         'transition-[width] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
-        (isTipsView || isNotesView)
+        collapsible
           ? expanded ? 'w-[320px]' : 'w-[60px]'
           : 'w-[320px]',
       )}
     >
-      {/* Toggle button — fixed position anchored to right edge, never moves with sidebar */}
-      {(isTipsView || isNotesView) && (
+      {/* Toggle button — fixed position anchored to right edge, never moves */}
+      {collapsible && (
         <Tooltip content={expanded ? (isTipsView ? 'Uždaryti patarimus' : 'Uždaryti užrašus') : (isTipsView ? 'Atidaryti patarimus' : 'Atidaryti užrašus')} side="left">
           <button
-            onClick={toggle}
+            onClick={() => setExpanded(!expanded)}
             aria-label={expanded ? 'Uždaryti' : 'Atidaryti'}
-            className="absolute right-3 top-3 z-20 p-1.5 rounded-lg text-surface-500 hover:text-surface-200 hover:bg-surface-800/50 transition-all duration-200"
+            className={clsx(
+              'absolute right-3 top-3 z-20 p-1.5 rounded-lg transition-all duration-200',
+              expanded
+                ? 'bg-surface-800/80 text-surface-300 hover:text-surface-100 hover:bg-surface-700/80'
+                : 'text-surface-500 hover:text-surface-200 hover:bg-surface-800/50',
+            )}
           >
-            <div className="relative w-[18px] h-[18px] overflow-hidden">
-              <PanelRightClose
-                className={clsx(
-                  'w-[18px] h-[18px] absolute inset-0 transition-all duration-300',
-                  expanded ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90',
-                )}
-              />
-              <PanelRightOpen
-                className={clsx(
-                  'w-[18px] h-[18px] absolute inset-0 transition-all duration-300',
-                  expanded ? 'opacity-0 rotate-90' : 'opacity-100 rotate-0',
-                )}
-              />
-            </div>
+            {expanded
+              ? <ChevronRight className="w-[18px] h-[18px]" />
+              : <ChevronLeft className="w-[18px] h-[18px]" />
+            }
           </button>
         </Tooltip>
       )}
