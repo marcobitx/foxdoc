@@ -1,9 +1,9 @@
 // frontend/src/components/UserMenu.tsx
 // User avatar + dropdown menu with logout in the TopBar
-// Shows user name/email and sign-out action
+// Opens on hover (instant), closes on mouse leave (100ms delay)
 // Related: TopBar.tsx, ConvexAuthWrapper.tsx
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
@@ -14,15 +14,17 @@ export default function UserMenu() {
   const currentUser = useQuery(api.users.currentUser);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const openTimer = useRef<ReturnType<typeof setTimeout>>();
+  const closeTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+  const startOpen = useCallback(() => {
+    clearTimeout(closeTimer.current);
+    openTimer.current = setTimeout(() => setOpen(true), 0);
+  }, []);
+
+  const startClose = useCallback(() => {
+    clearTimeout(openTimer.current);
+    closeTimer.current = setTimeout(() => setOpen(false), 100);
   }, []);
 
   const handleSignOut = async () => {
@@ -34,9 +36,14 @@ export default function UserMenu() {
   const initials = displayName.charAt(0).toUpperCase();
 
   return (
-    <div ref={ref} className="relative">
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={startOpen}
+      onMouseLeave={startClose}
+    >
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-surface-700/30 transition-colors"
       >
         {currentUser?.image ? (
@@ -52,7 +59,9 @@ export default function UserMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-48 py-1 bg-surface-800 border border-surface-700/50 rounded-lg shadow-xl z-50">
+        <div className="absolute right-0 top-full mt-1 w-48 py-1 bg-surface-800 border border-surface-700/50 rounded-lg shadow-xl z-50 animate-fade-in"
+          style={{ animationDuration: '150ms' }}
+        >
           <div className="px-3 py-2 border-b border-surface-700/50">
             <p className="text-sm text-surface-200 truncate">{displayName}</p>
             {currentUser?.email && (
