@@ -1,9 +1,9 @@
 // frontend/src/components/CustomSelect.tsx
 // Fully styled custom select dropdown matching the dark theme
-// Replaces native <select> which can't be styled on Windows/Chrome
+// Opens on hover with small delay, closes on mouse leave
 // Related: global.css (.input-field), SettingsView.tsx, HistoryView.tsx
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 interface Option {
@@ -21,15 +21,19 @@ interface CustomSelectProps {
 export default function CustomSelect({ value, onChange, options, className = '' }: CustomSelectProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const openTimer = useRef<ReturnType<typeof setTimeout>>();
+  const closeTimer = useRef<ReturnType<typeof setTimeout>>();
 
   const selected = options.find((o) => o.value === value);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+  const startOpen = useCallback(() => {
+    clearTimeout(closeTimer.current);
+    openTimer.current = setTimeout(() => setOpen(true), 80);
+  }, []);
+
+  const startClose = useCallback(() => {
+    clearTimeout(openTimer.current);
+    closeTimer.current = setTimeout(() => setOpen(false), 180);
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -41,7 +45,12 @@ export default function CustomSelect({ value, onChange, options, className = '' 
   };
 
   return (
-    <div ref={ref} className={`relative ${className}`}>
+    <div
+      ref={ref}
+      className={`relative ${className}`}
+      onMouseEnter={startOpen}
+      onMouseLeave={startClose}
+    >
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
