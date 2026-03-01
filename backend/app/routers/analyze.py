@@ -471,7 +471,7 @@ async def get_document_content(
 
 @router.get("/analyses", response_model=list[AnalysisSummary])
 async def list_analyses(
-    limit: int = Query(20, le=100),
+    limit: int = Query(20, le=200),
     offset: int = Query(0, ge=0),
     user_id: str = Depends(require_auth),
     db: ConvexDB = Depends(get_db),
