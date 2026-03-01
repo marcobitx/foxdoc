@@ -4,33 +4,40 @@
 # Related: base.py, schema_utils.py, llm.py
 
 from app.services.providers.base import BaseProvider
-from app.services.schema_utils import resolve_refs
+from app.services.schema_utils import flatten_nullable_anyof
 
 
 def _clean_schema_for_anthropic(schema: dict) -> dict:
     """Clean schema for Anthropic Claude models.
 
+    - Flattens nullable anyOf patterns to simple type (Anthropic handles Optional natively)
     - Removes title, description, default keys recursively
     - Adds additionalProperties: false on all object types
+    - Preserves $defs/$ref to keep schema compact (Anthropic supports them)
     """
-    cleaned: dict = {}
-    for key, value in schema.items():
-        if key in ("title", "description", "default"):
-            continue
-        if isinstance(value, dict):
-            cleaned[key] = _clean_schema_for_anthropic(value)
-        elif isinstance(value, list):
-            cleaned[key] = [
-                _clean_schema_for_anthropic(item) if isinstance(item, dict) else item
-                for item in value
-            ]
-        else:
-            cleaned[key] = value
+    def _clean(node: dict) -> dict:
+        node = flatten_nullable_anyof(node)
 
-    if cleaned.get("type") == "object" and "additionalProperties" not in cleaned:
-        cleaned["additionalProperties"] = False
+        cleaned: dict = {}
+        for key, value in node.items():
+            if key in ("title", "description", "default"):
+                continue
+            if isinstance(value, dict):
+                cleaned[key] = _clean(value)
+            elif isinstance(value, list):
+                cleaned[key] = [
+                    _clean(item) if isinstance(item, dict) else item
+                    for item in value
+                ]
+            else:
+                cleaned[key] = value
 
-    return cleaned
+        if cleaned.get("type") == "object" and "additionalProperties" not in cleaned:
+            cleaned["additionalProperties"] = False
+
+        return cleaned
+
+    return _clean(schema)
 
 
 _THINKING_BUDGETS: dict[str, int] = {
@@ -44,8 +51,9 @@ class AnthropicProvider(BaseProvider):
     """Provider strategy for Anthropic Claude models."""
 
     def prepare_schema(self, raw_schema: dict) -> dict:
-        resolved = resolve_refs(dict(raw_schema))
-        return _clean_schema_for_anthropic(resolved)
+        # Do NOT resolve_refs — Anthropic supports $defs/$ref natively.
+        # Inlining refs causes "too many optional parameters" errors (79 > 24 limit).
+        return _clean_schema_for_anthropic(dict(raw_schema))
 
     def build_response_format(self, cleaned_schema: dict, schema_name: str) -> dict:
         return {

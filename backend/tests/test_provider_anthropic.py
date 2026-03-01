@@ -52,7 +52,12 @@ class TestPrepareSchema:
         result = provider.prepare_schema(raw)
         assert result["additionalProperties"] is True
 
-    def test_resolves_refs(self, provider):
+    def test_preserves_refs(self, provider):
+        """Anthropic supports $defs/$ref natively — do NOT inline them.
+
+        Inlining causes 'too many optional parameters' errors when schemas
+        have many nested Optional fields (e.g. ExtractionResult with 79 params > 24 limit).
+        """
         raw = {
             "type": "object",
             "$defs": {
@@ -67,11 +72,12 @@ class TestPrepareSchema:
             "required": ["child"],
         }
         result = provider.prepare_schema(raw)
-        assert "$ref" not in str(result)
-        assert "$defs" not in result
-        child = result["properties"]["child"]
-        assert child["type"] == "object"
-        assert "x" in child["properties"]
+        # $defs and $ref must be preserved
+        assert "$defs" in result
+        assert result["properties"]["child"]["$ref"] == "#/$defs/Inner"
+        # $defs content should still be cleaned (titles removed, additionalProperties added)
+        inner = result["$defs"]["Inner"]
+        assert inner["additionalProperties"] is False
 
     def test_nested_object_gets_additional_properties(self, provider):
         raw = {
