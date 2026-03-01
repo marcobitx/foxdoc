@@ -4,5 +4,6 @@
 # Related: base.py, llm.py
 
 from app.services.providers.base import BaseProvider
+from app.services.providers.registry import get_provider
 
-__all__ = ["BaseProvider"]
+__all__ = ["BaseProvider", "get_provider"]
