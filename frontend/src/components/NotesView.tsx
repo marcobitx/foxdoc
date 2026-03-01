@@ -4,6 +4,7 @@
 // Related: store.ts, api.ts, panels/NotesPanel.tsx
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { clsx } from 'clsx';
 import {
   Plus,
@@ -1121,13 +1122,14 @@ export default function NotesView() {
 
   return (
     <div className="w-full animate-fade-in-up">
-      {/* ── Editor Modal ─────────────────────────────────────── */}
-      {activeNote && (
+      {/* ── Editor Modal (portaled to body for full-screen backdrop blur) ── */}
+      {activeNote && createPortal(
         <NoteEditorModal
           note={activeNote}
           onClose={() => appStore.setState({ activeNoteId: null })}
           analyses={analyses}
-        />
+        />,
+        document.body,
       )}
 
       {/* ── Header ───────────────────────────────────────────── */}
