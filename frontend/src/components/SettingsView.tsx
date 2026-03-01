@@ -126,7 +126,7 @@ export default function SettingsView() {
           <div className="lg:col-span-2 enterprise-card p-5">
             <div className="flex items-start gap-3 mb-4">
               <Cpu className="w-4.5 h-4.5 text-brand-400 flex-shrink-0 mt-0.5" />
-              <div>
+              <div className="flex-1 min-w-0">
                 <h3 className="text-[14px] font-bold text-surface-100 tracking-tight">
                   Numatytasis modelis
                 </h3>
@@ -134,6 +134,27 @@ export default function SettingsView() {
                   Naudojamas dokumentų analizei ir pokalbio atsakymams
                 </p>
               </div>
+              {/* Save button — inline */}
+              <button
+                onClick={handleSave}
+                disabled={saving || !hasChanges}
+                className={clsx(
+                  'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px] font-semibold transition-all duration-200 flex-shrink-0',
+                  hasChanges
+                    ? 'bg-brand-500 hover:bg-brand-400 text-surface-950 shadow-sm shadow-brand-500/20'
+                    : saved
+                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
+                      : 'bg-surface-800/50 text-surface-500 cursor-not-allowed',
+                )}
+              >
+                {saving ? (
+                  <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saugoma...</>
+                ) : saved ? (
+                  <><CheckCircle2 className="w-3.5 h-3.5" /> Išsaugota</>
+                ) : (
+                  <><Save className="w-3.5 h-3.5" /> Išsaugoti</>
+                )}
+              </button>
             </div>
 
             {myModels.length > 0 ? (
@@ -333,34 +354,6 @@ export default function SettingsView() {
         </div>
       </section>
 
-      {/* ── Save Button ────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] text-surface-600 font-medium">
-          {hasChanges ? 'Yra neišsaugotų pakeitimų' : 'Visi pakeitimai išsaugoti'}
-        </p>
-        <button
-          onClick={handleSave}
-          disabled={saving || !hasChanges}
-          className="btn-professional"
-        >
-          {saving ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Saugoma...
-            </>
-          ) : saved ? (
-            <>
-              <CheckCircle2 className="w-4 h-4" />
-              Išsaugota
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4" />
-              Išsaugoti
-            </>
-          )}
-        </button>
-      </div>
     </div>
   );
 }
