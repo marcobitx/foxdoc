@@ -175,7 +175,7 @@ export default function FilesPanel() {
       {/* Backdrop */}
       <div
         className={clsx(
-          "absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300",
+          "absolute inset-0 bg-black/65 backdrop-blur-md transition-opacity duration-300",
           animating ? "opacity-100" : "opacity-0"
         )}
         onClick={handleClose}
