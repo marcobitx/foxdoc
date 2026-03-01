@@ -449,14 +449,18 @@ class LLMClient:
         )
         body["stream"] = True
 
-        logger.debug(
-            "Streaming structured completion: model=%s schema=%s",
+        logger.info(
+            "Streaming structured completion: model=%s schema=%s thinking=%s response_format=%s",
             body["model"], response_schema.__name__,
+            "yes" if "thinking" in body else "no",
+            body.get("response_format", {}).get("type", "none"),
         )
 
         try:
             full_content = ""
             usage = {"input_tokens": 0, "output_tokens": 0}
+            _chunk_count = 0
+            _reasoning_count = 0
 
             async with self._client.stream(
                 "POST", "/chat/completions", json=body,
@@ -502,6 +506,10 @@ class LLMClient:
                         if content:
                             full_content += content
 
+                        _chunk_count += 1
+                        if reasoning:
+                            _reasoning_count += 1
+
                         # Usage from final chunk
                         chunk_usage = chunk.get("usage")
                         if chunk_usage:
@@ -511,6 +519,11 @@ class LLMClient:
                     except (json.JSONDecodeError, IndexError, KeyError) as exc:
                         logger.debug("Skipping unparseable SSE chunk: %s (%s)", payload[:100], exc)
                         continue
+
+            logger.info(
+                "Streaming done for %s: %d chunks, %d reasoning, %d content chars",
+                response_schema.__name__, _chunk_count, _reasoning_count, len(full_content),
+            )
 
             if not full_content or not full_content.strip():
                 logger.warning(

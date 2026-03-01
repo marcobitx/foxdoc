@@ -18,11 +18,13 @@ _THINKING_BUDGETS: dict[str, int] = {
 class AnthropicProvider(BaseProvider):
     """Provider strategy for Anthropic Claude models.
 
-    Uses json_object response format (not json_schema) to avoid grammar
-    compilation limits (24 optional params / 16 union types).  The full
-    JSON schema is injected into the system prompt instead — Claude follows
-    it reliably (~98%+) and the existing retry/validation layer handles
-    the rare deviation.
+    Does NOT use response_format at all — avoids both grammar compilation
+    limits (24 optional params / 16 union types) and the Anthropic constraint
+    that response_format cannot be combined with extended thinking.
+
+    The full JSON schema is injected into the system prompt instead.
+    Claude follows it reliably (~98%+) and the existing retry/validation +
+    json-repair layer handles the rare deviation.
     """
 
     def prepare_schema(self, raw_schema: dict) -> dict:
@@ -30,12 +32,14 @@ class AnthropicProvider(BaseProvider):
         # not into a grammar compiler, so no cleaning/resolving needed.
         return dict(raw_schema)
 
-    def build_response_format(self, cleaned_schema: dict, schema_name: str) -> dict:
-        # Use json_object (no grammar compilation) instead of json_schema.
-        # The schema is embedded in the system prompt via build_messages.
+    def build_response_format(self, cleaned_schema: dict, schema_name: str) -> dict | None:
+        # No response_format for Anthropic:
+        # 1. json_schema triggers grammar compilation (hard limits)
+        # 2. json_object conflicts with extended thinking
+        # Schema is embedded in the system prompt via build_messages instead.
         self._pending_schema = cleaned_schema
         self._pending_schema_name = schema_name
-        return {"type": "json_object"}
+        return None
 
     def build_messages(self, system: str, user: str | list[dict]) -> list[dict]:
         # Inject the JSON schema into the system prompt so Claude knows

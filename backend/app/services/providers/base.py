@@ -15,8 +15,10 @@ class BaseProvider(ABC):
         ...
 
     @abstractmethod
-    def build_response_format(self, cleaned_schema: dict, schema_name: str) -> dict:
-        """Build the response_format parameter for the API request."""
+    def build_response_format(self, cleaned_schema: dict, schema_name: str) -> dict | None:
+        """Build the response_format parameter for the API request.
+        Return None to skip response_format (e.g. when schema is prompt-injected).
+        """
         ...
 
     @abstractmethod

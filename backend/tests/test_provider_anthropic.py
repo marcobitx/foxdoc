@@ -49,10 +49,11 @@ class TestPrepareSchema:
 # ---------------------------------------------------------------------------
 
 class TestBuildResponseFormat:
-    def test_uses_json_object_type(self, provider):
+    def test_returns_none(self, provider):
+        """Anthropic skips response_format — schema is prompt-injected instead."""
         schema = {"type": "object", "properties": {}}
         result = provider.build_response_format(schema, "extraction")
-        assert result == {"type": "json_object"}
+        assert result is None
 
     def test_stores_pending_schema(self, provider):
         schema = {"type": "object", "properties": {"x": {"type": "integer"}}}
