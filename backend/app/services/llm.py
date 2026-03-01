@@ -589,9 +589,9 @@ class LLMClient:
                 "role": "user",
                 "content": (
                     f"Turinys, kurį reikia konvertuoti į JSON:\n\n"
-                    f"{original_content[:3000]}\n\n"
+                    f"{original_content[:12000]}\n\n"
                     f"Reikalinga JSON schema:\n{schema_json}\n\n"
-                    f"Pateik TIK validų JSON objektą."
+                    f"Pateik TIK validų JSON objektą — be markdown, be code fences, tik raw JSON."
                 ),
             },
         ]

@@ -46,10 +46,15 @@ class AnthropicProvider(BaseProvider):
         if schema:
             schema_instruction = (
                 f"\n\n## Required JSON output format\n"
-                f"You MUST respond with a single JSON object that strictly follows "
-                f"this JSON schema (named '{schema_name}'):\n"
-                f"```json\n{json.dumps(schema, indent=2)}\n```\n"
-                f"Return ONLY the JSON object, no other text."
+                f"You MUST respond with a single valid JSON object that strictly follows "
+                f"this JSON schema (named '{schema_name}'):\n\n"
+                f"{json.dumps(schema, indent=2)}\n\n"
+                f"CRITICAL RULES:\n"
+                f"- Output ONLY raw JSON starting with {{ and ending with }}\n"
+                f"- Do NOT wrap in markdown code fences (no ```)\n"
+                f"- Do NOT add any text before or after the JSON\n"
+                f"- All string values must use double quotes\n"
+                f"- Use null for missing/unknown values"
             )
             system = system + schema_instruction
             # Clear pending state
