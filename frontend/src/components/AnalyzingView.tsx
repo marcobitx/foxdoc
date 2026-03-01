@@ -243,7 +243,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
       let status: StepInfo['status'] = 'waiting';
       if (currentStatus === 'COMPLETED') status = 'done';
       else if (i < activeIdx) status = 'done';
-      else if (i === activeIdx) status = currentStatus === 'FAILED' ? 'error' : 'active';
+      else if (i === activeIdx) status = (currentStatus === 'FAILED' || currentStatus === 'CANCELED') ? 'error' : 'active';
       return { ...def, status };
     }),
     [currentStatus, activeIdx],

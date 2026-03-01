@@ -120,7 +120,7 @@ export default function App() {
     try {
       stopAnalysisStream();
       await cancelAnalysis(state.currentAnalysisId);
-      appStore.setState({ error: 'Analizė atšaukta', analysisStatus: null });
+      appStore.setState({ error: 'Analizė atšaukta', analysisStatus: null, streamStatus: 'CANCELED' });
     } catch (err) {
       console.error('Failed to cancel analysis:', err);
     }
