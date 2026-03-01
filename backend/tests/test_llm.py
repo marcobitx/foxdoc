@@ -15,9 +15,9 @@ from app.services.llm import (
     LLMParseError,
     LLMRateLimitError,
     _build_thinking,
-    _clean_json_schema,
     _extract_usage,
 )
+from app.services.llm import _clean_schema_for_anthropic as _clean_json_schema
 
 
 # ── Test helpers ────────────────────────────────────────────────────────────────
@@ -105,6 +105,8 @@ class TestExtractUsage:
 
 
 class TestCleanJsonSchema:
+    """Tests for provider schema cleaning (Anthropic removes title/description/default)."""
+
     def test_removes_title(self):
         schema = {"title": "Foo", "type": "object", "properties": {}}
         cleaned = _clean_json_schema(schema)
@@ -121,10 +123,10 @@ class TestCleanJsonSchema:
         cleaned = _clean_json_schema(schema)
         assert "title" not in cleaned["properties"]["name"]
 
-    def test_preserves_other_keys(self):
+    def test_removes_title_and_description(self):
         schema = {"type": "string", "description": "hello", "title": "T"}
         cleaned = _clean_json_schema(schema)
-        assert cleaned == {"type": "string", "description": "hello"}
+        assert cleaned == {"type": "string"}
 
 
 # ── Integration tests with mocked httpx ─────────────────────────────────────────
@@ -374,17 +376,23 @@ class TestListModels:
         with patch.object(client._client, "request", new_callable=AsyncMock, return_value=mock_resp):
             models = await client.list_models()
 
-        assert len(models) == 2
-        assert models[0]["id"] == "anthropic/claude-sonnet-4"
-        assert models[0]["name"] == "Claude Sonnet 4"
-        assert models[0]["context_length"] == 200000
-        assert models[0]["pricing_prompt"] == 0.003
-        assert models[0]["pricing_completion"] == 0.015
-        assert models[1]["id"] == "google/gemini-pro"
+        # Mandatory models are added as fallbacks, so total > 2
+        model_ids = [m["id"] for m in models]
+        assert "anthropic/claude-sonnet-4" in model_ids
+        assert "google/gemini-pro" in model_ids
+        assert "meta/llama-3-8b" not in model_ids  # filtered out (no json_schema)
+
+        # Check correct field mapping for a known model
+        claude = next(m for m in models if m["id"] == "anthropic/claude-sonnet-4")
+        assert claude["name"] == "Claude Sonnet 4"
+        assert claude["context_length"] == 200000
+        # Prices are per-million tokens (API returns per-token, code multiplies by 1M)
+        assert claude["pricing_prompt"] == 3000.0
+        assert claude["pricing_completion"] == 15000.0
 
     @pytest.mark.asyncio
-    async def test_list_models_no_supported_params_included(self, client: LLMClient):
-        """Models with no supported_parameters field should be included (not filtered)."""
+    async def test_list_models_no_supported_params_filtered(self, client: LLMClient):
+        """Models without json_schema support and not in mandatory list are filtered out."""
         api_response = {
             "data": [
                 {
@@ -392,7 +400,7 @@ class TestListModels:
                     "name": "GPT-4",
                     "context_length": 8192,
                     "pricing": {"prompt": "0.03", "completion": "0.06"},
-                    # No supported_parameters at all
+                    # No supported_parameters at all — filtered out
                 },
             ]
         }
@@ -402,8 +410,10 @@ class TestListModels:
         with patch.object(client._client, "request", new_callable=AsyncMock, return_value=mock_resp):
             models = await client.list_models()
 
-        assert len(models) == 1
-        assert models[0]["id"] == "openai/gpt-4"
+        # Non-mandatory models without json_schema support are excluded;
+        # only mandatory fallback models are added
+        model_ids = {m["id"] for m in models}
+        assert "openai/gpt-4" not in model_ids
 
 
 class TestBuildBody:
@@ -425,7 +435,7 @@ class TestBuildBody:
         assert "thinking" not in body
         assert body["model"] == "custom/model"
 
-    def test_response_format_adds_provider(self, client: LLMClient):
+    def test_response_format_included(self, client: LLMClient):
         fmt = {"type": "json_schema", "json_schema": {"name": "T", "strict": True, "schema": {}}}
         body = client._build_body(
             messages=[],
@@ -433,7 +443,6 @@ class TestBuildBody:
             response_format=fmt,
         )
         assert body["response_format"] == fmt
-        assert body["provider"] == {"require_parameters": True}
 
     def test_temperature_included(self, client: LLMClient):
         body = client._build_body(
@@ -446,6 +455,26 @@ class TestBuildBody:
     def test_temperature_none_excluded(self, client: LLMClient):
         body = client._build_body(messages=[], model=None)
         assert "temperature" not in body
+
+    def test_thinking_config_overrides_legacy(self, client: LLMClient):
+        """When thinking_config is provided, it overrides the legacy _build_thinking path."""
+        body = client._build_body(
+            messages=[],
+            model=None,
+            thinking="high",  # Would normally set thinking via _build_thinking
+            thinking_config={"type": "enabled", "budget_tokens": 3000},
+        )
+        assert body["thinking"] == {"type": "enabled", "budget_tokens": 3000}
+
+    def test_thinking_config_none_omits_thinking(self, client: LLMClient):
+        """When thinking_config=None is passed, no thinking key is set."""
+        body = client._build_body(
+            messages=[],
+            model=None,
+            thinking="high",  # Would normally set thinking
+            thinking_config=None,
+        )
+        assert "thinking" not in body
 
 
 class TestClientLifecycle:

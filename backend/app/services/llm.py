@@ -15,6 +15,9 @@ from typing import AsyncIterator, Awaitable, Callable, Optional
 import httpx
 from pydantic import BaseModel
 
+from app.services.providers import get_provider
+from app.services.schema_utils import extract_json as _extract_json_util
+
 logger = logging.getLogger(__name__)
 
 OPENROUTER_BASE = "https://openrouter.ai/api/v1"
@@ -28,6 +31,8 @@ THINKING_BUDGETS = {
 
 MAX_RETRIES = 3
 BACKOFF_SECONDS = [2, 4, 8]
+
+_SENTINEL = object()  # Used to distinguish "not provided" from None in _build_body
 
 MANDATORY_MODELS = [
     "openai/gpt-5.1-codex-mini",
@@ -135,57 +140,8 @@ def _extract_usage(data: dict) -> dict:
 
 
 def _extract_json(raw: str) -> str:
-    """
-    Robustly extract JSON from LLM output that may contain:
-    - Markdown code fences (```json ... ```)
-    - Trailing explanatory text after the JSON
-    - Leading text before the JSON
-    """
-    text = raw.strip()
-
-    # Strip markdown code fences
-    if text.startswith("```"):
-        first_nl = text.index("\n") if "\n" in text else len(text)
-        text = text[first_nl + 1:]
-        if text.rstrip().endswith("```"):
-            text = text.rstrip()[:-3].rstrip()
-        logger.debug("Stripped markdown code fences from structured output")
-
-    # Find the JSON object: first { to its matching }
-    start = text.find("{")
-    if start == -1:
-        return text  # no object found, return as-is and let validation handle it
-
-    depth = 0
-    in_string = False
-    escape = False
-    end = start
-
-    for i in range(start, len(text)):
-        c = text[i]
-        if escape:
-            escape = False
-            continue
-        if c == "\\":
-            escape = True
-            continue
-        if c == '"' and not escape:
-            in_string = not in_string
-            continue
-        if in_string:
-            continue
-        if c == "{":
-            depth += 1
-        elif c == "}":
-            depth -= 1
-            if depth == 0:
-                end = i
-                break
-
-    result = text[start:end + 1]
-    if result != text.strip():
-        logger.debug("Extracted JSON object (%d chars) from larger output (%d chars)", len(result), len(text))
-    return result
+    """Thin wrapper around shared extract_json utility for backward compat."""
+    return _extract_json_util(raw)
 
 
 def _detect_provider(model_id: str) -> str:
@@ -640,8 +596,13 @@ class LLMClient:
         response_format: dict | None = None,
         max_tokens: int = 32000,
         plugins: list[dict] | None = None,
+        thinking_config: object = _SENTINEL,
     ) -> dict:
-        """Build the request body for a chat completion."""
+        """Build the request body for a chat completion.
+
+        If thinking_config is provided (from a provider), it is used directly.
+        Otherwise, falls back to the legacy _build_thinking() helper.
+        """
         body: dict = {
             "model": model or self.default_model,
             "messages": messages,
@@ -654,9 +615,14 @@ class LLMClient:
         if response_format:
             body["response_format"] = response_format
 
-        thinking_cfg = _build_thinking(thinking)
-        if thinking_cfg:
-            body["thinking"] = thinking_cfg
+        # Use provider's thinking_config if provided, otherwise legacy helper
+        if thinking_config is not _SENTINEL:
+            if thinking_config is not None:
+                body["thinking"] = thinking_config
+        else:
+            cfg = _build_thinking(thinking)
+            if cfg:
+                body["thinking"] = cfg
 
         if plugins:
             body["plugins"] = plugins
@@ -693,54 +659,23 @@ class LLMClient:
         raw_schema = response_schema.model_json_schema()
         resolved_model = model or self.default_model
         provider = _detect_provider(resolved_model)
-        cleaned_schema = _prepare_schema(raw_schema, provider)
 
-        if provider == "anthropic":
-            response_format = {"type": "json_object"}
-            schema_instruction = (
-                f"\n\nRespond with valid JSON object. "
-                f"Field types: {_compact_schema_hint(cleaned_schema)}"
-            )
-            system_with_schema = system + schema_instruction
-        else:
-            response_format = {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": response_schema.__name__,
-                    "schema": cleaned_schema,
-                },
-            }
-            system_with_schema = system
-
-        # Build messages — Anthropic gets cache_control for prompt caching
-        if provider == "anthropic":
-            messages = [
-                {
-                    "role": "system",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": system_with_schema,
-                            "cache_control": {"type": "ephemeral"},
-                        }
-                    ],
-                },
-                {"role": "user", "content": user},
-            ]
-        else:
-            messages = [
-                {"role": "system", "content": system_with_schema},
-                {"role": "user", "content": user},
-            ]
+        # Delegate provider-specific formatting to the strategy object
+        provider_impl = get_provider(resolved_model)
+        cleaned_schema = provider_impl.prepare_schema(raw_schema)
+        response_format = provider_impl.build_response_format(cleaned_schema, response_schema.__name__)
+        messages = provider_impl.build_messages(system, user)
+        thinking_config = provider_impl.build_thinking_config(thinking)
+        adj_temperature = provider_impl.get_temperature(temperature, thinking)
 
         body = self._build_body(
             messages=messages,
             model=model,
-            thinking=thinking,
-            temperature=temperature,
+            temperature=adj_temperature,
             response_format=response_format,
             max_tokens=max_tokens,
             plugins=plugins,
+            thinking_config=thinking_config,
         )
 
         logger.debug(
@@ -841,54 +776,23 @@ class LLMClient:
         raw_schema = response_schema.model_json_schema()
         resolved_model = model or self.default_model
         provider = _detect_provider(resolved_model)
-        cleaned_schema = _prepare_schema(raw_schema, provider)
 
-        if provider == "anthropic":
-            response_format = {"type": "json_object"}
-            schema_instruction = (
-                f"\n\nRespond with valid JSON object. "
-                f"Field types: {_compact_schema_hint(cleaned_schema)}"
-            )
-            system_with_schema = system + schema_instruction
-        else:
-            response_format = {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": response_schema.__name__,
-                    "schema": cleaned_schema,
-                },
-            }
-            system_with_schema = system
-
-        # Build messages — Anthropic gets cache_control for prompt caching
-        if provider == "anthropic":
-            messages = [
-                {
-                    "role": "system",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": system_with_schema,
-                            "cache_control": {"type": "ephemeral"},
-                        }
-                    ],
-                },
-                {"role": "user", "content": user},
-            ]
-        else:
-            messages = [
-                {"role": "system", "content": system_with_schema},
-                {"role": "user", "content": user},
-            ]
+        # Delegate provider-specific formatting to the strategy object
+        provider_impl = get_provider(resolved_model)
+        cleaned_schema = provider_impl.prepare_schema(raw_schema)
+        response_format = provider_impl.build_response_format(cleaned_schema, response_schema.__name__)
+        messages = provider_impl.build_messages(system, user)
+        thinking_config = provider_impl.build_thinking_config(thinking)
+        adj_temperature = provider_impl.get_temperature(temperature, thinking)
 
         body = self._build_body(
             messages=messages,
             model=model,
-            thinking=thinking,
-            temperature=temperature,
+            temperature=adj_temperature,
             response_format=response_format,
             max_tokens=max_tokens,
             plugins=plugins,
+            thinking_config=thinking_config,
         )
         body["stream"] = True
 
