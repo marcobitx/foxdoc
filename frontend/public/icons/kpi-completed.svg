@@ -1,8 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <circle cx="12" cy="12" r="9" />
-  <path d="M7 13L10 16L17 8" stroke-dasharray="0" />
-  <path d="M12 1A11 11 0 0 1 23 12" stroke-dasharray="3 3" opacity="0.5" />
-  <path d="M23 12A11 11 0 0 1 12 23" stroke-dasharray="3 3" opacity="0.5" />
-  <path d="M12 23A11 11 0 0 1 1 12" stroke-dasharray="3 3" opacity="0.5" />
-  <path d="M1 12A11 11 0 0 1 12 1" stroke-dasharray="3 3" opacity="0.5" />
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="b" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feOffset dx="1" dy="2" result="offsetBlur"/>
+      <feComposite in="offsetBlur" in2="SourceAlpha" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <circle cx="12" cy="12" r="11" fill="url(#g)" filter="url(#b)"/>
+  <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
