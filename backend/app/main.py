@@ -2,9 +2,13 @@
 # FastAPI application entry point
 # Configures CORS, lifespan, and routes
 
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+
+# Configure logging — default is WARNING which hides all INFO from app modules
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(name)s: %(message)s")
 from fastapi.middleware.cors import CORSMiddleware
 
 
