@@ -22,6 +22,14 @@ from app.services.zip_extractor import extract_files
 
 logger = logging.getLogger(__name__)
 
+# ── Active pipeline registry (for cancellation from API) ─────────────────────
+# Maps analysis_id → AnalysisPipeline instance
+_active_pipelines: dict[str, "AnalysisPipeline"] = {}
+
+
+def get_active_pipeline(analysis_id: str) -> "AnalysisPipeline | None":
+    return _active_pipelines.get(analysis_id)
+
 # Fallback context lengths for known models (used when API lookup fails)
 KNOWN_CONTEXT_LENGTHS: dict[str, int] = {
     "anthropic/claude-sonnet-4": 200_000,
@@ -106,6 +114,8 @@ class AnalysisPipeline:
         self.metrics = PipelineMetrics(model_used=model)
         self._event_index = 0
         self._stream_queue = create_stream(analysis_id)
+        self._cancel_event = asyncio.Event()
+        self._eval_task: asyncio.Task | None = None
 
     async def _resolve_context_length(self) -> int:
         """Resolve the context window size for the selected model.
@@ -136,6 +146,7 @@ class AnalysisPipeline:
 
     async def run(self, upload_paths: list[Path]) -> None:
         """Execute the full analysis pipeline."""
+        _active_pipelines[self.analysis_id] = self
         self.metrics.start_time = time.time()
 
         # Phase-specific thinking callbacks
@@ -203,6 +214,7 @@ class AnalysisPipeline:
                 analysis_type=self.analysis_type,
                 custom_instructions=self.custom_instructions,
                 thinking_override=self.thinking_override,
+                cancel_event=self._cancel_event,
             )
             await self._push_thinking_done()
 
@@ -248,11 +260,13 @@ class AnalysisPipeline:
                 )
                 for d in parsed_docs
             ]
-            asyncio.create_task(
-                self._run_evaluation_background(
-                    report, source_docs, evaluation_thinking,
+            # Only start evaluation if not already cancelled
+            if not self._cancel_event.is_set():
+                self._eval_task = asyncio.create_task(
+                    self._run_evaluation_background(
+                        report, source_docs, evaluation_thinking,
+                    )
                 )
-            )
 
         except asyncio.CancelledError:
             logger.info("Pipeline cancelled for %s", self.analysis_id)
@@ -274,6 +288,7 @@ class AnalysisPipeline:
             await self._emit_event("error", {"message": str(e)})
 
         finally:
+            _active_pipelines.pop(self.analysis_id, None)
             remove_stream(self.analysis_id)
 
     # ── Background evaluation ─────────────────────────────────────────────
@@ -291,6 +306,11 @@ class AnalysisPipeline:
         """
         bg_llm = LLMClient(api_key=self._api_key, default_model=self.model)
         try:
+            # Check cancellation before starting expensive evaluation
+            if self._cancel_event.is_set():
+                logger.info("Skipping evaluation for %s — cancelled", self.analysis_id)
+                return
+
             qa, eval_usage = await evaluate_report(
                 report, source_docs, bg_llm, self.model,
                 on_thinking=evaluation_thinking,
@@ -308,6 +328,8 @@ class AnalysisPipeline:
                 "Background evaluation completed for %s: score=%.2f",
                 self.analysis_id, qa.completeness_score,
             )
+        except asyncio.CancelledError:
+            logger.info("Background evaluation cancelled for %s", self.analysis_id)
         except Exception as e:
             logger.error(
                 "Background evaluation failed for %s: %s",
@@ -360,11 +382,24 @@ class AnalysisPipeline:
         except asyncio.QueueFull:
             pass
 
+    def request_cancel(self) -> None:
+        """Signal cancellation from outside (API endpoint).
+
+        Sets the event flag so all in-progress work can check it,
+        and cancels the background evaluation task if running.
+        """
+        self._cancel_event.set()
+        if self._eval_task and not self._eval_task.done():
+            self._eval_task.cancel()
+            logger.info("Cancelled background evaluation task for %s", self.analysis_id)
+
     async def _check_cancellation(self):
-        """Check if analysis has been canceled in the DB."""
-        # We need to fetch the latest status from DB
+        """Check if analysis has been canceled (event flag or DB)."""
+        if self._cancel_event.is_set():
+            raise asyncio.CancelledError("Analysis canceled by user")
         record = await self.db.get_analysis(self.analysis_id)
         if record and record.get("status") == AnalysisStatus.CANCELED:
+            self._cancel_event.set()
             raise asyncio.CancelledError("Analysis canceled by user")
 
     # ── Sync callbacks (bridge to async event emission) ────────────────────

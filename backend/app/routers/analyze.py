@@ -722,7 +722,7 @@ async def cancel_analysis(
     analysis_id: str,
     db: ConvexDB = Depends(get_db),
 ):
-    """Cancel a running analysis."""
+    """Cancel a running analysis — stops LLM work immediately."""
     record = await db.get_analysis(analysis_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
@@ -732,4 +732,13 @@ async def cancel_analysis(
         return
 
     await db.update_analysis(analysis_id, status="canceled")
-    logger.info("Cancelled analysis %s", analysis_id)
+
+    # Signal the running pipeline to stop all in-progress work
+    from app.services.pipeline import get_active_pipeline
+
+    pipeline = get_active_pipeline(analysis_id)
+    if pipeline:
+        pipeline.request_cancel()
+        logger.info("Cancelled analysis %s — signalled pipeline to stop", analysis_id)
+    else:
+        logger.info("Cancelled analysis %s — no active pipeline found", analysis_id)

@@ -407,6 +407,7 @@ async def extract_all(
     analysis_type: str = "detailed",
     custom_instructions: str = "",
     thinking_override: str = "",
+    cancel_event: Optional[asyncio.Event] = None,
 ) -> list[tuple[ParsedDocument, ExtractionResult, dict]]:
     """
     Parallel extraction with concurrency limit.
@@ -446,6 +447,14 @@ async def extract_all(
         index: int, doc: ParsedDocument
     ) -> tuple[int, tuple[ParsedDocument, ExtractionResult, dict]]:
         async with semaphore:
+            # Check cancellation before starting this document
+            if cancel_event and cancel_event.is_set():
+                logger.info("Extraction skipped (cancelled): %s", doc.filename)
+                empty = ExtractionResult(
+                    confidence_notes=["Extraction skipped: analysis cancelled"],
+                )
+                return (index, (doc, empty, {"input_tokens": 0, "output_tokens": 0}))
+
             if on_started:
                 on_started(index, doc.filename)
             try:
