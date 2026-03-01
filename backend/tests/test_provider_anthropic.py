@@ -125,15 +125,15 @@ class TestBuildThinkingConfig:
 
     def test_low_budget(self, provider):
         result = provider.build_thinking_config("low")
-        assert result == {"type": "enabled", "budget_tokens": 2000}
+        assert result == {"max_tokens": 2000}
 
     def test_medium_budget(self, provider):
         result = provider.build_thinking_config("medium")
-        assert result == {"type": "enabled", "budget_tokens": 5000}
+        assert result == {"max_tokens": 5000}
 
     def test_high_budget(self, provider):
         result = provider.build_thinking_config("high")
-        assert result == {"type": "enabled", "budget_tokens": 10000}
+        assert result == {"max_tokens": 10000}
 
     def test_unknown_returns_none(self, provider):
         assert provider.build_thinking_config("turbo") is None

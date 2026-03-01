@@ -41,6 +41,10 @@ class BaseProvider(ABC):
         """Whether this provider supports native PDF input (base64 document blocks)."""
         ...
 
+    def get_thinking_body_key(self) -> str:
+        """Return the request body key for thinking config ('thinking' or 'reasoning')."""
+        return "thinking"
+
     def get_provider_routing(self) -> dict | None:
         """Return OpenRouter provider routing config, or None for default routing."""
         return None

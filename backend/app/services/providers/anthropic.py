@@ -83,7 +83,12 @@ class AnthropicProvider(BaseProvider):
         budget = _THINKING_BUDGETS.get(thinking)
         if budget is None:
             return None
-        return {"type": "enabled", "budget_tokens": budget}
+        # OpenRouter uses "reasoning" key with max_tokens (not Anthropic's native format)
+        return {"max_tokens": budget}
+
+    def get_thinking_body_key(self) -> str:
+        # OpenRouter expects "reasoning" (not "thinking") for Anthropic models
+        return "reasoning"
 
     def get_temperature(self, requested_temp: float, thinking: str) -> float | None:
         if thinking != "off":

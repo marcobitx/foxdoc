@@ -236,11 +236,13 @@ class LLMClient:
         plugins: list[dict] | None = None,
         thinking_config: object = _SENTINEL,
         provider_routing: dict | None = None,
+        thinking_body_key: str = "thinking",
     ) -> dict:
         """Build the request body for a chat completion.
 
         If thinking_config is provided (from a provider), it is used directly.
         Otherwise, falls back to the legacy _build_thinking() helper.
+        thinking_body_key controls the JSON key name ("thinking" or "reasoning").
         """
         body: dict = {
             "model": model or self.default_model,
@@ -257,11 +259,11 @@ class LLMClient:
         # Use provider's thinking_config if provided, otherwise legacy helper
         if thinking_config is not _SENTINEL:
             if thinking_config is not None:
-                body["thinking"] = thinking_config
+                body[thinking_body_key] = thinking_config
         else:
             cfg = _build_thinking(thinking)
             if cfg:
-                body["thinking"] = cfg
+                body[thinking_body_key] = cfg
 
         if plugins:
             body["plugins"] = plugins
@@ -319,6 +321,7 @@ class LLMClient:
             plugins=plugins,
             thinking_config=thinking_config,
             provider_routing=provider_impl.get_provider_routing(),
+            thinking_body_key=provider_impl.get_thinking_body_key(),
         )
 
         logger.debug(
@@ -439,6 +442,7 @@ class LLMClient:
         thinking_config = provider_impl.build_thinking_config(thinking)
         adj_temperature = provider_impl.get_temperature(temperature, thinking)
 
+        thinking_key = provider_impl.get_thinking_body_key()
         body = self._build_body(
             messages=messages,
             model=model,
@@ -448,13 +452,15 @@ class LLMClient:
             plugins=plugins,
             thinking_config=thinking_config,
             provider_routing=provider_impl.get_provider_routing(),
+            thinking_body_key=thinking_key,
         )
         body["stream"] = True
 
         logger.info(
-            "Streaming structured completion: model=%s schema=%s thinking=%s response_format=%s",
+            "Streaming structured completion: model=%s schema=%s thinking=%s(%s) response_format=%s",
             body["model"], response_schema.__name__,
-            "yes" if "thinking" in body else "no",
+            "yes" if thinking_key in body else "no",
+            thinking_key,
             body.get("response_format", {}).get("type", "none"),
         )
 
@@ -498,6 +504,14 @@ class LLMClient:
                     try:
                         chunk = json.loads(payload)
                         delta = chunk.get("choices", [{}])[0].get("delta", {})
+
+                        # Log first few deltas to diagnose field names
+                        if _chunk_count < 3 and delta:
+                            logger.info(
+                                "SSE delta #%d keys=%s preview=%s",
+                                _chunk_count, list(delta.keys()),
+                                str(delta)[:200],
+                            )
 
                         # Reasoning / thinking tokens
                         # OpenRouter uses different field names depending on provider:
