@@ -301,7 +301,7 @@ function MobileProfileButton({ onNavigate }: { onNavigate: (v: AppView) => void 
             onClick={() => {
               setOpen(false);
               clearAuthToken();
-              window.location.href = (import.meta.env.PUBLIC_LANDING_URL || 'https://foxdoc.io') + '/auth';
+              window.location.href = import.meta.env.PUBLIC_LANDING_URL || 'https://foxdoc.io';
             }}
             className="flex items-center gap-2.5 w-full px-4 py-2.5 text-left text-surface-400 hover:text-red-400 hover:bg-surface-800/60 transition-colors duration-150"
           >
