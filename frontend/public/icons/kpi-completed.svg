@@ -1,19 +1,5 @@
-<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#10b981"/>
-      <stop offset="100%" stop-color="#059669"/>
-    </linearGradient>
-    <filter id="b" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="1.5" result="blur"/>
-      <feOffset dx="1" dy="2" result="offsetBlur"/>
-      <feComposite in="offsetBlur" in2="SourceAlpha" operator="in" result="shadow"/>
-      <feMerge>
-        <feMergeNode in="shadow"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-  <circle cx="12" cy="12" r="11" fill="url(#g)" filter="url(#b)"/>
-  <path d="M7 12l3 3 7-7" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5.5 12.5l3.5 3.5l7.5 -7.5" />
+  <path d="M12 7.5v-3.5a1 1 0 0 1 1 -1h2" />
+  <path d="M12 7.5v-3.5a1 1 0 0 0 -1 -1h-2" />
 </svg>
