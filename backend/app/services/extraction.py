@@ -156,6 +156,7 @@ async def _extract_single(
     analysis_type: str = "detailed",
     custom_instructions: str = "",
     thinking_override: str = "",
+    cancel_event: Optional[asyncio.Event] = None,
 ) -> tuple[ExtractionResult, dict]:
     """Extract structured data from a single document/chunk via LLM call."""
     system_prompt, user_template = get_extraction_prompts(analysis_type, custom_instructions)
@@ -177,6 +178,7 @@ async def _extract_single(
             thinking=thinking,
             max_tokens=32000,
             on_thinking=on_thinking,
+            cancel_event=cancel_event,
         )
     else:
         result, usage = await llm.complete_structured(
@@ -195,6 +197,7 @@ async def _extract_single_multimodal(
     llm: LLMClient,
     model: str,
     on_thinking: Callable[[str], Awaitable[None]] | None = None,
+    cancel_event: Optional[asyncio.Event] = None,
 ) -> tuple[ExtractionResult, dict]:
     """Extract structured data from a scanned PDF/image via OpenRouter multimodal API."""
     user_prompt = EXTRACTION_OCR_USER.format(
@@ -222,6 +225,7 @@ async def _extract_single_multimodal(
         max_tokens=16000,
         on_thinking=on_thinking,
         plugins=plugins,
+        cancel_event=cancel_event,
     )
     return result, usage  # type: ignore[return-value]
 
@@ -231,6 +235,7 @@ async def _extract_single_local_ocr(
     llm: LLMClient,
     model: str,
     on_thinking: Callable[[str], Awaitable[None]] | None = None,
+    cancel_event: Optional[asyncio.Event] = None,
 ) -> tuple[ExtractionResult, dict]:
     """Extract from large scanned file using local Docling OCR fallback."""
     from app.services.parser import parse_with_ocr
@@ -255,7 +260,7 @@ async def _extract_single_local_ocr(
         file_path=doc.file_path,
         is_scanned=False,  # OCR text is now available
     )
-    return await _extract_single(ocr_doc, llm, model, on_thinking=on_thinking)
+    return await _extract_single(ocr_doc, llm, model, on_thinking=on_thinking, cancel_event=cancel_event)
 
 
 async def extract_document(
@@ -267,6 +272,7 @@ async def extract_document(
     analysis_type: str = "detailed",
     custom_instructions: str = "",
     thinking_override: str = "",
+    cancel_event: Optional[asyncio.Event] = None,
 ) -> tuple[ExtractionResult, dict]:
     """
     Extract structured data from a single parsed document.
@@ -292,11 +298,11 @@ async def extract_document(
         if doc.is_scanned and doc.file_path and doc.file_path.exists():
             if doc.file_size_bytes <= OPENROUTER_MAX_FILE_SIZE:
                 result, usage = await _extract_single_multimodal(
-                    doc, llm, model, on_thinking=on_thinking,
+                    doc, llm, model, on_thinking=on_thinking, cancel_event=cancel_event,
                 )
             else:
                 result, usage = await _extract_single_local_ocr(
-                    doc, llm, model, on_thinking=on_thinking,
+                    doc, llm, model, on_thinking=on_thinking, cancel_event=cancel_event,
                 )
             logger.info(
                 "Scanned extraction complete for %s: in=%d out=%d tokens",
@@ -315,7 +321,9 @@ async def extract_document(
             )
             # Single chunk — direct extraction with retry fallback
             try:
-                result, usage = await _extract_single(doc, llm, model, on_thinking=on_thinking, analysis_type=analysis_type, custom_instructions=custom_instructions, thinking_override=thinking_override)
+                result, usage = await _extract_single(doc, llm, model, on_thinking=on_thinking, analysis_type=analysis_type, custom_instructions=custom_instructions, thinking_override=thinking_override, cancel_event=cancel_event)
+            except asyncio.CancelledError:
+                raise  # Never swallow cancellation
             except Exception as streaming_exc:
                 logger.warning(
                     "Streaming extraction failed for %s, retrying non-streaming: %s",
@@ -354,7 +362,9 @@ async def extract_document(
                     is_scanned=False,  # chunks contain text
                 )
                 try:
-                    return await _extract_single(chunk_doc, llm, model, on_thinking=on_thinking, analysis_type=analysis_type, custom_instructions=custom_instructions, thinking_override=thinking_override)
+                    return await _extract_single(chunk_doc, llm, model, on_thinking=on_thinking, analysis_type=analysis_type, custom_instructions=custom_instructions, thinking_override=thinking_override, cancel_event=cancel_event)
+                except asyncio.CancelledError:
+                    raise  # Never swallow cancellation
                 except Exception as streaming_exc:
                     logger.warning(
                         "Streaming extraction failed for %s chunk %d, retrying non-streaming: %s",
@@ -385,6 +395,9 @@ async def extract_document(
             total_usage["output_tokens"],
         )
         return merged, total_usage
+
+    except asyncio.CancelledError:
+        raise  # Never swallow cancellation — stop consuming credits
 
     except Exception as e:
         logger.error("Extraction failed for %s: %s", doc.filename, e, exc_info=True)
@@ -461,6 +474,7 @@ async def extract_all(
                 result, usage = await extract_document(
                     doc, llm, model, context_length=context_length, on_thinking=on_thinking,
                     analysis_type=analysis_type, custom_instructions=custom_instructions, thinking_override=thinking_override,
+                    cancel_event=cancel_event,
                 )
 
                 # Check if extract_document already handled the error internally
@@ -476,6 +490,13 @@ async def extract_all(
                         on_completed(index, doc.filename, usage)
 
                 return (index, (doc, result, usage))
+
+            except asyncio.CancelledError:
+                logger.info("Extraction aborted (cancelled): %s", doc.filename)
+                empty = ExtractionResult(
+                    confidence_notes=["Extraction aborted: analysis cancelled"],
+                )
+                return (index, (doc, empty, {"input_tokens": 0, "output_tokens": 0}))
 
             except Exception as e:
                 logger.error("Extraction failed for %s: %s", doc.filename, e)

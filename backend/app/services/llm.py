@@ -410,6 +410,7 @@ class LLMClient:
         max_tokens: int = 32000,
         on_thinking: Callable[[str], Awaitable[None]] | None = None,
         plugins: list[dict] | None = None,
+        cancel_event: asyncio.Event | None = None,
     ) -> tuple[BaseModel, dict]:
         """
         Streaming structured output completion with live thinking token callback.
@@ -418,6 +419,7 @@ class LLMClient:
         user can be a string or a list of content parts (multimodal).
         Streams the response via SSE, calling on_thinking() for each reasoning chunk.
         Falls back to non-streaming complete_structured() on any streaming error.
+        If cancel_event is set, aborts the streaming connection immediately.
         """
         if on_thinking is None:
             return await self.complete_structured(
@@ -478,6 +480,14 @@ class LLMClient:
                     )
 
                 async for line in response.aiter_lines():
+                    # Check cancellation every chunk — abort HTTP connection immediately
+                    if cancel_event and cancel_event.is_set():
+                        logger.info(
+                            "Streaming aborted (cancelled) for %s after %d chunks",
+                            response_schema.__name__, _chunk_count,
+                        )
+                        raise asyncio.CancelledError("Analysis cancelled by user")
+
                     if not line.startswith("data: "):
                         continue
 
@@ -609,6 +619,9 @@ class LLMClient:
 
             logger.debug("Streaming structured usage: %s", usage)
             return parsed, usage
+
+        except asyncio.CancelledError:
+            raise  # Never swallow cancellation — let it propagate up
 
         except Exception as exc:
             logger.warning(
