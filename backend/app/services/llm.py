@@ -490,11 +490,25 @@ class LLMClient:
                         delta = chunk.get("choices", [{}])[0].get("delta", {})
 
                         # Reasoning / thinking tokens
+                        # OpenRouter uses different field names depending on provider:
+                        #   - "reasoning" / "reasoning_content" — simple string (DeepSeek, etc.)
+                        #   - "reasoning_details" — array of objects with .text (Anthropic thinking)
                         reasoning = (
                             delta.get("reasoning")
                             or delta.get("reasoning_content")
                             or ""
                         )
+
+                        # Anthropic extended thinking via OpenRouter: reasoning_details array
+                        if not reasoning:
+                            details = delta.get("reasoning_details")
+                            if details and isinstance(details, list):
+                                for detail in details:
+                                    txt = detail.get("text") or detail.get("summary") or ""
+                                    if txt:
+                                        reasoning = txt
+                                        break
+
                         if reasoning and on_thinking:
                             try:
                                 await on_thinking(reasoning)
