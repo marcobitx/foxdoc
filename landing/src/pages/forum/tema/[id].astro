@@ -1,0 +1,33 @@
+---
+// landing/src/pages/forum/tema/[id].astro
+// Single forum topic view with replies
+// SSR page — post ID from URL params, React island handles data fetching
+import Layout from '../../../layouts/Layout.astro';
+export const prerender = false;
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect('/forum');
+---
+<Layout title="Tema — foxDoc forumas">
+
+  <div style="background: #0d0a08; padding: 5rem 1.5rem 2rem;">
+    <div style="max-width: 52rem; margin: 0 auto;">
+      <!-- Placeholder for React island to fill -->
+    </div>
+  </div>
+
+  <div style="background: #1a1512; padding: 0 1.5rem 5rem;">
+    <div style="max-width: 52rem; margin: 0 auto;">
+      <div id="topic-root" data-post-id={id}></div>
+    </div>
+  </div>
+
+  <script>
+    import ForumTopicView from '../../../components/forum/ForumTopicView';
+    import { createElement } from 'react';
+    import { createRoot } from 'react-dom/client';
+    const root = document.getElementById('topic-root');
+    const postId = root?.dataset.postId;
+    if (root && postId) createRoot(root).render(createElement(ForumTopicView, { postId }));
+  </script>
+</Layout>

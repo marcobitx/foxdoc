@@ -213,7 +213,7 @@ export default function PricingFull() {
 
   const ctaStyle = (highlight: boolean, enterprise: boolean): React.CSSProperties => ({
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: '0.75rem 1rem', borderRadius: '0.625rem', fontSize: '0.875rem',
+    padding: '0.4375rem 1rem', borderRadius: '0.375rem', fontSize: '0.75rem',
     fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s',
     background: highlight ? '#f59e0b' : 'transparent',
     color: highlight ? '#0d0a08' : '#b5a99f',
@@ -441,9 +441,9 @@ export default function PricingFull() {
               onMouseLeave={() => setHoveredCta(null)}
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                padding: '0.9375rem 1rem',
-                borderRadius: '0.875rem',
-                fontSize: '0.875rem',
+                padding: '0.4375rem 1rem',
+                borderRadius: '0.375rem',
+                fontSize: '0.75rem',
                 fontWeight: 600,
                 textDecoration: 'none',
                 letterSpacing: '0.02em',
@@ -529,7 +529,7 @@ export default function PricingFull() {
               <p style={{ color: '#b5a99f', fontSize: '0.875rem', margin: '0 0 1rem' }}>kreditų</p>
               <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fdf9f7', margin: '0 0 0.25rem' }}>€{a.price}</p>
               <p style={{ fontSize: '0.75rem', color: '#ea580c', margin: '0 0 1.25rem' }}>{a.perCredit}/kreditas</p>
-              <a href="/auth" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem 1rem', borderRadius: '0.5rem', border: '1px solid rgba(168,162,158,0.22)', color: '#fdf9f7', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600, transition: 'background 0.2s' }}>
+              <a href="/auth" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.4375rem 1rem', borderRadius: '0.375rem', border: '1px solid rgba(168,162,158,0.22)', color: '#fdf9f7', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 600, transition: 'background 0.2s' }}>
                 Pirkti
               </a>
             </div>
@@ -588,7 +588,7 @@ export default function PricingFull() {
         <div style={{ position: 'relative', zIndex: 10, maxWidth: '32rem' }}>
           <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 700, fontSize: '1.75rem', color: '#fdf9f7', margin: '0 0 0.75rem', letterSpacing: '-0.01em' }}>Reikia individualaus sprendimo?</h2>
           <p style={{ color: '#e5d9ce', marginBottom: '1.5rem', fontSize: '0.9375rem', lineHeight: 1.6 }}>Didelės organizacijos, savivaldybės ir centriniai perkantys subjektai — susisiekite dėl Enterprise kainos</p>
-          <a href="mailto:hello@foxdoc.io" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 2rem', borderRadius: '0.5rem', background: '#f59e0b', color: '#1a1512', fontWeight: 600, textDecoration: 'none', fontSize: '1rem' }}>
+          <a href="mailto:hello@foxdoc.io" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.4375rem 1rem', borderRadius: '0.375rem', background: '#f59e0b', color: '#1a1512', fontWeight: 600, textDecoration: 'none', fontSize: '0.75rem' }}>
             Susisiekti su komanda
           </a>
         </div>

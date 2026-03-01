@@ -105,7 +105,7 @@ function AuthFormInner() {
         </p>
         <button
           onClick={() => redirectToApp()}
-          className="w-full py-3 px-4 rounded-lg bg-amber-500 text-neutral-900 font-semibold hover:bg-amber-400 transition-colors"
+          className="w-full py-2 px-4 rounded-md bg-amber-500 text-neutral-900 text-xs font-semibold hover:bg-amber-400 transition-colors"
         >
           Eiti į aplikaciją
         </button>
@@ -114,7 +114,7 @@ function AuthFormInner() {
             await signOut();
             clearSignInPending();
           }}
-          className="w-full py-3 px-4 rounded-lg bg-[#f0e8df] text-[#3d3028] font-medium hover:bg-[#e8dfd5] border border-[#e5ddd4] transition-colors"
+          className="w-full py-2 px-4 rounded-md bg-[#f0e8df] text-[#3d3028] text-xs font-medium hover:bg-[#e8dfd5] border border-[#e5ddd4] transition-colors"
         >
           Atsijungti ir prisijungti kitu
         </button>
@@ -188,7 +188,7 @@ function AuthFormInner() {
       <button
         onClick={handleGoogle}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg bg-white text-neutral-900 font-medium hover:bg-neutral-50 border border-[#e5ddd4] transition-colors disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2.5 py-2 px-4 rounded-md bg-white text-neutral-900 text-xs font-medium hover:bg-neutral-50 border border-[#e5ddd4] transition-colors disabled:opacity-50"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
@@ -251,7 +251,7 @@ function AuthFormInner() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 px-4 rounded-lg bg-amber-500 text-neutral-900 font-semibold hover:bg-amber-400 transition-all disabled:opacity-50 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]"
+          className="w-full py-2 px-4 rounded-md bg-amber-500 text-neutral-900 text-xs font-semibold hover:bg-amber-400 transition-all disabled:opacity-50 hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]"
         >
           {loading ? "Palaukite..." : tab === "signIn" ? "Prisijungti" : "Registruotis"}
         </button>

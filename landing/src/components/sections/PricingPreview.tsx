@@ -235,8 +235,8 @@ export default function PricingPreview() {
                 href={plan.ctaHref}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '0.75rem 1rem', borderRadius: '0.625rem',
-                  fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none',
+                  padding: '0.4375rem 1rem', borderRadius: '0.375rem',
+                  fontSize: '0.75rem', fontWeight: 600, textDecoration: 'none',
                   transition: 'all 0.2s',
                   background: plan.highlight ? '#f59e0b' : 'transparent',
                   color: plan.highlight ? '#0d0a08' : '#b5a99f',

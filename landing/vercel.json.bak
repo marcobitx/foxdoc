@@ -1,0 +1,4 @@
+{
+  "installCommand": "cd landing && bun install",
+  "buildCommand": "cd landing && bun run build && mv .vercel/output ../.vercel/output"
+}
