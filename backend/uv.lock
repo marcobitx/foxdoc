@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.13'",
@@ -668,6 +668,7 @@ dependencies = [
     { name = "convex" },
     { name = "fastapi" },
     { name = "httpx" },
+    { name = "json-repair" },
     { name = "py7zr" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
@@ -699,6 +700,7 @@ requires-dist = [
     { name = "docling", marker = "extra == 'ml'", specifier = "==2.73.0" },
     { name = "fastapi", specifier = ">=0.115" },
     { name = "httpx" },
+    { name = "json-repair", specifier = ">=0.30" },
     { name = "py7zr" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pydantic-settings", specifier = ">=2.0" },
@@ -919,6 +921,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d", size = 245115, upload-time = "2025-03-05T20:05:02.478Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67", size = 134899, upload-time = "2025-03-05T20:05:00.369Z" },
+]
+
+[[package]]
+name = "json-repair"
+version = "0.58.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c5/19/54a7f22971669e583bb223217ae16a21b0bc8d4549c22c88b97cbfcb6fe5/json_repair-0.58.1.tar.gz", hash = "sha256:7a4560ef04dcc4ef69c05131372d8608fc7ea8c51de0d76b53958f26d8ecb4cc", size = 58654, upload-time = "2026-02-28T09:24:02.936Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/49/54/d8b06c401d30b4c32ddcd875878b61e15fd3f7a956a2771a2d8066273841/json_repair-0.58.1-py3-none-any.whl", hash = "sha256:d4f10319855573e84376c6205ebf7a5f7f6f02059854e3d03b292d8dde1412bb", size = 40538, upload-time = "2026-02-28T09:24:01.507Z" },
 ]
 
 [[package]]
