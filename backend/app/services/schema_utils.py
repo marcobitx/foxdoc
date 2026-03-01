@@ -3,7 +3,10 @@
 # Extracted from llm.py so multiple provider backends can reuse them
 # Related: llm.py, models/schemas.py
 
+import json
 import logging
+
+from json_repair import repair_json
 
 logger = logging.getLogger(__name__)
 
@@ -167,3 +170,18 @@ def flatten_nullable_anyof_openai(node: dict) -> dict:
             merged.setdefault(k, v)
     merged["type"] = [real_type, "null"]
     return merged
+
+
+def repair_json_safe(raw: str) -> str | None:
+    """Try to repair malformed JSON using json-repair library.
+
+    Returns the repaired JSON string if successful, None otherwise.
+    """
+    try:
+        repaired = repair_json(raw, return_objects=False)
+        # Validate the repair produced valid JSON
+        json.loads(repaired)
+        logger.info("JSON repair succeeded (%d → %d chars)", len(raw), len(repaired))
+        return repaired
+    except Exception:
+        return None

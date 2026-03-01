@@ -88,5 +88,5 @@ async def get_usage_stats(
                 "evaluation": {"input": 0, "output": 0},
             },
         )
-    stats = await db.get_token_usage_stats(user_id=user_id)
+    stats = await db.get_token_usage_stats()
     return TokenUsageStats(**stats)

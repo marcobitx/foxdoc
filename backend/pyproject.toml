@@ -19,6 +19,7 @@ dependencies = [
     "py7zr",
     "pypdf>=6.0",
     "python-jose[cryptography]>=3.5.0",
+    "json-repair>=0.30",
 ]
 
 [project.optional-dependencies]

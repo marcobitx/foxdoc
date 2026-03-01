@@ -17,6 +17,7 @@ from pydantic import BaseModel
 
 from app.services.providers import get_provider
 from app.services.schema_utils import extract_json as _extract_json_util
+from app.services.schema_utils import repair_json_safe as _repair_json
 
 logger = logging.getLogger(__name__)
 
@@ -364,6 +365,16 @@ class LLMClient:
         try:
             parsed = response_schema.model_validate_json(content_clean)
         except Exception as first_exc:
+            # Try JSON repair before expensive LLM correction retry
+            repaired = _repair_json(content_clean)
+            if repaired:
+                try:
+                    parsed = response_schema.model_validate_json(repaired)
+                    logger.info("JSON repair succeeded for %s", response_schema.__name__)
+                    return parsed, _extract_usage(data)
+                except Exception:
+                    pass  # repair didn't fix schema validation — fall through
+
             # Retry: ask the LLM to convert its non-JSON response to valid JSON
             logger.warning(
                 "First parse attempt failed for %s, retrying with correction prompt: %s",
@@ -519,21 +530,40 @@ class LLMClient:
             try:
                 json.loads(content_clean)
             except json.JSONDecodeError as json_err:
-                logger.warning(
-                    "Streaming returned incomplete JSON for %s (%d chars: %.100s...), "
-                    "falling back to non-streaming: %s",
-                    response_schema.__name__, len(full_content),
-                    full_content, str(json_err)[:100],
-                )
-                return await self.complete_structured(
-                    system=system, user=user, response_schema=response_schema,
-                    model=model, temperature=temperature, thinking=thinking,
-                    max_tokens=max_tokens, plugins=plugins,
-                )
+                # Try JSON repair before falling back to non-streaming
+                repaired = _repair_json(content_clean)
+                if repaired:
+                    content_clean = repaired
+                    logger.info(
+                        "JSON repair fixed streaming output for %s (%d chars)",
+                        response_schema.__name__, len(content_clean),
+                    )
+                else:
+                    logger.warning(
+                        "Streaming returned incomplete JSON for %s (%d chars: %.100s...), "
+                        "falling back to non-streaming: %s",
+                        response_schema.__name__, len(full_content),
+                        full_content, str(json_err)[:100],
+                    )
+                    return await self.complete_structured(
+                        system=system, user=user, response_schema=response_schema,
+                        model=model, temperature=temperature, thinking=thinking,
+                        max_tokens=max_tokens, plugins=plugins,
+                    )
 
             try:
                 parsed = response_schema.model_validate_json(content_clean)
             except Exception as first_exc:
+                # Try JSON repair before expensive LLM correction
+                repaired = _repair_json(content_clean)
+                if repaired:
+                    try:
+                        parsed = response_schema.model_validate_json(repaired)
+                        logger.info("JSON repair fixed streaming schema for %s", response_schema.__name__)
+                        return parsed, usage
+                    except Exception:
+                        pass
+
                 # JSON is syntactically valid but doesn't match schema — correction may help
                 logger.warning(
                     "Streaming parse failed for %s, retrying with correction: %s",
@@ -589,7 +619,7 @@ class LLMClient:
                 "role": "user",
                 "content": (
                     f"Turinys, kurį reikia konvertuoti į JSON:\n\n"
-                    f"{original_content[:12000]}\n\n"
+                    f"{original_content[:24000]}\n\n"
                     f"Reikalinga JSON schema:\n{schema_json}\n\n"
                     f"Pateik TIK validų JSON objektą — be markdown, be code fences, tik raw JSON."
                 ),
