@@ -10,10 +10,16 @@ import logging
 import mimetypes
 import random
 from pathlib import Path
-from typing import AsyncIterator, Awaitable, Callable, Optional
+from typing import AsyncIterator, Awaitable, Callable
 
 import httpx
 from pydantic import BaseModel
+
+from app.services.providers import get_provider
+from app.services.providers.anthropic import (  # noqa: F401
+    _clean_schema_for_anthropic,  # re-export for backward compat (used by tests)
+)
+from app.services.schema_utils import extract_json as _extract_json_util
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +34,8 @@ THINKING_BUDGETS = {
 
 MAX_RETRIES = 3
 BACKOFF_SECONDS = [2, 4, 8]
+
+_SENTINEL = object()  # Used to distinguish "not provided" from None in _build_body
 
 MANDATORY_MODELS = [
     "openai/gpt-5.1-codex-mini",
@@ -135,420 +143,8 @@ def _extract_usage(data: dict) -> dict:
 
 
 def _extract_json(raw: str) -> str:
-    """
-    Robustly extract JSON from LLM output that may contain:
-    - Markdown code fences (```json ... ```)
-    - Trailing explanatory text after the JSON
-    - Leading text before the JSON
-    """
-    text = raw.strip()
-
-    # Strip markdown code fences
-    if text.startswith("```"):
-        first_nl = text.index("\n") if "\n" in text else len(text)
-        text = text[first_nl + 1:]
-        if text.rstrip().endswith("```"):
-            text = text.rstrip()[:-3].rstrip()
-        logger.debug("Stripped markdown code fences from structured output")
-
-    # Find the JSON object: first { to its matching }
-    start = text.find("{")
-    if start == -1:
-        return text  # no object found, return as-is and let validation handle it
-
-    depth = 0
-    in_string = False
-    escape = False
-    end = start
-
-    for i in range(start, len(text)):
-        c = text[i]
-        if escape:
-            escape = False
-            continue
-        if c == "\\":
-            escape = True
-            continue
-        if c == '"' and not escape:
-            in_string = not in_string
-            continue
-        if in_string:
-            continue
-        if c == "{":
-            depth += 1
-        elif c == "}":
-            depth -= 1
-            if depth == 0:
-                end = i
-                break
-
-    result = text[start:end + 1]
-    if result != text.strip():
-        logger.debug("Extracted JSON object (%d chars) from larger output (%d chars)", len(result), len(text))
-    return result
-
-
-def _detect_provider(model_id: str) -> str:
-    """Detect provider family from OpenRouter model ID."""
-    prefixes = {
-        "anthropic/": "anthropic",
-        "google/": "google",
-        "openai/": "openai",
-        "meta-llama/": "meta",
-        "mistralai/": "mistral",
-        "deepseek/": "deepseek",
-        "moonshotai/": "moonshot",
-        "qwen/": "qwen",
-        "cohere/": "cohere",
-        "ai21/": "ai21",
-        "perplexity/": "perplexity",
-        "microsoft/": "microsoft",
-        "nvidia/": "nvidia",
-        "x-ai/": "xai",
-        "z-ai/": "zai",
-        "amazon/": "amazon",
-    }
-    for prefix, provider in prefixes.items():
-        if model_id.startswith(prefix):
-            return provider
-    return "generic"
-
-
-def _resolve_refs(schema: dict) -> dict:
-    """Inline all $defs/$ref references so the schema is self-contained.
-
-    Gemini and some other providers don't support $ref/$defs in JSON schema.
-    This replaces every {"$ref": "#/$defs/TypeName"} with the actual definition.
-    Handles circular references by tracking the resolution stack.
-    """
-    defs = schema.pop("$defs", None) or schema.pop("definitions", None) or {}
-    if not defs:
-        return schema
-
-    def _inline(node: dict, resolving: frozenset[str] = frozenset()) -> dict:
-        if "$ref" in node:
-            ref_path = node["$ref"]  # e.g. "#/$defs/LotInfo"
-            type_name = ref_path.rsplit("/", 1)[-1]
-            if type_name in resolving:
-                # Circular reference — break the cycle with a generic object
-                logger.debug("Circular $ref detected for %s, using generic object", type_name)
-                fallback: dict = {"type": "object"}
-                for k, v in node.items():
-                    if k != "$ref":
-                        fallback[k] = v
-                return fallback
-            if type_name in defs:
-                resolved = _inline(dict(defs[type_name]), resolving | {type_name})
-                for k, v in node.items():
-                    if k != "$ref":
-                        resolved.setdefault(k, v)
-                return resolved
-            return node
-
-        # Flatten single-element allOf (Pydantic sometimes wraps inherited models)
-        if "allOf" in node and isinstance(node["allOf"], list) and len(node["allOf"]) == 1:
-            merged = dict(node["allOf"][0])
-            for k, v in node.items():
-                if k != "allOf":
-                    merged.setdefault(k, v)
-            return _inline(merged, resolving)
-
-        result: dict = {}
-        for key, value in node.items():
-            if isinstance(value, dict):
-                result[key] = _inline(value, resolving)
-            elif isinstance(value, list):
-                result[key] = [
-                    _inline(item, resolving) if isinstance(item, dict) else item
-                    for item in value
-                ]
-            else:
-                result[key] = value
-        return result
-
-    return _inline(schema)
-
-
-def _clean_schema_for_anthropic(schema: dict) -> dict:
-    """Clean schema for Anthropic Claude models.
-
-    - Removes title, description, default
-    - Adds additionalProperties: false on all objects
-    """
-    cleaned: dict = {}
-    for key, value in schema.items():
-        if key in ("title", "description", "default"):
-            continue
-        if isinstance(value, dict):
-            cleaned[key] = _clean_schema_for_anthropic(value)
-        elif isinstance(value, list):
-            cleaned[key] = [
-                _clean_schema_for_anthropic(item) if isinstance(item, dict) else item
-                for item in value
-            ]
-        else:
-            cleaned[key] = value
-
-    if cleaned.get("type") == "object" and "additionalProperties" not in cleaned:
-        cleaned["additionalProperties"] = False
-
-    return cleaned
-
-
-def _flatten_nullable_anyof(node: dict) -> dict:
-    """Convert anyOf nullable pattern to simpler nullable form.
-
-    Pydantic generates: anyOf: [{...real_type}, {type: null}]
-    Many providers prefer: {...real_type} (with the field being Optional in required).
-    """
-    if "anyOf" not in node or not isinstance(node["anyOf"], list):
-        return node
-    variants = node["anyOf"]
-    if len(variants) != 2:
-        return node
-    null_variant = next((v for v in variants if isinstance(v, dict) and v.get("type") == "null"), None)
-    real_variant = next((v for v in variants if isinstance(v, dict) and v.get("type") != "null"), None)
-    if null_variant is None or real_variant is None:
-        return node
-    # Merge: take real variant + any sibling keys from parent (e.g. description)
-    merged = dict(real_variant)
-    for k, v in node.items():
-        if k != "anyOf":
-            merged.setdefault(k, v)
-    return merged
-
-
-def _flatten_nullable_anyof_openai(node: dict) -> dict:
-    """Convert anyOf nullable pattern to OpenAI strict-mode format.
-
-    Primitive types: anyOf: [{type: "number"}, {type: "null"}] -> {type: ["number", "null"]}
-    Object/array types: keep anyOf as-is (OpenAI supports anyOf for complex types).
-    See: https://platform.openai.com/docs/guides/structured-outputs
-    """
-    if "anyOf" not in node or not isinstance(node["anyOf"], list):
-        return node
-    variants = node["anyOf"]
-    if len(variants) != 2:
-        return node
-    null_variant = next((v for v in variants if isinstance(v, dict) and v.get("type") == "null"), None)
-    real_variant = next((v for v in variants if isinstance(v, dict) and v.get("type") != "null"), None)
-    if null_variant is None or real_variant is None:
-        return node
-    real_type = real_variant.get("type")
-    # Object/array types: keep anyOf format (OpenAI supports anyOf for nested schemas)
-    if real_type in ("object", "array") or real_type is None:
-        return node
-    # Primitive types: flatten to type: [T, "null"]
-    merged = dict(real_variant)
-    for k, v in node.items():
-        if k != "anyOf":
-            merged.setdefault(k, v)
-    merged["type"] = [real_type, "null"]
-    return merged
-
-
-def _clean_schema_for_google(schema: dict) -> dict:
-    """Clean schema for Google Gemini models.
-
-    - Removes title, default
-    - KEEPS description (Gemini requires it on every field)
-    - Adds fallback description where missing (including nested items)
-    - Inlines $defs (Gemini doesn't support $ref)
-    - Flattens anyOf nullable patterns (Gemini handles them poorly)
-    - Ensures required array on objects
-    - Adds additionalProperties: false
-    """
-    schema = _resolve_refs(dict(schema))
-
-    def _clean(node: dict, field_name: str = "") -> dict:
-        # Flatten nullable anyOf before processing
-        node = _flatten_nullable_anyof(node)
-
-        cleaned: dict = {}
-        for key, value in node.items():
-            if key in ("title", "default"):
-                continue
-            if key == "properties" and isinstance(value, dict):
-                cleaned_props: dict = {}
-                for prop_name, prop_val in value.items():
-                    if isinstance(prop_val, dict):
-                        cleaned_prop = _clean(prop_val, field_name=prop_name)
-                        if "description" not in cleaned_prop:
-                            cleaned_prop["description"] = prop_name.replace("_", " ")
-                        cleaned_props[prop_name] = cleaned_prop
-                    else:
-                        cleaned_props[prop_name] = prop_val
-                cleaned[key] = cleaned_props
-            elif isinstance(value, dict):
-                cleaned[key] = _clean(value, field_name=field_name)
-            elif isinstance(value, list):
-                cleaned[key] = [
-                    _clean(item, field_name=field_name) if isinstance(item, dict) else item
-                    for item in value
-                ]
-            else:
-                cleaned[key] = value
-
-        if cleaned.get("type") == "object":
-            if "additionalProperties" not in cleaned:
-                cleaned["additionalProperties"] = False
-            # Gemini needs required array — if properties exist but required is missing, add all
-            if "properties" in cleaned and "required" not in cleaned:
-                cleaned["required"] = list(cleaned["properties"].keys())
-
-        # Ensure array items have descriptions
-        if cleaned.get("type") == "array" and "items" in cleaned:
-            items = cleaned["items"]
-            if isinstance(items, dict):
-                if "description" not in items:
-                    items["description"] = f"{field_name} item" if field_name else "array item"
-                # Recursively ensure nested object items also have required
-                if items.get("type") == "object" and "properties" in items and "required" not in items:
-                    items["required"] = list(items["properties"].keys())
-
-        # Top-level description fallback
-        if field_name and "description" not in cleaned and cleaned.get("type") not in (None,):
-            cleaned["description"] = field_name.replace("_", " ")
-
-        return cleaned
-
-    return _clean(schema)
-
-
-def _clean_schema_for_openai(schema: dict) -> dict:
-    """Clean schema for OpenAI GPT models (strict mode).
-
-    - Removes title, default
-    - KEEPS description
-    - Inlines $defs (OpenAI supports them but inline is safer for OpenRouter proxy)
-    - Flattens single-item allOf
-    - Converts anyOf nullable to type: [T, "null"] (OpenAI strict format)
-    - Adds additionalProperties: false
-    - ALL properties must be in required array (OpenAI strict mode rule)
-    See: https://platform.openai.com/docs/guides/structured-outputs
-    """
-    schema = _resolve_refs(dict(schema))
-
-    def _clean(node: dict) -> dict:
-        # Flatten nullable anyOf to OpenAI format: type: [T, "null"]
-        node = _flatten_nullable_anyof_openai(node)
-
-        cleaned: dict = {}
-        for key, value in node.items():
-            if key in ("title", "default"):
-                continue
-            if isinstance(value, dict):
-                cleaned[key] = _clean(value)
-            elif isinstance(value, list):
-                cleaned[key] = [
-                    _clean(item) if isinstance(item, dict) else item
-                    for item in value
-                ]
-            else:
-                cleaned[key] = value
-
-        if cleaned.get("type") == "object":
-            if "additionalProperties" not in cleaned:
-                cleaned["additionalProperties"] = False
-            # OpenAI strict mode: ALL properties must be in required
-            if "properties" in cleaned:
-                cleaned["required"] = list(cleaned["properties"].keys())
-
-        return cleaned
-
-    return _clean(schema)
-
-
-def _clean_schema_generic(schema: dict) -> dict:
-    """Generic schema cleaning for unknown providers.
-
-    - Removes title, default
-    - KEEPS description
-    - Inlines $defs (safer for unknown providers)
-    - Flattens anyOf nullable to type: [T, "null"] (safest for OpenRouter proxy)
-    - Adds additionalProperties: false
-    - ALL properties in required array (strictest common denominator)
-    """
-    schema = _resolve_refs(dict(schema))
-
-    def _clean(node: dict, field_name: str = "") -> dict:
-        node = _flatten_nullable_anyof_openai(node)
-
-        cleaned: dict = {}
-        for key, value in node.items():
-            if key in ("title", "default"):
-                continue
-            if key == "properties" and isinstance(value, dict):
-                cleaned_props: dict = {}
-                for prop_name, prop_val in value.items():
-                    if isinstance(prop_val, dict):
-                        cleaned_prop = _clean(prop_val, field_name=prop_name)
-                        if "description" not in cleaned_prop:
-                            cleaned_prop["description"] = prop_name.replace("_", " ")
-                        cleaned_props[prop_name] = cleaned_prop
-                    else:
-                        cleaned_props[prop_name] = prop_val
-                cleaned[key] = cleaned_props
-            elif isinstance(value, dict):
-                cleaned[key] = _clean(value, field_name=field_name)
-            elif isinstance(value, list):
-                cleaned[key] = [
-                    _clean(item, field_name=field_name) if isinstance(item, dict) else item
-                    for item in value
-                ]
-            else:
-                cleaned[key] = value
-
-        if cleaned.get("type") == "object":
-            if "additionalProperties" not in cleaned:
-                cleaned["additionalProperties"] = False
-            # All properties must be in required (strictest common denominator)
-            if "properties" in cleaned:
-                cleaned["required"] = list(cleaned["properties"].keys())
-
-        return cleaned
-
-    return _clean(schema)
-
-
-def _prepare_schema(raw_schema: dict, provider: str) -> dict:
-    """Dispatch to the appropriate provider-specific schema cleaner."""
-    logger.debug("Preparing schema for provider: %s", provider)
-    if provider == "anthropic":
-        return _clean_schema_for_anthropic(raw_schema)
-    elif provider == "google":
-        return _clean_schema_for_google(raw_schema)
-    elif provider == "openai":
-        return _clean_schema_for_openai(raw_schema)
-    else:
-        return _clean_schema_generic(raw_schema)
-
-
-def _compact_schema_hint(schema: dict) -> str:
-    """Build a compact type-hint string from a JSON schema for Anthropic models.
-
-    Instead of dumping the full schema (3-5KB), produces a concise summary like:
-      project_title: str, cpv_codes: list[str], estimated_value: {amount: num, ...}
-    This gives the model enough type info without bloating the prompt.
-    """
-    def _type_str(prop: dict) -> str:
-        if "$ref" in prop or "anyOf" in prop or "allOf" in prop or "oneOf" in prop:
-            return "object"
-        t = prop.get("type", "any")
-        if t == "array":
-            items = prop.get("items", {})
-            inner = items.get("type", "object")
-            return f"list[{inner}]"
-        return t
-
-    props = schema.get("properties", {})
-    if not props:
-        return json.dumps(schema, ensure_ascii=False)
-
-    parts = []
-    for name, prop in props.items():
-        parts.append(f"{name}: {_type_str(prop)}")
-    return ", ".join(parts)
+    """Thin wrapper around shared extract_json utility for backward compat."""
+    return _extract_json_util(raw)
 
 
 class LLMClient:
@@ -640,8 +236,13 @@ class LLMClient:
         response_format: dict | None = None,
         max_tokens: int = 32000,
         plugins: list[dict] | None = None,
+        thinking_config: object = _SENTINEL,
     ) -> dict:
-        """Build the request body for a chat completion."""
+        """Build the request body for a chat completion.
+
+        If thinking_config is provided (from a provider), it is used directly.
+        Otherwise, falls back to the legacy _build_thinking() helper.
+        """
         body: dict = {
             "model": model or self.default_model,
             "messages": messages,
@@ -654,9 +255,14 @@ class LLMClient:
         if response_format:
             body["response_format"] = response_format
 
-        thinking_cfg = _build_thinking(thinking)
-        if thinking_cfg:
-            body["thinking"] = thinking_cfg
+        # Use provider's thinking_config if provided, otherwise legacy helper
+        if thinking_config is not _SENTINEL:
+            if thinking_config is not None:
+                body["thinking"] = thinking_config
+        else:
+            cfg = _build_thinking(thinking)
+            if cfg:
+                body["thinking"] = cfg
 
         if plugins:
             body["plugins"] = plugins
@@ -692,60 +298,28 @@ class LLMClient:
         """
         raw_schema = response_schema.model_json_schema()
         resolved_model = model or self.default_model
-        provider = _detect_provider(resolved_model)
-        cleaned_schema = _prepare_schema(raw_schema, provider)
 
-        if provider == "anthropic":
-            response_format = {"type": "json_object"}
-            schema_instruction = (
-                f"\n\nRespond with valid JSON object. "
-                f"Field types: {_compact_schema_hint(cleaned_schema)}"
-            )
-            system_with_schema = system + schema_instruction
-        else:
-            response_format = {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": response_schema.__name__,
-                    "schema": cleaned_schema,
-                },
-            }
-            system_with_schema = system
-
-        # Build messages — Anthropic gets cache_control for prompt caching
-        if provider == "anthropic":
-            messages = [
-                {
-                    "role": "system",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": system_with_schema,
-                            "cache_control": {"type": "ephemeral"},
-                        }
-                    ],
-                },
-                {"role": "user", "content": user},
-            ]
-        else:
-            messages = [
-                {"role": "system", "content": system_with_schema},
-                {"role": "user", "content": user},
-            ]
+        # Delegate provider-specific formatting to the strategy object
+        provider_impl = get_provider(resolved_model)
+        cleaned_schema = provider_impl.prepare_schema(raw_schema)
+        response_format = provider_impl.build_response_format(cleaned_schema, response_schema.__name__)
+        messages = provider_impl.build_messages(system, user)
+        thinking_config = provider_impl.build_thinking_config(thinking)
+        adj_temperature = provider_impl.get_temperature(temperature, thinking)
 
         body = self._build_body(
             messages=messages,
             model=model,
-            thinking=thinking,
-            temperature=temperature,
+            temperature=adj_temperature,
             response_format=response_format,
             max_tokens=max_tokens,
             plugins=plugins,
+            thinking_config=thinking_config,
         )
 
         logger.debug(
-            "Structured completion request: model=%s schema=%s provider=%s",
-            body["model"], response_schema.__name__, provider,
+            "Structured completion request: model=%s schema=%s",
+            body["model"], response_schema.__name__,
         )
 
         response = await self._request_with_retry("POST", "/chat/completions", json=body)
@@ -840,61 +414,29 @@ class LLMClient:
 
         raw_schema = response_schema.model_json_schema()
         resolved_model = model or self.default_model
-        provider = _detect_provider(resolved_model)
-        cleaned_schema = _prepare_schema(raw_schema, provider)
 
-        if provider == "anthropic":
-            response_format = {"type": "json_object"}
-            schema_instruction = (
-                f"\n\nRespond with valid JSON object. "
-                f"Field types: {_compact_schema_hint(cleaned_schema)}"
-            )
-            system_with_schema = system + schema_instruction
-        else:
-            response_format = {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": response_schema.__name__,
-                    "schema": cleaned_schema,
-                },
-            }
-            system_with_schema = system
-
-        # Build messages — Anthropic gets cache_control for prompt caching
-        if provider == "anthropic":
-            messages = [
-                {
-                    "role": "system",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": system_with_schema,
-                            "cache_control": {"type": "ephemeral"},
-                        }
-                    ],
-                },
-                {"role": "user", "content": user},
-            ]
-        else:
-            messages = [
-                {"role": "system", "content": system_with_schema},
-                {"role": "user", "content": user},
-            ]
+        # Delegate provider-specific formatting to the strategy object
+        provider_impl = get_provider(resolved_model)
+        cleaned_schema = provider_impl.prepare_schema(raw_schema)
+        response_format = provider_impl.build_response_format(cleaned_schema, response_schema.__name__)
+        messages = provider_impl.build_messages(system, user)
+        thinking_config = provider_impl.build_thinking_config(thinking)
+        adj_temperature = provider_impl.get_temperature(temperature, thinking)
 
         body = self._build_body(
             messages=messages,
             model=model,
-            thinking=thinking,
-            temperature=temperature,
+            temperature=adj_temperature,
             response_format=response_format,
             max_tokens=max_tokens,
             plugins=plugins,
+            thinking_config=thinking_config,
         )
         body["stream"] = True
 
         logger.debug(
-            "Streaming structured completion: model=%s schema=%s provider=%s",
-            body["model"], response_schema.__name__, provider,
+            "Streaming structured completion: model=%s schema=%s",
+            body["model"], response_schema.__name__,
         )
 
         try:
@@ -905,7 +447,7 @@ class LLMClient:
                 "POST", "/chat/completions", json=body,
             ) as response:
                 if response.status_code != 200:
-                    body_text = await response.aread()
+                    await response.aread()
                     logger.warning(
                         "Streaming request failed (%d), falling back to non-streaming",
                         response.status_code,
@@ -1051,18 +593,8 @@ class LLMClient:
         ]
 
         resolved_model = model or self.default_model
-        provider = _detect_provider(resolved_model)
-
-        if provider == "anthropic":
-            response_format = {"type": "json_object"}
-        else:
-            response_format = {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": response_schema.__name__,
-                    "schema": cleaned_schema,
-                },
-            }
+        provider_impl = get_provider(resolved_model)
+        response_format = provider_impl.build_response_format(cleaned_schema, response_schema.__name__)
 
         body = self._build_body(
             messages=correction_messages,

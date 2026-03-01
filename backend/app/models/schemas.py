@@ -199,6 +199,8 @@ class SourceDocument(BaseModel):
         """Gracefully handle unknown document type values from LLM."""
         if v is None:
             return DocumentType.OTHER.value
+        if isinstance(v, DocumentType):
+            return v.value
         v_str = str(v).strip().lower().replace(" ", "_").replace("-", "_")
         valid = {e.value for e in DocumentType}
         if v_str in valid:

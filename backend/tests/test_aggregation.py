@@ -60,9 +60,9 @@ def _make_extraction(
 def _make_mock_llm(report: AggregatedReport, usage: dict | None = None) -> MagicMock:
     """Create a mock LLM client that returns the given report."""
     mock_llm = MagicMock()
-    mock_llm.complete_structured = AsyncMock(
-        return_value=(report, usage or {"input_tokens": 5000, "output_tokens": 1000})
-    )
+    rv = (report, usage or {"input_tokens": 5000, "output_tokens": 1000})
+    mock_llm.complete_structured = AsyncMock(return_value=rv)
+    mock_llm.complete_structured_streaming = AsyncMock(return_value=rv)
     return mock_llm
 
 
@@ -118,8 +118,8 @@ async def test_aggregate_three_documents():
     assert usage["output_tokens"] == 1000
 
     # Verify LLM was called correctly
-    mock_llm.complete_structured.assert_called_once()
-    call_kwargs = mock_llm.complete_structured.call_args
+    mock_llm.complete_structured_streaming.assert_called_once()
+    call_kwargs = mock_llm.complete_structured_streaming.call_args
     assert call_kwargs.kwargs["response_schema"] is AggregatedReport
     assert call_kwargs.kwargs["model"] == "anthropic/claude-sonnet-4"
 
@@ -153,7 +153,7 @@ async def test_aggregate_single_document():
     assert report.source_documents[0].filename == "single.pdf"
 
     # Verify user prompt contains doc count = 1
-    call_args = mock_llm.complete_structured.call_args
+    call_args = mock_llm.complete_structured_streaming.call_args
     user_prompt = call_args.kwargs["user"]
     assert "1 dokumentai" in user_prompt or "Dokumentas 1:" in user_prompt
 
@@ -204,7 +204,7 @@ async def test_aggregate_prompt_contains_all_extractions():
 
     await aggregate_results(docs_and_exts, mock_llm, "model-x")
 
-    call_args = mock_llm.complete_structured.call_args
+    call_args = mock_llm.complete_structured_streaming.call_args
     user_prompt = call_args.kwargs["user"]
 
     # Verify all documents appear numbered
