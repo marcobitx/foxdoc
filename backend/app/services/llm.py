@@ -16,9 +16,6 @@ import httpx
 from pydantic import BaseModel
 
 from app.services.providers import get_provider
-from app.services.providers.anthropic import (  # noqa: F401
-    _clean_schema_for_anthropic,  # re-export for backward compat (used by tests)
-)
 from app.services.schema_utils import extract_json as _extract_json_util
 
 logger = logging.getLogger(__name__)
@@ -237,6 +234,7 @@ class LLMClient:
         max_tokens: int = 32000,
         plugins: list[dict] | None = None,
         thinking_config: object = _SENTINEL,
+        provider_routing: dict | None = None,
     ) -> dict:
         """Build the request body for a chat completion.
 
@@ -266,6 +264,10 @@ class LLMClient:
 
         if plugins:
             body["plugins"] = plugins
+
+        # OpenRouter provider routing (e.g. force Anthropic backend)
+        if provider_routing:
+            body["provider"] = provider_routing
 
         return body
 
@@ -315,6 +317,7 @@ class LLMClient:
             max_tokens=max_tokens,
             plugins=plugins,
             thinking_config=thinking_config,
+            provider_routing=provider_impl.get_provider_routing(),
         )
 
         logger.debug(
@@ -431,6 +434,7 @@ class LLMClient:
             max_tokens=max_tokens,
             plugins=plugins,
             thinking_config=thinking_config,
+            provider_routing=provider_impl.get_provider_routing(),
         )
         body["stream"] = True
 
@@ -602,6 +606,7 @@ class LLMClient:
             thinking="off",
             temperature=0.0,
             response_format=response_format,
+            provider_routing=provider_impl.get_provider_routing(),
         )
 
         response = await self._request_with_retry("POST", "/chat/completions", json=body)
@@ -644,6 +649,9 @@ class LLMClient:
         thinking: str = "high",
     ) -> tuple[str, dict]:
         """Simple text completion. Returns (text, usage_dict)."""
+        resolved_model = model or self.default_model
+        provider_impl = get_provider(resolved_model)
+
         messages = [
             {"role": "system", "content": system},
             {"role": "user", "content": user},
@@ -653,6 +661,7 @@ class LLMClient:
             messages=messages,
             model=model,
             thinking=thinking,
+            provider_routing=provider_impl.get_provider_routing(),
         )
 
         logger.debug("Text completion request: model=%s", body["model"])
@@ -684,12 +693,15 @@ class LLMClient:
         Yields text chunks as they arrive.
         Uses server-sent events from OpenRouter.
         """
+        resolved_model = model or self.default_model
+        provider_impl = get_provider(resolved_model)
         full_messages = [{"role": "system", "content": system}] + messages
 
         body = self._build_body(
             messages=full_messages,
             model=model,
             thinking=thinking,
+            provider_routing=provider_impl.get_provider_routing(),
         )
         body["stream"] = True
 

@@ -38,3 +38,7 @@ class BaseProvider(ABC):
     def supports_native_pdf(self) -> bool:
         """Whether this provider supports native PDF input (base64 document blocks)."""
         ...
+
+    def get_provider_routing(self) -> dict | None:
+        """Return OpenRouter provider routing config, or None for default routing."""
+        return None

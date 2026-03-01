@@ -17,7 +17,7 @@ from app.services.llm import (
     _build_thinking,
     _extract_usage,
 )
-from app.services.llm import _clean_schema_for_anthropic as _clean_json_schema
+from app.services.providers.anthropic import AnthropicProvider
 
 
 # ── Test helpers ────────────────────────────────────────────────────────────────
@@ -104,29 +104,31 @@ class TestExtractUsage:
         assert _extract_usage(data) == {"input_tokens": 42, "output_tokens": 0}
 
 
-class TestCleanJsonSchema:
-    """Tests for provider schema cleaning (Anthropic removes title/description/default)."""
+class TestAnthropicPrepareSchema:
+    """Tests for Anthropic provider schema preparation (returns raw schema for prompt injection)."""
 
-    def test_removes_title(self):
+    def test_returns_schema_unchanged(self):
+        provider = AnthropicProvider()
         schema = {"title": "Foo", "type": "object", "properties": {}}
-        cleaned = _clean_json_schema(schema)
-        assert "title" not in cleaned
-        assert cleaned["type"] == "object"
+        result = provider.prepare_schema(schema)
+        assert result == schema
 
-    def test_removes_nested_title(self):
+    def test_preserves_nested_structure(self):
+        provider = AnthropicProvider()
         schema = {
             "type": "object",
             "properties": {
                 "name": {"title": "Name", "type": "string"}
             },
         }
-        cleaned = _clean_json_schema(schema)
-        assert "title" not in cleaned["properties"]["name"]
+        result = provider.prepare_schema(schema)
+        assert result["properties"]["name"]["title"] == "Name"
 
-    def test_removes_title_and_description(self):
+    def test_preserves_all_fields(self):
+        provider = AnthropicProvider()
         schema = {"type": "string", "description": "hello", "title": "T"}
-        cleaned = _clean_json_schema(schema)
-        assert cleaned == {"type": "string"}
+        result = provider.prepare_schema(schema)
+        assert result == {"type": "string", "description": "hello", "title": "T"}
 
 
 # ── Integration tests with mocked httpx ─────────────────────────────────────────
