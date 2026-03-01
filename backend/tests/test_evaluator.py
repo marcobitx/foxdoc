@@ -113,9 +113,9 @@ def _make_source_documents() -> list[SourceDocument]:
 def _make_mock_llm(evaluation: QAEvaluation, usage: dict | None = None) -> MagicMock:
     """Create a mock LLM client that returns the given evaluation."""
     mock_llm = MagicMock()
-    mock_llm.complete_structured = AsyncMock(
-        return_value=(evaluation, usage or {"input_tokens": 2000, "output_tokens": 300})
-    )
+    rv = (evaluation, usage or {"input_tokens": 2000, "output_tokens": 300})
+    mock_llm.complete_structured = AsyncMock(return_value=rv)
+    mock_llm.complete_structured_streaming = AsyncMock(return_value=rv)
     return mock_llm
 
 
@@ -184,8 +184,8 @@ async def test_evaluate_incomplete_report():
 
 
 @pytest.mark.asyncio
-async def test_evaluate_uses_medium_thinking():
-    """Evaluator should use thinking='medium' for faster QA."""
+async def test_evaluate_uses_low_thinking():
+    """Evaluator should use thinking='low' for faster QA."""
     report = _make_complete_report()
     documents = _make_source_documents()
 
@@ -194,8 +194,8 @@ async def test_evaluate_uses_medium_thinking():
 
     await evaluate_report(report, documents, mock_llm, "model-x")
 
-    call_kwargs = mock_llm.complete_structured.call_args.kwargs
-    assert call_kwargs["thinking"] == "medium"
+    call_kwargs = mock_llm.complete_structured_streaming.call_args.kwargs
+    assert call_kwargs["thinking"] == "low"
     assert call_kwargs["response_schema"] is QAEvaluation
     assert call_kwargs["model"] == "model-x"
 
@@ -211,7 +211,7 @@ async def test_evaluate_prompt_contains_report_json():
 
     await evaluate_report(report, documents, mock_llm, "model-x")
 
-    user_prompt = mock_llm.complete_structured.call_args.kwargs["user"]
+    user_prompt = mock_llm.complete_structured_streaming.call_args.kwargs["user"]
 
     # Report JSON should be in the prompt
     assert "Vilniaus miesto IT infrastruktūros" in user_prompt
@@ -238,7 +238,7 @@ async def test_evaluate_prompt_document_list_format():
 
     await evaluate_report(report, documents, mock_llm, "model")
 
-    user_prompt = mock_llm.complete_structured.call_args.kwargs["user"]
+    user_prompt = mock_llm.complete_structured_streaming.call_args.kwargs["user"]
 
     # Check numbered format with type and optional pages
     assert "1. spec.pdf (technical_spec, 30 psl.)" in user_prompt
@@ -263,5 +263,5 @@ async def test_evaluate_empty_documents_list():
     assert evaluation.completeness_score == 0.1
 
     # Prompt should have the fallback text for no documents
-    user_prompt = mock_llm.complete_structured.call_args.kwargs["user"]
+    user_prompt = mock_llm.complete_structured_streaming.call_args.kwargs["user"]
     assert "(nėra dokumentų)" in user_prompt

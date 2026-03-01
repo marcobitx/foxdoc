@@ -326,12 +326,12 @@ class TestPipelineFullRun:
         await pipeline.run([Path("/tmp/a.pdf")])
         await asyncio.sleep(0.05)
 
+        # Evaluation runs in background (non-blocking), so no EVALUATING status
         expected = [
             AnalysisStatus.UNPACKING.value,
             AnalysisStatus.PARSING.value,
             AnalysisStatus.EXTRACTING.value,
             AnalysisStatus.AGGREGATING.value,
-            AnalysisStatus.EVALUATING.value,
             AnalysisStatus.COMPLETED.value,
         ]
         assert status_log == expected
@@ -797,12 +797,10 @@ class TestPipelineEvents:
 
         events = await mock_db.get_events(analysis_id)
 
-        # Verify at least aggregation_started/completed and evaluation_started/completed + metrics_update
+        # Evaluation runs in background (non-blocking), so only check core pipeline events
         event_types = [e["event_type"] for e in events]
         assert "aggregation_started" in event_types
         assert "aggregation_completed" in event_types
-        assert "evaluation_started" in event_types
-        assert "evaluation_completed" in event_types
         assert "metrics_update" in event_types
 
         # Verify indexes are sequential
@@ -901,7 +899,7 @@ class TestPipelineEvents:
 
         # Simulate extract_all calling the callbacks
         async def fake_extract_all(
-            docs, llm, model, max_concurrent=5, on_started=None, on_completed=None, on_error=None
+            docs, llm, model, max_concurrent=5, on_started=None, on_completed=None, on_error=None, **kwargs
         ):
             for i, d in enumerate(docs):
                 if on_started:
@@ -1012,7 +1010,7 @@ class TestPipelineEvents:
 
 
 class TestPipelineEvaluationFailure:
-    """Test pipeline when evaluation step fails."""
+    """Test pipeline when evaluation step fails (non-fatal, background)."""
 
     @pytest.mark.asyncio
     @patch("app.services.pipeline.extract_files")
@@ -1020,7 +1018,7 @@ class TestPipelineEvaluationFailure:
     @patch("app.services.pipeline.extract_all")
     @patch("app.services.pipeline.aggregate_results")
     @patch("app.services.pipeline.evaluate_report")
-    async def test_evaluation_error_fails_pipeline(
+    async def test_evaluation_error_does_not_fail_pipeline(
         self,
         mock_evaluate,
         mock_aggregate,
@@ -1030,7 +1028,7 @@ class TestPipelineEvaluationFailure:
         mock_db,
         mock_llm,
     ):
-        """Pipeline fails if evaluate_report raises."""
+        """Evaluation runs in background — failure is non-fatal, pipeline stays COMPLETED."""
         doc = _make_parsed_doc()
         mock_extract_files.return_value = [(Path("/tmp/a.pdf"), "a.pdf")]
         mock_parse_all.return_value = [doc]
@@ -1048,11 +1046,13 @@ class TestPipelineEvaluationFailure:
             analysis_id=analysis_id, db=mock_db, llm=mock_llm, model="test-model"
         )
         await pipeline.run([Path("/tmp/a.pdf")])
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.15)
 
         analysis = await mock_db.get_analysis(analysis_id)
-        assert analysis["status"] == AnalysisStatus.FAILED.value
-        assert "Evaluation model error" in analysis["error"]
+        # Pipeline completes successfully; evaluation failure is logged but non-fatal
+        assert analysis["status"] == AnalysisStatus.COMPLETED.value
+        # Report should be saved despite evaluation failure
+        assert analysis["report_json"] is not None
         # Extraction and aggregation metrics should be preserved
         m = analysis["metrics_json"]
         assert m["tokens_extraction_input"] == 100
@@ -1245,10 +1245,12 @@ class TestPipelineServiceCalls:
             analysis_id=analysis_id, db=mock_db, llm=mock_llm, model="test-model"
         )
         await pipeline.run([Path("/tmp/spec.pdf")])
-        await asyncio.sleep(0.05)
+        # Background evaluation task needs time to start and call evaluate_report
+        await asyncio.sleep(0.2)
 
         # Verify evaluate_report was called with correct source docs
         eval_call = mock_evaluate.call_args
+        assert eval_call is not None, "evaluate_report was not called (background task may not have run)"
         source_docs = eval_call.args[1] if len(eval_call.args) > 1 else eval_call.kwargs.get("documents")
         assert len(source_docs) == 2
         assert source_docs[0].filename == "spec.pdf"

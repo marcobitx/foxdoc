@@ -12,7 +12,13 @@ from httpx import ASGITransport, AsyncClient
 
 from app.convex_client import ConvexDB, _db_instance
 from app.main import app
+from app.middleware.auth import require_auth
 import app.convex_client as convex_module
+
+
+async def _mock_require_auth():
+    """Override auth dependency to return a fake user ID."""
+    return "test-user-id"
 
 
 @pytest_asyncio.fixture(autouse=True)
@@ -21,8 +27,11 @@ async def reset_db():
     # Force a fresh in-memory DB for each test
     fresh_db = ConvexDB(url="")
     convex_module._db_instance = fresh_db
+    # Override auth to bypass JWT validation in tests
+    app.dependency_overrides[require_auth] = _mock_require_auth
     yield
     convex_module._db_instance = None
+    app.dependency_overrides.pop(require_auth, None)
 
 
 @pytest_asyncio.fixture
