@@ -105,7 +105,7 @@ export default function ChatPanel({ analysisId, open, onClose }: Props) {
       {/* Backdrop */}
       <div
         className={clsx(
-          "absolute inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300",
+          "absolute inset-0 bg-black/20 backdrop-blur-md transition-opacity duration-300",
           animating ? "opacity-100" : "opacity-0"
         )}
         onClick={handleClose}

@@ -699,7 +699,7 @@ function NoteEditorModal({
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-10 sm:pt-14 md:pt-16 px-3 sm:px-4 md:px-6 lg:px-8">
       {/* Backdrop — full-app blur overlay */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-md animate-fade-in"
+        className="absolute inset-0 bg-black/20 backdrop-blur-md animate-fade-in"
         onClick={onClose}
       />
       <div
@@ -1145,7 +1145,7 @@ export default function NotesView() {
         <div className="flex-shrink-0">
           <Tooltip content="Sukurti naują užrašą" side="bottom">
             <button onClick={() => handleCreateNote()} className="btn-professional group">
-              <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
+              <Plus className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Naujas užrašas</span>
               <span className="sm:hidden">Naujas</span>
             </button>
@@ -1189,7 +1189,7 @@ export default function NotesView() {
                   Kurkite užrašus, grupuokite pagal statusą ir prioritetą, naudokite Kanban lentą idėjoms sekti.
                 </p>
                 <button onClick={() => handleCreateNote()} className="btn-professional mt-5 group">
-                  <Plus className="w-3.5 h-3.5 transition-transform group-hover:rotate-90" />
+                  <Plus className="w-3.5 h-3.5" />
                   Sukurti pirmą užrašą
                 </button>
               </div>
