@@ -16,7 +16,7 @@ import httpx
 from pydantic import BaseModel
 
 from app.services.providers import get_provider
-from app.services.providers.anthropic import (
+from app.services.providers.anthropic import (  # noqa: F401
     _clean_schema_for_anthropic,  # re-export for backward compat (used by tests)
 )
 from app.services.schema_utils import extract_json as _extract_json_util
@@ -145,12 +145,6 @@ def _extract_usage(data: dict) -> dict:
 def _extract_json(raw: str) -> str:
     """Thin wrapper around shared extract_json utility for backward compat."""
     return _extract_json_util(raw)
-
-
-class LLMClient:
-    def __init__(self, api_key: str, default_model: str = "anthropic/claude-sonnet-4"):
-        self.api_key = api_key
-        self.default_model = default_model
 
 
 class LLMClient:
@@ -453,7 +447,7 @@ class LLMClient:
                 "POST", "/chat/completions", json=body,
             ) as response:
                 if response.status_code != 200:
-                    body_text = await response.aread()
+                    await response.aread()
                     logger.warning(
                         "Streaming request failed (%d), falling back to non-streaming",
                         response.status_code,
