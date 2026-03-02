@@ -30,6 +30,10 @@ _active_pipelines: dict[str, "AnalysisPipeline"] = {}
 def get_active_pipeline(analysis_id: str) -> "AnalysisPipeline | None":
     return _active_pipelines.get(analysis_id)
 
+# Anthropic extraction: always use Haiku for speed/cost, UI model for aggregation
+ANTHROPIC_EXTRACTION_MODEL = "anthropic/claude-haiku-4"
+ANTHROPIC_EXTRACTION_CONTEXT = 200_000
+
 # Fallback context lengths for known models (used when API lookup fails)
 KNOWN_CONTEXT_LENGTHS: dict[str, int] = {
     "anthropic/claude-sonnet-4": 200_000,
@@ -200,13 +204,23 @@ class AnalysisPipeline:
             context_length = await self._resolve_context_length()
 
             # Step 2: Extract per-document (parallel with concurrency limit)
+            # Anthropic models: use Haiku for extraction (fast/cheap),
+            # UI-selected model used for aggregation/evaluation only
+            if self.model.startswith("anthropic/"):
+                extraction_model = ANTHROPIC_EXTRACTION_MODEL
+                extraction_context = ANTHROPIC_EXTRACTION_CONTEXT
+                logger.info("Anthropic model selected — using %s for extraction", extraction_model)
+            else:
+                extraction_model = self.model
+                extraction_context = context_length
+
             await self._check_cancellation()
             await self._update_status(AnalysisStatus.EXTRACTING)
             extractions = await extract_all(
                 docs=parsed_docs,
                 llm=self.llm,
-                model=self.model,
-                context_length=context_length,
+                model=extraction_model,
+                context_length=extraction_context,
                 max_concurrent=min(len(parsed_docs), 5),
                 on_started=self._on_extraction_started_sync,
                 on_completed=self._on_extraction_completed_sync,
