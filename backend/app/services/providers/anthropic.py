@@ -58,7 +58,7 @@ class AnthropicProvider(BaseProvider):
                 f"- Do NOT wrap in markdown code fences (no ```)\n"
                 f"- Do NOT add any text before or after the JSON\n"
                 f"- All string values must use double quotes\n"
-                f"- Use null for missing/unknown values"
+                f"- OMIT fields entirely if the value is null, unknown, or an empty list — do NOT include them in the output"
             )
             system = system + schema_instruction
             # Clear pending state
