@@ -90,3 +90,14 @@ async def get_usage_stats(
         )
     stats = await db.get_token_usage_stats()
     return TokenUsageStats(**stats)
+
+
+@router.delete("/usage")
+async def reset_usage_stats(
+    db: ConvexDB = Depends(get_db),
+    user_id: str | None = Depends(get_current_user_id),
+):
+    """Reset all token usage history by clearing metrics from analyses."""
+    await db.reset_token_usage()
+    logger.info("Token usage stats reset by user %s", user_id)
+    return {"ok": True}

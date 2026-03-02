@@ -265,6 +265,11 @@ export async function getUsageStats(): Promise<TokenUsageStats> {
   return res.json();
 }
 
+export async function resetUsageStats(): Promise<void> {
+  const res = await fetch(`${BASE}/usage`, { method: 'DELETE', headers: { ...authHeaders() } });
+  if (!res.ok) throw new Error(res.statusText);
+}
+
 // ── Notes ─────────────────────────────────────────────────────────────────────
 
 export interface NoteData {

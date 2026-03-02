@@ -8,9 +8,9 @@ import {
   Save, Cpu, Loader2, CheckCircle2,
   Zap, HardDrive, FileText, Users, Clock,
   ExternalLink, ChevronRight, ArrowUpRight, ArrowDownRight,
-  DollarSign, Hash, Layers, Star,
+  DollarSign, Hash, Layers, Star, RotateCcw,
 } from 'lucide-react';
-import { getSettings, updateSettings, getModels, getUsageStats, type Settings, type ModelInfo, type TokenUsageStats } from '../lib/api';
+import { getSettings, updateSettings, getModels, getUsageStats, resetUsageStats, type Settings, type ModelInfo, type TokenUsageStats } from '../lib/api';
 import { buildVisibleModels } from '../lib/modelStorage';
 import { appStore, useStore, initModelStore } from '../lib/store';
 import { ProviderLogo } from './ProviderLogos';
@@ -26,6 +26,7 @@ export default function SettingsView() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [resettingUsage, setResettingUsage] = useState(false);
   const [savingDefault, setSavingDefault] = useState<string | null>(null);
 
   // Model list from store — reactive, synced with ModelPanel (single source of truth)
@@ -257,6 +258,29 @@ export default function SettingsView() {
               Tokenų naudojimas
             </h2>
             <span className="text-[10px] text-surface-600 font-medium ml-1">(visa istorija)</span>
+            <Tooltip content="Išvalyti tokenų naudojimo istoriją" side="top">
+              <button
+                onClick={async () => {
+                  if (!confirm('Ar tikrai norite išvalyti visą tokenų naudojimo istoriją?')) return;
+                  setResettingUsage(true);
+                  try {
+                    await resetUsageStats();
+                    setUsage(null);
+                    const fresh = await getUsageStats();
+                    setUsage(fresh);
+                  } catch (e) {
+                    console.error('Failed to reset usage stats', e);
+                  } finally {
+                    setResettingUsage(false);
+                  }
+                }}
+                disabled={resettingUsage}
+                className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium text-surface-500 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+              >
+                <RotateCcw size={12} className={resettingUsage ? 'animate-spin' : ''} />
+                Reset
+              </button>
+            </Tooltip>
           </div>
 
           {/* Top stats row */}

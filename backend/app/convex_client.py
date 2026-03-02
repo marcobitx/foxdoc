@@ -794,6 +794,13 @@ class ConvexDB:
 
         return stats
 
+    async def reset_token_usage(self) -> None:
+        """Clear metrics_json on every analysis, effectively resetting usage stats."""
+        analyses = await self.list_analyses(limit=10000, offset=0)
+        for a in analyses:
+            if a.get("metrics_json") is not None:
+                await self.update_analysis(a["_id"], metrics_json=None)
+
     async def update_saved_report(self, bookmark_id: str, **kwargs: Any) -> None:
         """Edit title/notes/pinned on a saved report."""
         if self.is_convex:
