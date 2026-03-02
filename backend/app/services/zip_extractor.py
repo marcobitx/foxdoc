@@ -93,6 +93,12 @@ async def _extract_zip(
                 if info.is_dir():
                     continue
 
+                # Skip Office temp/lock files (~$filename.docx)
+                basename = info.filename.rsplit("/", 1)[-1]
+                if basename.startswith("~$"):
+                    logger.debug("Skipping Office lock file: %s", info.filename)
+                    continue
+
                 # Sanitize the filename to prevent path traversal
                 safe_name = _sanitize_filename(info.filename)
                 if safe_name is None:
@@ -234,6 +240,11 @@ async def _extract_7z(
         # Walk extracted directory and collect supported files
         for root, _dirs, files in os.walk(dest_dir):
             for filename in files:
+                # Skip Office temp/lock files (~$filename.docx)
+                if filename.startswith("~$"):
+                    logger.debug("Skipping Office lock file: %s", filename)
+                    continue
+
                 file_path = Path(root) / filename
                 ext = file_path.suffix.lower()
 
