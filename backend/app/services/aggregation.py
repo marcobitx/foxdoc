@@ -100,7 +100,10 @@ async def aggregate_results(
 
     per_doc_results = "\n\n".join(per_doc_blocks)
 
-    # Get analysis-type-specific prompts
+    # Get analysis-type-specific prompts and thinking level.
+    # Aggregation is the ONLY phase that uses the UI thinking slider —
+    # this is where reasoning adds value (resolving conflicts, prioritising).
+    # Extraction and evaluation have thinking hardcoded to "off".
     agg_system, agg_user_template = get_aggregation_prompts(analysis_type, custom_instructions)
     thinking = get_thinking_level(analysis_type, thinking_override)
 

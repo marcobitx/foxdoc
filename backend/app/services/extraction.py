@@ -10,7 +10,7 @@ from typing import Awaitable, Callable, Optional
 
 from app.models.schemas import ExtractionResult
 from app.prompts.extraction import EXTRACTION_SYSTEM, EXTRACTION_USER
-from app.prompts.analysis_types import get_extraction_prompts, get_thinking_level
+from app.prompts.analysis_types import get_extraction_prompts
 from app.prompts.extraction_ocr import EXTRACTION_OCR_USER
 from app.services.llm import OPENROUTER_MAX_FILE_SIZE, LLMClient, build_multimodal_content
 from app.services.parser import ParsedDocument
@@ -22,10 +22,10 @@ def calculate_max_chars(context_length: int) -> int:
     """Calculate max chunk size based on model context window.
 
     Formula: (context - reserved) * chars_per_token * safety_fill
-    Reserved: 32k output + 2k system + 2k thinking + 1k overhead = 37k tokens
+    Reserved: 32k output + 2k system + 1k overhead = 35k tokens
     Safety: 70% fill — Anthropic recommends 50-70% for optimal quality.
     """
-    reserved = 37_000  # max_output + system + thinking + overhead
+    reserved = 35_000  # max_output + system + overhead (no thinking budget)
     available_tokens = max(context_length - reserved, 8_000)
     safe_tokens = int(available_tokens * 0.70)
     return safe_tokens * 4  # ~4 chars per token
@@ -158,9 +158,15 @@ async def _extract_single(
     thinking_override: str = "",
     cancel_event: Optional[asyncio.Event] = None,
 ) -> tuple[ExtractionResult, dict]:
-    """Extract structured data from a single document/chunk via LLM call."""
+    """Extract structured data from a single document/chunk via LLM call.
+
+    Thinking is always disabled for extraction — this phase does structured
+    JSON extraction where reasoning tokens add cost (~15-20%) without
+    improving output quality. The UI thinking slider applies only to
+    aggregation where the model must resolve conflicts and prioritise.
+    """
     system_prompt, user_template = get_extraction_prompts(analysis_type, custom_instructions)
-    thinking = get_thinking_level(analysis_type, thinking_override)
+    thinking = "off"  # hardcoded: reasoning adds no value for structured extraction
 
     user_prompt = user_template.format(
         filename=doc.filename,

@@ -29,7 +29,7 @@ export default function SectionThinking() {
   return (
     <div className="p-4 bg-transparent">
       <div className="flex items-center justify-between mb-3">
-        <Tooltip content="AI mąstymo gylis — daugiau tokenų = tikslesni rezultatai, bet lėčiau" side="left">
+        <Tooltip content="AI mąstymo gylis agregacijos fazėje — daugiau tokenų = tikslesni rezultatai, bet lėčiau. Duomenų ištraukimas visada be mąstymo." side="left">
           <div className="flex items-center gap-2">
             <Brain className="w-3.5 h-3.5 text-brand-400" />
             <h3 className="text-[11px] font-bold text-surface-500 uppercase tracking-widest">Thinking</h3>

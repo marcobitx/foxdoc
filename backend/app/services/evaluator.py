@@ -33,7 +33,8 @@ async def evaluate_report(
     1. Serialize report to JSON
     2. Format document list
     3. Call llm.complete_structured() with EVALUATION_SYSTEM prompt
-    4. Use thinking="medium" (faster QA, less accuracy needed)
+    4. Thinking is hardcoded to "off" — QA scoring is straightforward
+       structured output; reasoning tokens add cost without benefit
     5. Return (QAEvaluation, usage_dict)
     """
     logger.info("Evaluating report with %d source documents", len(documents))
@@ -61,13 +62,14 @@ async def evaluate_report(
         len(documents),
     )
 
-    # Call LLM with thinking="medium" — QA is simpler, less accuracy needed
+    # Thinking disabled for evaluation — minimal cost savings (single call,
+    # max 4k output) and QA scoring is straightforward structured output.
     evaluation, usage = await llm.complete_structured_streaming(
         system=EVALUATION_SYSTEM,
         user=user_prompt,
         response_schema=QAEvaluation,
         model=model,
-        thinking="low",
+        thinking="off",
         max_tokens=4000,
         on_thinking=on_thinking,
     )
