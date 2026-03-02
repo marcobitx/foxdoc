@@ -260,14 +260,16 @@ export default function SettingsView() {
             </h2>
             <span className="text-[10px] text-surface-600 font-medium ml-1">(visa istorija)</span>
             {!confirmReset ? (
-              <button
-                onClick={() => setConfirmReset(true)}
-                disabled={resettingUsage}
-                className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium text-surface-500 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
-              >
-                <RotateCcw size={12} className={resettingUsage ? 'animate-spin' : ''} />
-                Reset
-              </button>
+              <Tooltip content="Išvalyti tokenų naudojimo istoriją" side="top">
+                <button
+                  onClick={() => setConfirmReset(true)}
+                  disabled={resettingUsage}
+                  className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium text-surface-500 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                >
+                  <RotateCcw size={12} className={resettingUsage ? 'animate-spin' : ''} />
+                  Reset
+                </button>
+              </Tooltip>
             ) : (
               <div className="ml-auto flex items-center gap-2">
                 <span className="text-[11px] text-surface-500">Tikrai išvalyti?</span>
