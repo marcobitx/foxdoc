@@ -118,11 +118,17 @@ export default function App() {
   const handleCancel = useCallback(async () => {
     if (!state.currentAnalysisId) return;
     try {
-      stopAnalysisStream();
       await cancelAnalysis(state.currentAnalysisId);
-      appStore.setState({ error: 'Analizė atšaukta', analysisStatus: null, streamStatus: 'CANCELED' });
+      stopAnalysisStream();
+      appStore.setState({
+        error: 'Analizė atšaukta',
+        analysisStatus: 'CANCELED',
+        streamStatus: 'CANCELED',
+        streamThinkingActive: false,
+      });
     } catch (err) {
-      console.error('Failed to cancel analysis:', err);
+      console.error('Failed to cancel:', err);
+      stopAnalysisStream();
     }
   }, [state.currentAnalysisId]);
 

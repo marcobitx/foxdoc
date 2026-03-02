@@ -207,7 +207,7 @@ class AnalysisPipeline:
                 llm=self.llm,
                 model=self.model,
                 context_length=context_length,
-                max_concurrent=min(len(parsed_docs), 10),
+                max_concurrent=min(len(parsed_docs), 5),
                 on_started=self._on_extraction_started_sync,
                 on_completed=self._on_extraction_completed_sync,
                 on_thinking=extraction_thinking,
@@ -234,6 +234,7 @@ class AnalysisPipeline:
                 analysis_type=self.analysis_type,
                 custom_instructions=self.custom_instructions,
                 thinking_override=self.thinking_override,
+                cancel_event=self._cancel_event,
             )
             await self._push_thinking_done()
             self.metrics.tokens_aggregation_input = agg_usage.get("input_tokens", 0)

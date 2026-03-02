@@ -392,7 +392,11 @@ async def stream_analysis_progress(
                     await asyncio.sleep(0.8)
 
             except asyncio.CancelledError:
-                logger.info("SSE stream cancelled for analysis %s", analysis_id)
+                logger.info("SSE stream cancelled for analysis %s — triggering pipeline cancel", analysis_id)
+                from app.services.pipeline import get_active_pipeline
+                pipeline = get_active_pipeline(analysis_id)
+                if pipeline:
+                    pipeline.request_cancel()
                 break
             except Exception as e:
                 logger.error("SSE stream error for %s: %s", analysis_id, e)

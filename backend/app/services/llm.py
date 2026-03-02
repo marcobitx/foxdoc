@@ -156,7 +156,7 @@ class LLMClient:
                 "HTTP-Referer": "https://foxdoc.app",
                 "X-Title": "FoxDoc",
             },
-            timeout=httpx.Timeout(300.0, connect=10.0),
+            timeout=httpx.Timeout(120.0, connect=10.0),
         )
 
     # ── Internal helpers ───────────────────────────────────────────────────
@@ -485,14 +485,23 @@ class LLMClient:
                         max_tokens=max_tokens, plugins=plugins,
                     )
 
-                async for line in response.aiter_lines():
-                    # Check cancellation every chunk — abort HTTP connection immediately
+                line_aiter = response.aiter_lines().__aiter__()
+                while True:
                     if cancel_event and cancel_event.is_set():
                         logger.info(
                             "Streaming aborted (cancelled) for %s after %d chunks",
                             response_schema.__name__, _chunk_count,
                         )
                         raise asyncio.CancelledError("Analysis cancelled by user")
+                    try:
+                        if cancel_event:
+                            line = await asyncio.wait_for(line_aiter.__anext__(), timeout=2.0)
+                        else:
+                            line = await line_aiter.__anext__()
+                    except asyncio.TimeoutError:
+                        continue  # re-check cancel_event
+                    except StopAsyncIteration:
+                        break
 
                     if not line.startswith("data: "):
                         continue

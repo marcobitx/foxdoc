@@ -444,6 +444,7 @@ export function stopAnalysisStream() {
     closeStream = null;
   }
   clearTimer();
+  appStore.setState({ streamThinkingActive: false });
 }
 
 /** Reset all analysis-related state for starting a fresh analysis */
@@ -547,6 +548,17 @@ export function startAnalysisStream(analysisId: string) {
       appStore.setState({ error: 'Analizė nepavyko — bandykite dar kartą' });
     } else if (newStatus === 'CANCELED') {
       clearTimer();
+      const s = appStore.getState();
+      appStore.setState({
+        streamThinkingActive: false,
+        analysisSnapshot: {
+          events: s.streamEvents,
+          stepThinking: s.streamThinking,
+          stepTimes: { ...stepTimes },
+          finalStatus: 'CANCELED',
+          elapsedSec: s.streamElapsedSec,
+        },
+      });
     }
   }
 

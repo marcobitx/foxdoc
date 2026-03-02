@@ -132,7 +132,7 @@ export function streamProgress(id: string, onEvent: (e: SSEEvent) => void, onDon
     try {
       const data = JSON.parse(msg.data);
       onEvent({ event: 'status', data });
-      if (data.status === 'COMPLETED' || data.status === 'FAILED') {
+      if (data.status === 'COMPLETED' || data.status === 'FAILED' || data.status === 'CANCELED') {
         es.close();
         onDone();
       }

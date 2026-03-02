@@ -503,6 +503,20 @@
 }
 
 
+/* ── Analysis Canceled — kill all animations ────────────────────────────── */
+
+.analysis-canceled .shimmer-text,
+.analysis-canceled .snake-trail,
+.analysis-canceled .snake-head,
+.analysis-canceled .animate-pulse {
+  animation: none !important;
+}
+
+.analysis-canceled .shimmer-text {
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
 /* ── Utility Layer ───────────────────────────────────────────────────────── */
 
 @layer utilities {

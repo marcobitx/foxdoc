@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from typing import TYPE_CHECKING, Awaitable, Callable
@@ -60,6 +61,7 @@ async def aggregate_results(
     analysis_type: str = "detailed",
     custom_instructions: str = "",
     thinking_override: str = "",
+    cancel_event: asyncio.Event | None = None,
 ) -> tuple[AggregatedReport, dict]:
     """
     Merge N extraction results into 1 aggregated report.
@@ -155,6 +157,7 @@ async def aggregate_results(
         model=model,
         thinking=thinking,
         on_thinking=on_thinking,
+        cancel_event=cancel_event,
     )
 
     # Ensure source_documents includes all analyzed docs

@@ -330,7 +330,7 @@ export default function AnalyzingView({ analysisId, error, reviewMode, onComplet
   }
 
   return (
-    <div className="animate-fade-in-up" role="status" aria-label="Analizės progresas">
+    <div className={`animate-fade-in-up ${currentStatus === 'CANCELED' || currentStatus === 'FAILED' ? 'analysis-canceled' : ''}`} role="status" aria-label="Analizės progresas">
       {/* Review mode header */}
       {reviewMode && (
         <div className="flex items-center justify-between mb-4 px-1">
